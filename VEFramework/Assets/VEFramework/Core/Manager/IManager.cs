@@ -24,8 +24,17 @@
 
 namespace VEFramework
 {
+	using UnityEngine;
 	public interface IManager
 	{
 		void Dispose();
 	}
+
+    public class MonoManager : MonoBehaviour,IManager
+    {
+        public void Dispose()
+        {
+            
+        }
+    }
 }
