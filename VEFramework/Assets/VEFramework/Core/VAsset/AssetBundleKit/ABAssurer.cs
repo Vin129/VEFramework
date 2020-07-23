@@ -23,11 +23,44 @@
  ****************************************************************************/
 namespace VEFramework
 {
+	using UnityEngine;
     public class ABAssurer : Assurer
     {
-		public ABAssurer()
+		private AssetBundle mAB;
+		public AssetBundle AB 
 		{
-			
+			get{return mAB;}
 		}
+		public ABAssurer(string path) : this(path,false)
+		{}
+
+		public ABAssurer(string path,bool AsyncMode)
+		{
+			mAssetPath = path;
+			mAsyncMode = AsyncMode;
+			Init();	
+		}
+
+		private void Init()
+		{
+			InUse();
+		}
+
+		public override void Recycle()
+		{
+			if(mUseCount > 0)
+			{
+				//TODO UnSafe Tip
+			}
+			base.Recycle();
+			if(mAB != null)
+				mAB.Unload(false);
+		}
+
+		protected override void Become2Useless()
+		{
+			//TODO Wait4Recycle
+		}
+
 	}
 }

@@ -73,6 +73,8 @@ namespace VEFramework
         public virtual void NonUse()
         {
             mUseCount--;
+            if(mUseCount <= 0)
+                Become2Useless();
         }
 
 		public virtual void Reset()
@@ -86,8 +88,8 @@ namespace VEFramework
 			mUseCount = 0;
         }
         public virtual void Reuse()
-        {
+        {}
 
-        }
+        protected virtual void Become2Useless(){}
     }
 }

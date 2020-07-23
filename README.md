@@ -1,2 +1,21 @@
 # VEFramework
-VEFramwork = Vin129(Very) + Easy + Framwork  : )
+**VEFramwork = Vin129(Very) + Easy + Framwork  : )**
+
+
+
+# V0.0.1
+
+**— Core**
+
+​	**— DisignMode  : 设计模式**
+
+​	**— Manager : ManagerOfManagers   对外由VEManager来统领全部**
+
+​	**— VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**
+
+
+
+
+
+**— GamePipeline : Easy化使用流（非开发者）**
+
