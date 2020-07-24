@@ -23,20 +23,41 @@
  ****************************************************************************/
 namespace VEFramework
 {
-	using UnityEngine;
+    using System.Collections;
+    using UnityEngine;
     public class ABAssurer : Assurer
     {
+		public static ABAssurer EasyGet(string assetPath)
+		{
+			var assurer = EasyPool<ABAssurer>.Instance.Get();
+			assurer.AssetPath = assetPath;
+			assurer.Init();
+			return assurer;
+		}
+
 		private AssetBundle mAB;
 		public AssetBundle AB 
 		{
 			get{return mAB;}
 		}
-		public ABAssurer(string path) : this(path,false)
-		{}
+		private byte[] mBinary;
+		private AssetBundleCreateRequest mABCR;
 
+		public float Process
+		{
+			get
+			{
+				if(mABCR == null)
+					return 0;
+				return mABCR.progress;
+			}
+		}
+
+		public ABAssurer(){}
+		public ABAssurer(string path) : this(path,false){}
 		public ABAssurer(string path,bool AsyncMode)
 		{
-			mAssetPath = path;
+			AssetPath = path;
 			mAsyncMode = AsyncMode;
 			Init();	
 		}
@@ -46,6 +67,73 @@ namespace VEFramework
 			InUse();
 		}
 
+		public override bool LoadSync()
+		{
+			mAB = AssetBundle.LoadFromFile(AssetPath);
+			return DoLoadAsync();
+		}
+
+		public override bool LoadSync(byte[] binary)
+		{
+			mAB = AssetBundle.LoadFromMemory(binary);
+			return DoLoadAsync();
+		}
+
+		public bool DoLoadAsync()
+		{
+			if(mAB == null)
+			{
+				OnFail2Load();
+				return false;
+			}
+			OnSuccess2Load();
+			return true;
+		}
+
+
+		public override void LoadAsync()
+		{
+			//TODO Add List
+		}
+
+		public override void LoadAsync(byte[] binary)
+		{
+			mBinary = binary;
+			//TODO Add List
+		}
+
+		public IEnumerator DoLoadAsync4Memory(System.Action finishCallback)
+		{
+			mABCR = AssetBundle.LoadFromMemoryAsync(mBinary);
+			yield return mABCR;
+			if (!mABCR.isDone)
+			{
+				// Log.E("AssetBundleCreateRequest Not Done! Path:" + mAssetName);
+				OnFail2Load();
+				finishCallback();
+				yield break;
+			}
+			mAB = mABCR.assetBundle;
+			OnSuccess2Load();
+			finishCallback();
+		}
+
+        public override IEnumerator DoLoadAsync(System.Action finishCallback)
+        {
+			mABCR = AssetBundle.LoadFromFileAsync(AssetPath);
+			yield return mABCR;
+			if (!mABCR.isDone)
+			{
+				// Log.E("AssetBundleCreateRequest Not Done! Path:" + mAssetName);
+				OnFail2Load();
+				finishCallback();
+				yield break;
+			}
+			mAB = mABCR.assetBundle;
+			OnSuccess2Load();
+			finishCallback();
+        }
+
 		public override void Recycle()
 		{
 			if(mUseCount > 0)
@@ -53,14 +141,25 @@ namespace VEFramework
 				//TODO UnSafe Tip
 			}
 			base.Recycle();
+			if(mABCR != null && !mABCR.isDone)
+				OnFail2Load();
 			if(mAB != null)
-				mAB.Unload(false);
+				mAB.Unload(true);
+			mAB = null;
+			mABCR = null;
 		}
 
 		protected override void Become2Useless()
 		{
 			//TODO Wait4Recycle
 		}
-
+		protected override void OnSuccess2Load()
+		{
+			
+		}
+		protected override void OnFail2Load()
+		{
+			
+		}
 	}
 }

@@ -30,13 +30,19 @@ namespace VEFramework
 		void Recycle();
 	}
 
-    public class EasyPool<T> where T : IReusable,new()
+    public class EasyPool<T> : Singleton<EasyPool<T>> where T : IReusable,new()
 	{
 		private Queue<T> mCache;
 		public EasyPool()
 		{
 			mCache = new Queue<T>();
 		}
+
+		public override void InitFinished()
+		{
+			
+		}
+
 		public T Get()
 		{
 			if(mCache.Count <= 0)

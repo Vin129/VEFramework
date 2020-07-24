@@ -21,8 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  ****************************************************************************/
+using System.Collections;
+
 namespace VEFramework
 {
+    //资产承保者：资产存放的最小单位
     public class Assurer : IAsset, ICounter, IReusable
     {
 		protected string mAssetPath = string.Empty;
@@ -65,18 +68,23 @@ namespace VEFramework
             }
         }
 
+        public virtual bool LoadSync(){return true;}
+        public virtual bool LoadSync(byte[] binary){return true;}
+        public virtual void LoadAsync(){}
+        public virtual void LoadAsync(byte[] binary){}
+        public virtual IEnumerator DoLoadAsync(System.Action finishCallback){ finishCallback(); yield break;}
+       
+       
         public virtual void InUse()
         {
             mUseCount++;
         }
-
         public virtual void NonUse()
         {
             mUseCount--;
             if(mUseCount <= 0)
                 Become2Useless();
         }
-
 		public virtual void Reset()
         {
             mUseCount = 0;
@@ -87,9 +95,9 @@ namespace VEFramework
 			mAssetPath = null;
 			mUseCount = 0;
         }
-        public virtual void Reuse()
-        {}
-
+        public virtual void Reuse(){}
         protected virtual void Become2Useless(){}
+        protected virtual void OnSuccess2Load(){}
+        protected virtual void OnFail2Load(){}
     }
 }
