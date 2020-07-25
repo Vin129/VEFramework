@@ -27,20 +27,45 @@ namespace VEFramework
 	using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
-	public class VEManager : MonoBehaviour ,IManager
+	public class VEManager : MonoBehaviour
 	{
-		
+		private static VEManager mInstance;
+		public static VEManager Instance
+		{
+			get
+			{
+				if(mInstance == null)
+				{
+					Log.E("VEManager Not Initialize!Please Try To AddComponent<VEManager>");
+					return null;
+				}
+				return mInstance;
+			}
+		}
+		private Dictionary<string,MonoManager> mManagers;
 
-
-		private Dictionary<string,IManager> mManagers;
+		public T GetManagers<T>() where T : MonoManager
+		{
+			var manager = gameObject.GetComponent<T>();
+			if(manager != null)
+			{
+				if(!mManagers.ContainsKey(manager.ManagerName))
+					mManagers.Add(manager.ManagerName,manager);
+				return manager;
+			}
+			manager = gameObject.AddComponent<T>();
+			mManagers.Add(manager.ManagerName,manager);
+			return manager;
+		}
 
 		private void Awake() 
 		{
-			mManagers = new Dictionary<string, IManager>();
+			mInstance = this;
+			mManagers = new Dictionary<string, MonoManager>();
 		}
 
-		public virtual void Dispose()
-        {	
+		private void OnDestroy() 
+		{
 			foreach (var m in mManagers)
 			{
 				m.Value.Dispose();

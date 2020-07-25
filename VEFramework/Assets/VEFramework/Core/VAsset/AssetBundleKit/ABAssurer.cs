@@ -31,7 +31,7 @@ namespace VEFramework
 		{
 			var assurer = EasyPool<ABAssurer>.Instance.Get();
 			assurer.AssetPath = assetPath;
-			assurer.Init();
+			assurer.Init(); 
 			return assurer;
 		}
 
@@ -53,15 +53,6 @@ namespace VEFramework
 			}
 		}
 
-		public ABAssurer(){}
-		public ABAssurer(string path) : this(path,false){}
-		public ABAssurer(string path,bool AsyncMode)
-		{
-			AssetPath = path;
-			mAsyncMode = AsyncMode;
-			Init();	
-		}
-
 		private void Init()
 		{
 			InUse();
@@ -70,16 +61,16 @@ namespace VEFramework
 		public override bool LoadSync()
 		{
 			mAB = AssetBundle.LoadFromFile(AssetPath);
-			return DoLoadAsync();
+			return DoLoadSync();
 		}
 
 		public override bool LoadSync(byte[] binary)
 		{
 			mAB = AssetBundle.LoadFromMemory(binary);
-			return DoLoadAsync();
+			return DoLoadSync();
 		}
 
-		public bool DoLoadAsync()
+		public bool DoLoadSync()
 		{
 			if(mAB == null)
 			{
@@ -151,7 +142,8 @@ namespace VEFramework
 
 		protected override void Become2Useless()
 		{
-			//TODO Wait4Recycle
+			if(ABManager.Instance.RemoveAssurer(this))
+				EasyPool<ABAssurer>.Instance.Recycle(this);
 		}
 		protected override void OnSuccess2Load()
 		{

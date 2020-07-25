@@ -26,7 +26,7 @@ using System.Collections;
 namespace VEFramework
 {
     //资产承保者：资产存放的最小单位
-    public class Assurer : IAsset, ICounter, IReusable
+    public class Assurer : IAsset,IAsyncTask,ICounter, IReusable
     {
 		protected string mAssetPath = string.Empty;
         public string AssetPath

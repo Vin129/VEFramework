@@ -21,37 +21,56 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  ****************************************************************************/
-
 namespace VEFramework
 {
-	using UnityEngine;
-	public interface IManager
-	{
-		void Dispose();
+	using System;
+    using System.Linq;
+
+    public static class Log {
+		#region Base		
+		public static void I(object message)
+		{
+			UnityEngine.Debug.Log(message.ToString());
+		}
+		public static void W(object message)
+		{
+			UnityEngine.Debug.LogWarning(message.ToString());
+		}
+
+		public static void E(object message)
+		{
+			UnityEngine.Debug.LogError(message.ToString());
+		}
+		public static void I(object message, params object[] args)
+		{
+			UnityEngine.Debug.LogFormat(message.ToString(),args);
+		}
+		public static void W(object message, params object[] args)
+		{
+			UnityEngine.Debug.LogWarningFormat(message.ToString(),args);
+		}
+
+		public static void E(object message, params object[] args)
+		{
+			UnityEngine.Debug.LogErrorFormat(message.ToString(),args);
+		}
+		# endregion
+
+
+		#region  Extension
+		public static void ErrorReport(this Exception e)
+		{
+			if(e == null)
+				return;
+			var message = e.Message + "\n" + e.StackTrace.Split('\n').FirstOrDefault();
+			I(message);
+		}
+
+		public static void LogInfo<T>(this T obj,params object[] args)
+		{
+			UnityEngine.Debug.LogFormat(obj.ToString(),args);
+		}
+
+		#endregion
 	}
-
-    public abstract class MonoManager : MonoBehaviour, IManager
-    {
-        public abstract string ManagerName{get;}
-        public virtual void Init(){}
-
-        public virtual void Dispose(){}
-    }
-
-    public abstract class VEManagers<T> : MonoManager where T : MonoManager
-    {
-        private static T mInstance;
-        public static T Instance
-        {
-            get
-            {
-                if(mInstance == null)
-                {
-                    mInstance = VEManager.Instance.GetManagers<T>();
-                    mInstance.Init();
-                }
-                return mInstance;
-            }
-        }
-    }
 }

@@ -23,6 +23,7 @@
  ****************************************************************************/
 namespace VEFramework
 {
+	using System.Collections;
 	public interface ICounter
 	{
 		int UseCount {get;set;}
@@ -37,5 +38,10 @@ namespace VEFramework
     {
 		string AssetPath {get;set;}
 		bool AsyncMode {get;set;}
+    }
+
+	public interface IAsyncTask
+    {
+        IEnumerator DoLoadAsync(System.Action finishCallback);
     }
 }

@@ -21,37 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  ****************************************************************************/
-
-namespace VEFramework
-{
-	using UnityEngine;
-	public interface IManager
+using UnityEngine;
+using VEFramework;
+public class GamePipeline : MonoBehaviour {
+	private void Awake() 
 	{
-		void Dispose();
+		//初始化VEManager
+		gameObject.AddComponent<VEManager>();
+
 	}
-
-    public abstract class MonoManager : MonoBehaviour, IManager
-    {
-        public abstract string ManagerName{get;}
-        public virtual void Init(){}
-
-        public virtual void Dispose(){}
-    }
-
-    public abstract class VEManagers<T> : MonoManager where T : MonoManager
-    {
-        private static T mInstance;
-        public static T Instance
-        {
-            get
-            {
-                if(mInstance == null)
-                {
-                    mInstance = VEManager.Instance.GetManagers<T>();
-                    mInstance.Init();
-                }
-                return mInstance;
-            }
-        }
-    }
 }

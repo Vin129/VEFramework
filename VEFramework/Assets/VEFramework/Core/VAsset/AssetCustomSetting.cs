@@ -21,37 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  ****************************************************************************/
-
 namespace VEFramework
 {
-	using UnityEngine;
-	public interface IManager
+	///<summary>
+	/// AssetCustomSetting 基本原则：
+	///	Resource文件夹下文件的加载可以使用相对路径 
+	/// AssetBundle文件命名分为：1. 路径 + 文件名  2. 文件路径
+	///</summary>
+	public static class AssetCustomSetting
 	{
-		void Dispose();
+		public static string PersistentDir
+		{
+			get
+			{
+				return UnityEngine.Application.persistentDataPath;
+			}
+		}
+
+		public static string AssetBundleDir
+		{
+			get
+			{
+				return UnityEngine.Application.streamingAssetsPath;
+			}
+		}
 	}
-
-    public abstract class MonoManager : MonoBehaviour, IManager
-    {
-        public abstract string ManagerName{get;}
-        public virtual void Init(){}
-
-        public virtual void Dispose(){}
-    }
-
-    public abstract class VEManagers<T> : MonoManager where T : MonoManager
-    {
-        private static T mInstance;
-        public static T Instance
-        {
-            get
-            {
-                if(mInstance == null)
-                {
-                    mInstance = VEManager.Instance.GetManagers<T>();
-                    mInstance.Init();
-                }
-                return mInstance;
-            }
-        }
-    }
 }
