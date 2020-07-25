@@ -35,6 +35,23 @@ namespace VEFramework
 			return assurer;
 		}
 
+		public string RealPath;
+		public string FileName;
+		public override string AssetPath
+		{
+			get
+			{
+				return mAssetPath;
+			}
+			set
+			{
+				FileName = string.Empty;
+				RealPath = ABManager.Instance.GetAssetbundleRealPath(value,ref FileName);
+				mAssetPath = value;
+			}
+		}
+
+
 		private AssetBundle mAB;
 		public AssetBundle AB 
 		{
@@ -58,9 +75,37 @@ namespace VEFramework
 			InUse();
 		}
 
+		public T Get<T>() where T:UnityEngine.Object
+		{
+			if(mAB == null || FileName.IsEmptyOrNull())
+				return null;
+			FileName = FileName.ToLower();
+			string[] assetsNames = mAB.GetAllAssetNames();
+			for(int i = 0;i < assetsNames.Length;i++)
+			{
+				if(assetsNames[i].Contains(FileName))
+				{
+					string strVal = assetsNames[i].Substring(assetsNames[i].IndexOf(FileName));
+					int iIdx = strVal.LastIndexOf(".");
+					if(-1 != iIdx)
+						strVal = strVal.Substring(0,iIdx);
+					if(strVal == FileName)
+						return mAB.LoadAsset(assetsNames[i]) as T;
+				}
+        	}
+			return null;
+		}
+
+		public T LoadSync<T>() where T : UnityEngine.Object
+		{
+			if(!LoadSync())
+				return null;
+			return Get<T>();
+		}
+
 		public override bool LoadSync()
 		{
-			mAB = AssetBundle.LoadFromFile(AssetPath);
+			mAB = AssetBundle.LoadFromFile(RealPath);
 			return DoLoadSync();
 		}
 
@@ -111,7 +156,7 @@ namespace VEFramework
 
         public override IEnumerator DoLoadAsync(System.Action finishCallback)
         {
-			mABCR = AssetBundle.LoadFromFileAsync(AssetPath);
+			mABCR = AssetBundle.LoadFromFileAsync(RealPath);
 			yield return mABCR;
 			if (!mABCR.isDone)
 			{
@@ -135,23 +180,31 @@ namespace VEFramework
 			if(mABCR != null && !mABCR.isDone)
 				OnFail2Load();
 			if(mAB != null)
-				mAB.Unload(true);
+				mAB.Unload(false);
 			mAB = null;
 			mABCR = null;
+			RealPath = null;
+			FileName = null;
+		}
+
+		public void ForceRecycle()
+		{
+			ABManager.Instance.RemoveAssurer(this);
+			EasyPool<ABAssurer>.Instance.Recycle(this);
 		}
 
 		protected override void Become2Useless()
 		{
-			if(ABManager.Instance.RemoveAssurer(this))
-				EasyPool<ABAssurer>.Instance.Recycle(this);
+			ABManager.Instance.RemoveAssurer(this);
+			EasyPool<ABAssurer>.Instance.Recycle(this);
 		}
 		protected override void OnSuccess2Load()
 		{
-			
+			// add wait4recycle
 		}
 		protected override void OnFail2Load()
 		{
-			
+			ForceRecycle();
 		}
 	}
 }

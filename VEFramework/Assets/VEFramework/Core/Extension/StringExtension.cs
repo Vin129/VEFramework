@@ -23,35 +23,12 @@
  ****************************************************************************/
 namespace VEFramework
 {
-	///<summary>
-	/// AssetCustomSetting 基本原则：
-	///	Resource文件夹下文件的加载可以使用相对路径 
-	/// AssetBundle文件命名分为：1. 路径 + 文件名  2. 文件路径
-	///</summary>
-	public static class AssetCustomSetting
+	public static class StringExtension
 	{
-
-		public static string ABPostfix
+		public static bool IsEmptyOrNull(this string str)
 		{
-			get
-			{
-				return ".unity3d";
-			}
-		}
-		public static string PersistentDir
-		{
-			get
-			{
-				return UnityEngine.Application.persistentDataPath;
-			}
-		}
-
-		public static string AssetBundleDir
-		{
-			get
-			{
-				return UnityEngine.Application.streamingAssetsPath;
-			}
+			return string.IsNullOrEmpty(str);
 		}
 	}
+
 }

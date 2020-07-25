@@ -39,14 +39,102 @@ namespace VEFramework
         private	LinkedList<IAsyncTask> mAsyncTaskStack;
 
 		private Dictionary<string,string> mRealABFilePath;
+        private Dictionary<string, bool> mFilePathExistsList;
+        ///<summary>
+        /// Key:RealPath  
+        ///</summary>
 		private Dictionary<string,ABAssurer> mAssurerList;
 
 		public override void Init()
 		{
 			mAsyncTaskStack = new LinkedList<IAsyncTask>();
 			mRealABFilePath = new Dictionary<string, string>();
+            mFilePathExistsList = new Dictionary<string, bool>();
 			mAssurerList = new Dictionary<string, ABAssurer>();
 		}
+
+        # region Check Function
+        public string GetAssetbundleRealPath(string assetPath,ref string fileName)
+        {
+            string filePath = "";
+            PathUtil.GetPathAndFile(assetPath,ref filePath,ref fileName);
+            int iIdx = assetPath.LastIndexOf(AssetCustomSetting.ABPostfix);
+            if(-1 == iIdx)
+                assetPath += AssetCustomSetting.ABPostfix;
+            string abRealPath = string.Empty ;
+            if (false == CheckFileExists(assetPath, ref abRealPath))
+            {
+                Log.W("{0} nonexistent",assetPath);
+                if(false == CheckFileExists(filePath, ref abRealPath))
+                    Log.W("{0} nonexistent",filePath);
+            }
+            return abRealPath;
+        }
+
+
+        public bool CheckFileExists(string assetPath,ref string abRealPath, bool bTolower = true)
+        {
+            if (bTolower)
+                assetPath = assetPath.ToLower();
+
+            if (mRealABFilePath.ContainsKey(assetPath)) {
+                abRealPath = mRealABFilePath[assetPath];
+                if (mFilePathExistsList.ContainsKey(abRealPath))
+                {
+                    return mFilePathExistsList[abRealPath];
+                }
+                return false;
+            }
+            if(AppSetting.AppABResVersion.IsEmptyOrNull())
+                abRealPath = AssetCustomSetting.PersistentDir + "/" + assetPath;
+            else
+                abRealPath = AssetCustomSetting.PersistentDir + "/" + AppSetting.AppABResVersion + "/" + assetPath;
+            if (PathUtil.IsPersistentFileExists(abRealPath))
+            {
+                mRealABFilePath.Add(assetPath, abRealPath);
+                mFilePathExistsList.Add(abRealPath, true);
+                return true;
+            }
+
+            abRealPath = AssetCustomSetting.AssetBundleDir + "/" + assetPath;
+            if (PathUtil.IsStreamingFileExists(abRealPath))
+            {
+                mRealABFilePath.Add(assetPath, abRealPath);
+                mFilePathExistsList.Add(abRealPath, true);
+                return true;
+            }
+            mRealABFilePath.Add(assetPath, abRealPath);
+            mFilePathExistsList.Add(abRealPath, false);
+            return false;
+        }
+
+
+
+        # endregion
+
+
+        public T LoadSync<T>(string AssetPath) where T : UnityEngine.Object
+        {
+            string realPath = AssetPath;
+            bool isContains = false;
+            if(mRealABFilePath.ContainsKey(AssetPath))
+            {
+                isContains = true;
+                realPath = mRealABFilePath[AssetPath];
+            }
+            ABAssurer assurer = null;
+            if(mAssurerList.ContainsKey(realPath))
+                assurer = mAssurerList[realPath];
+            if(assurer == null)
+            {
+                assurer = ABAssurer.EasyGet(AssetPath);
+                mAssurerList.Add(assurer.RealPath,assurer);
+            }
+            if(!isContains)
+                mRealABFilePath.Add(assurer.AssetPath,assurer.RealPath);
+            return assurer.LoadSync<T>();
+        }
+
 
 		public bool RemoveAssurer(ABAssurer aber)
 		{

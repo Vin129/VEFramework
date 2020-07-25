@@ -73,7 +73,7 @@ namespace VEFramework
         return strDirs;
     }
 
-    public static void GetPathAndFile(string fileNameOrPath,ref string filePath ,ref string fileName,bool bContainSlash = true)
+    public static void GetPathAndFile(string fileNameOrPath,ref string filePath ,ref string fileName,bool bContainSlash = false)
     {
         fileNameOrPath = fileNameOrPath.Replace('\\', '/');
         int iIdx = fileNameOrPath.LastIndexOf("/");
@@ -169,28 +169,9 @@ namespace VEFramework
         return File.Exists(strFullPath);
     }
 
-    public static bool IsABFileExists(string strFullPath)
+    public static bool IsStreamingFileExists(string strFullPath)
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        if(null == m_AndroidJavaObject)
-        {
-            AndroidJavaClass kJavaClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-            if(null != kJavaClass)
-                m_AndroidJavaObject = kJavaClass.GetStatic<AndroidJavaObject>("currentActivity");
-        }
-        if(null == m_AndroidJavaObject)
-            return false;
-        strFullPath = strFullPath.Substring(strFullPath.IndexOf(AssetCustomSetting.AssetBundleDir));
-        strFullPath = strFullPath.Replace(AssetCustomSetting.AssetBundleDir+"/","");
-        bool bRet = m_AndroidJavaObject.Call<bool>("FileIsExists",strFullPath);
-        if(false == bRet)
-            Log.I("IsFileExists False " + strFullPath);
-        else
-            Log.I("IsFileExists True " + strFullPath);
-        return bRet;
-#else
         return File.Exists(strFullPath);
-#endif
     }
 
     public static void CreateDirectory(string strPath)
