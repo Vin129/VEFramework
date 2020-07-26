@@ -66,10 +66,10 @@ namespace VEFramework
 
 		private void OnDestroy() 
 		{
-			foreach (var m in mManagers)
-			{
-				m.Value.Dispose();
-			}
+			// foreach (var m in mManagers)
+			// {
+			// 	m.Value.Dispose();
+			// }
 		}
     }
 }

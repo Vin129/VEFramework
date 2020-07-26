@@ -64,11 +64,11 @@ namespace VEFramework
         public virtual IEnumerator DoLoadAsync(System.Action finishCallback){ finishCallback(); yield break;}
        
        
-        public virtual void InUse()
+        public virtual void Retain()
         {
             mUseCount++;
         }
-        public virtual void NonUse()
+        public virtual void Release()
         {
             mUseCount--;
             if(mUseCount <= 0)
@@ -81,7 +81,11 @@ namespace VEFramework
 
         public virtual void Recycle()
         {
-			mAssetPath = null;
+
+        }
+        protected virtual void Rest()
+        {
+            mAssetPath = null;
 			mUseCount = 0;
         }
         public virtual void Reuse(){}

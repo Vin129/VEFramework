@@ -28,11 +28,9 @@ namespace VEFramework
 	{
 		int UseCount {get;set;}
 		//使用
-		void InUse();
+		void Retain();
 		//放弃使用
-		void NonUse();
-		//重置
-		void Reset();
+		void Release();
 	}
     public interface IAsset
     {

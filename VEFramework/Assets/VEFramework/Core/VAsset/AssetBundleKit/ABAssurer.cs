@@ -23,20 +23,25 @@
  ****************************************************************************/
 namespace VEFramework
 {
+	using System;
     using System.Collections;
     using UnityEngine;
     public class ABAssurer : Assurer
     {
-		public static ABAssurer EasyGet(string assetPath)
+		public static ABAssurer EasyGet(string assetPath,bool bPostfix = true)
 		{
 			var assurer = EasyPool<ABAssurer>.Instance.Get();
-			assurer.AssetPath = assetPath;
+			assurer.mAssetPath = assetPath;
+			assurer.InitAssetPath(bPostfix);
 			assurer.Init(); 
 			return assurer;
 		}
 
+		private bool mFileExist = false;
 		public string RealPath;
 		public string FileName;
+		public string[] DependFileList;
+		public event Action<ABAssurer> LoadFinishCallback;
 		public override string AssetPath
 		{
 			get
@@ -45,8 +50,6 @@ namespace VEFramework
 			}
 			set
 			{
-				FileName = string.Empty;
-				RealPath = ABManager.Instance.GetAssetbundleRealPath(value,ref FileName);
 				mAssetPath = value;
 			}
 		}
@@ -59,6 +62,8 @@ namespace VEFramework
 		}
 		private byte[] mBinary;
 		private AssetBundleCreateRequest mABCR;
+		private AsyncLoadState mAsyncState = AsyncLoadState.None;
+
 
 		public float Process
 		{
@@ -72,27 +77,54 @@ namespace VEFramework
 
 		private void Init()
 		{
-			InUse();
+
+		}
+
+		private void InitAssetPath(bool bPostfix)
+		{
+			FileName = string.Empty;
+			RealPath = ABManager.Instance.GetAssetbundleRealPath(mAssetPath,ref mFileExist,ref FileName,bPostfix);
+		}
+
+		protected override void Rest()
+		{
+			base.Rest();
+			if(mABCR != null && !mABCR.isDone)
+				OnFail2Load();
+			if(mAB != null)
+				mAB.Unload(false);
+			mBinary = null;
+			mAB = null;
+			mABCR = null;
+			RealPath = null;
+			FileName = null;
+			DependFileList = null;
+			mAsyncState = AsyncLoadState.None;
+			LoadFinishCallback = null;
 		}
 
 		public T Get<T>() where T:UnityEngine.Object
 		{
 			if(mAB == null || FileName.IsEmptyOrNull())
 				return null;
+			if(typeof(T) == typeof(AssetBundle))
+				return mAB as T;
 			FileName = FileName.ToLower();
 			string[] assetsNames = mAB.GetAllAssetNames();
 			for(int i = 0;i < assetsNames.Length;i++)
 			{
 				if(assetsNames[i].Contains(FileName))
 				{
+					Log.I("Get:{0}",assetsNames[i]);
 					string strVal = assetsNames[i].Substring(assetsNames[i].IndexOf(FileName));
 					int iIdx = strVal.LastIndexOf(".");
 					if(-1 != iIdx)
 						strVal = strVal.Substring(0,iIdx);
 					if(strVal == FileName)
-						return mAB.LoadAsset(assetsNames[i]) as T;
+						return mAB.LoadAsset<T>(assetsNames[i]);
 				}
         	}
+			Log.E("No Get:{0}",FileName);
 			return null;
 		}
 
@@ -105,13 +137,19 @@ namespace VEFramework
 
 		public override bool LoadSync()
 		{
-			mAB = AssetBundle.LoadFromFile(RealPath);
-			return DoLoadSync();
-		}
-
-		public override bool LoadSync(byte[] binary)
-		{
-			mAB = AssetBundle.LoadFromMemory(binary);
+			if(!mFileExist)
+			{
+				Log.E("File Not Exist:{0}",RealPath);
+				OnFail2Load();
+				return false;
+			}
+			if(mAB == null)
+			{
+				if(mBinary == null)
+					mAB = AssetBundle.LoadFromFile(RealPath);
+				else
+					mAB = AssetBundle.LoadFromMemory(mBinary);
+			}
 			return DoLoadSync();
 		}
 
@@ -126,46 +164,43 @@ namespace VEFramework
 			return true;
 		}
 
-
 		public override void LoadAsync()
 		{
-			//TODO Add List
-		}
-
-		public override void LoadAsync(byte[] binary)
-		{
-			mBinary = binary;
-			//TODO Add List
-		}
-
-		public IEnumerator DoLoadAsync4Memory(System.Action finishCallback)
-		{
-			mABCR = AssetBundle.LoadFromMemoryAsync(mBinary);
-			yield return mABCR;
-			if (!mABCR.isDone)
-			{
-				// Log.E("AssetBundleCreateRequest Not Done! Path:" + mAssetName);
-				OnFail2Load();
-				finishCallback();
-				yield break;
-			}
-			mAB = mABCR.assetBundle;
-			OnSuccess2Load();
-			finishCallback();
+			if(mAsyncState != AsyncLoadState.None)
+				return;
+			ABManager.Instance.PushInAsyncList(this);
+			mAsyncState = AsyncLoadState.Loading;
 		}
 
         public override IEnumerator DoLoadAsync(System.Action finishCallback)
         {
-			mABCR = AssetBundle.LoadFromFileAsync(RealPath);
-			yield return mABCR;
-			if (!mABCR.isDone)
+			if(!mFileExist)
 			{
-				// Log.E("AssetBundleCreateRequest Not Done! Path:" + mAssetName);
+				Log.E("File Not Exist:{0}",RealPath);
+				mAsyncState = AsyncLoadState.Done;
 				OnFail2Load();
 				finishCallback();
 				yield break;
 			}
-			mAB = mABCR.assetBundle;
+
+			if(mAB == null)
+			{
+				if(mBinary == null)
+					mABCR = AssetBundle.LoadFromFileAsync(RealPath);
+				else
+					mABCR = AssetBundle.LoadFromMemoryAsync(mBinary);
+				yield return mABCR;
+				if (!mABCR.isDone)
+				{
+					Log.E("AssetBundleCreateRequest Not Done! Path:" + RealPath);
+					mAsyncState = AsyncLoadState.Done;
+					OnFail2Load();
+					finishCallback();
+					yield break;
+				}
+				mAB = mABCR.assetBundle;
+			}
+			mAsyncState = AsyncLoadState.Done;
 			OnSuccess2Load();
 			finishCallback();
         }
@@ -176,15 +211,7 @@ namespace VEFramework
 			{
 				//TODO UnSafe Tip
 			}
-			base.Recycle();
-			if(mABCR != null && !mABCR.isDone)
-				OnFail2Load();
-			if(mAB != null)
-				mAB.Unload(false);
-			mAB = null;
-			mABCR = null;
-			RealPath = null;
-			FileName = null;
+			Rest();
 		}
 
 		public void ForceRecycle()
@@ -195,15 +222,22 @@ namespace VEFramework
 
 		protected override void Become2Useless()
 		{
+			Log.I("Become2Useless:{0}",AssetPath);
 			ABManager.Instance.RemoveAssurer(this);
 			EasyPool<ABAssurer>.Instance.Recycle(this);
 		}
 		protected override void OnSuccess2Load()
 		{
-			// add wait4recycle
+			Log.I("OnSuccess2Load:{0}",AssetPath);
+			if(LoadFinishCallback != null)
+				LoadFinishCallback.Invoke(this);
+			//TODO add wait4recycle
 		}
 		protected override void OnFail2Load()
 		{
+			Log.E("OnFail2Load:{0}",RealPath);
+			if(LoadFinishCallback != null)
+				LoadFinishCallback.Invoke(null);
 			ForceRecycle();
 		}
 	}

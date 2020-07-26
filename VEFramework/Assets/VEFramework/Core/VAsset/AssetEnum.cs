@@ -23,44 +23,11 @@
  ****************************************************************************/
 namespace VEFramework
 {
-	using System.Collections.Generic;
-	public interface IReusable
+	public enum AsyncLoadState
 	{
-		void Reuse();
-		void Recycle();
+		None,
+		Loading,
+		Done,
 	}
 
-    public class EasyPool<T> : Singleton<EasyPool<T>> where T : IReusable,new()
-	{
-		private Queue<T> mCache;
-		private EasyPool()
-		{
-			mCache = new Queue<T>();
-		}
-
-		public override void InitFinished()
-		{
-			
-		}
-
-		public T Get()
-		{
-			if(mCache.Count <= 0)
-				return new T();
-			var v = mCache.Dequeue();
-			v.Reuse();
-			return v;
-		}
-
-		public void Recycle(T t)
-		{
-			t.Recycle();
-			mCache.Enqueue(t);
-		}
-
-		public void Release()
-		{
-			mCache.Clear();
-		}
-	}
 }

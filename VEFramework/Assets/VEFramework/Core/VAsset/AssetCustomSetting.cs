@@ -30,7 +30,17 @@ namespace VEFramework
 	///</summary>
 	public static class AssetCustomSetting
 	{
-
+		///<summary>
+		///Empty：默认StreamingAssets为AssetBundle文件根目录
+		///若需要指定文件夹为AB文件根目录请修改此值在StreamingAssets下创建专属文件夹。 
+		///</summary>
+		public static string ABManifestFileName
+		{
+			get
+			{
+				return string.Empty;
+			}
+		}
 		public static string ABPostfix
 		{
 			get
@@ -38,11 +48,13 @@ namespace VEFramework
 				return ".unity3d";
 			}
 		}
-		public static string PersistentDir
+		public static string PersistentABDir
 		{
 			get
 			{
-				return UnityEngine.Application.persistentDataPath;
+				if(ABManifestFileName.IsEmptyOrNull())
+					return UnityEngine.Application.persistentDataPath;
+				return UnityEngine.Application.persistentDataPath + "/" + ABManifestFileName;
 			}
 		}
 
@@ -50,7 +62,9 @@ namespace VEFramework
 		{
 			get
 			{
-				return UnityEngine.Application.streamingAssetsPath;
+				if(ABManifestFileName.IsEmptyOrNull())
+					return UnityEngine.Application.streamingAssetsPath;
+				return UnityEngine.Application.streamingAssetsPath + "/" + ABManifestFileName;
 			}
 		}
 	}
