@@ -27,6 +27,10 @@ namespace VEFramework
 	using System.Collections.Generic;
     using System;
 
+    ///<summary>
+    ///规则：基于AssetPath(相对路径)来加载所需资源
+    ///1.搜寻优先级：PersistentABDir/AppSetting.AppABResVersion/AssetPath > AssetBundleDir/AssetPath
+    ///</summary>
     public class ABManager : VEManagers<ABManager>
 	{
 		public override string ManagerName
