@@ -19,3 +19,17 @@
 
 **— GamePipeline : Easy化使用流（非开发者）**
 
+
+
+
+
+## TimeLine
+
+**7-26 : AssetBundleKit 初步完成（基于相对路径的资源加载模式）**
+
+## TODO：
+
+**1.AssetBundleKit 释放Assurer机制**
+
+**2.AssetBundleKit 制作对应的ABBuild工具**
+
