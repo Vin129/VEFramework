@@ -13,7 +13,7 @@
 
 ​	**— VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**
 
-
+​		**— AssestBundleKit : AB资产模块**
 
 
 
