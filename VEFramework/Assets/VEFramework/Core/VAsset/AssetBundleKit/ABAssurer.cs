@@ -28,18 +28,20 @@ namespace VEFramework
     using UnityEngine;
     public class ABAssurer : Assurer
     {
-		public static ABAssurer EasyGet(string assetPath,bool bPostfix = true)
+		public static ABAssurer EasyGet()
 		{
 			var assurer = EasyPool<ABAssurer>.Instance.Get();
-			assurer.mAssetPath = assetPath;
-			assurer.InitAssetPath(bPostfix);
-			assurer.Init(); 
 			return assurer;
 		}
 
 		private bool mFileExist = false;
+		//资源释放模式
+		public bool UnloadTag;
+		//AB地址
 		public string RealPath;
+		//AB文件
 		public string FileName;
+		//依赖文件List
 		public string[] DependFileList;
 		public event Action<ABAssurer> LoadFinishCallback;
 		public override string AssetPath
@@ -75,15 +77,16 @@ namespace VEFramework
 			}
 		}
 
-		private void Init()
+		public void Init(ABPathAnalysis analysis)
 		{
+			mAssetPath = analysis.AssetPath;
+			mFileExist = analysis.B_FileExist;
+			FileName = analysis.FileName;
+			RealPath = analysis.RealPath;
+			UnloadTag = analysis.B_UnloadTag;
 
-		}
-
-		private void InitAssetPath(bool bPostfix)
-		{
-			FileName = string.Empty;
-			RealPath = ABManager.Instance.GetAssetbundleRealPath(mAssetPath,ref mFileExist,ref FileName,bPostfix);
+			analysis.RecycleSelf();
+			analysis = null;
 		}
 
 		protected override void Rest()
@@ -92,7 +95,7 @@ namespace VEFramework
 			if(mABCR != null && !mABCR.isDone)
 				OnFail2Load();
 			if(mAB != null)
-				mAB.Unload(false);
+				mAB.Unload(UnloadTag);
 			mBinary = null;
 			mAB = null;
 			mABCR = null;

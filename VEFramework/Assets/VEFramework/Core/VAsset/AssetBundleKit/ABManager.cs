@@ -27,6 +27,35 @@ namespace VEFramework
 	using System.Collections.Generic;
     using System;
 
+    public class ABPathAnalysis:IReusable
+    {
+        public static ABPathAnalysis EasyGet()
+		{
+			var analysis = EasyPool<ABPathAnalysis>.Instance.Get();
+			return analysis;
+		}
+
+        public bool B_FileExist;
+        public bool B_UnloadTag;
+        public string AssetPath;
+        public string FileName;
+        public string RealPath;
+        public ABPathAnalysis(){}
+        public void Analyze(string AssetPath,bool bPostfix,bool bUnloadTag)
+        {
+            this.AssetPath = AssetPath;
+            this.B_UnloadTag = bUnloadTag;
+            this.RealPath = ABManager.Instance.GetAssetbundleRealPath(AssetPath,ref B_FileExist,ref FileName,bPostfix);
+        }
+        public void Reuse(){}
+        public void Recycle()
+        {
+            B_FileExist = false;
+            AssetPath = null;
+            FileName = null;
+            RealPath = null;
+        }
+    }
     ///<summary>
     ///规则：基于AssetPath(相对路径)来加载所需资源
     ///1.搜寻优先级：PersistentABDir/AppSetting.AppABResVersion/AssetPath > AssetBundleDir/AssetPath
@@ -165,7 +194,10 @@ namespace VEFramework
 
 
     #region 已扩展方式
-        public ABAssurer GetAssurer(string AssetPath,bool bPostfix = true)
+        ///<param name="AssetPath">资产加载外部路径</param>
+        ///<param name="bPostfix">资产文件是否存在后缀</param>
+        ///<param name="bUnloadTag">资产释放模式</param>
+        public ABAssurer GetAssurer(string AssetPath,bool bPostfix = true,bool bUnloadTag = false)
         {
             string realPath;
             bool isContains = false;
@@ -175,15 +207,18 @@ namespace VEFramework
                 realPath = mRealABFilePath[AssetPath];
             }
             ABAssurer assurer = null;
-            //TODO 优化RealPath过程
-            bool bFileExist = false;
-            string fileName = string.Empty;
-            realPath = GetAssetbundleRealPath(AssetPath,ref bFileExist,ref fileName);
-            if(mAssurerList.ContainsKey(realPath))
-                assurer = mAssurerList[realPath];
+
+            var ABAnlysis = ABPathAnalysis.EasyGet();
+            ABAnlysis.Analyze(AssetPath,bPostfix,bUnloadTag);
+            if(mAssurerList.ContainsKey(ABAnlysis.RealPath))
+            {
+                assurer = mAssurerList[ABAnlysis.RealPath];
+                assurer.Init(ABAnlysis);
+            }
             if(assurer == null)
             {
-                assurer = ABAssurer.EasyGet(AssetPath,bPostfix);
+                assurer = ABAssurer.EasyGet();
+                assurer.Init(ABAnlysis);
                 mAssurerList.Add(assurer.RealPath,assurer);
             }
             if(!isContains)
@@ -244,11 +279,11 @@ namespace VEFramework
             LoadAsync(AssetPath,(assurer)=>{GetResOnFinish<T>(assurer,finishCallback);},false);
         }
 
-        public void LoadAsync(string AssetPath,Action<ABAssurer> finishCallback = null)
+        protected void LoadAsync(string AssetPath,Action<ABAssurer> finishCallback = null)
         {
             LoadAsync(AssetPath,finishCallback,false);
         }
-        public void LoadAsync(string AssetPath,Action<ABAssurer> finishCallback,bool bDepLoad)
+        protected void LoadAsync(string AssetPath,Action<ABAssurer> finishCallback,bool bDepLoad)
         {
             var assurer = GetAssurer(AssetPath);
             if(bDepLoad == false)

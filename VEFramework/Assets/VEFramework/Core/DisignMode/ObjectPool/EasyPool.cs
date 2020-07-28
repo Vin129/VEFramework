@@ -63,4 +63,13 @@ namespace VEFramework
 			mCache.Clear();
 		}
 	}
+
+
+	public static class EasyPoolExtension
+	{
+		public static void RecycleSelf(this ABPathAnalysis analysis)
+        {
+            EasyPool<ABPathAnalysis>.Instance.Recycle(analysis);
+        }
+	}
 }
