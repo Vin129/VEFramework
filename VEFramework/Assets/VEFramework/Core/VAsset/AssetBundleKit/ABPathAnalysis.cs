@@ -23,12 +23,33 @@
  ****************************************************************************/
 namespace VEFramework
 {
-	public enum AssetLoadState
-	{
-		None,
-		Loading,
-		Done,
-		Wait4Recycle,
-	}
+    public class ABPathAnalysis:IReusable
+    {
+        public static ABPathAnalysis EasyGet()
+		{
+			var analysis = EasyPool<ABPathAnalysis>.Instance.Get();
+			return analysis;
+		}
 
+        public bool B_FileExist;
+        public bool B_UnloadTag;
+        public string AssetPath;
+        public string FileName;
+        public string RealPath;
+        public ABPathAnalysis(){}
+        public void Analyze(string AssetPath,bool bPostfix,bool bUnloadTag)
+        {
+            this.AssetPath = AssetPath;
+            this.B_UnloadTag = bUnloadTag;
+            this.RealPath = ABManager.Instance.GetAssetbundleRealPath(AssetPath,ref B_FileExist,ref FileName,bPostfix);
+        }
+        public void Reuse(){}
+        public void Recycle()
+        {
+            B_FileExist = false;
+            AssetPath = null;
+            FileName = null;
+            RealPath = null;
+        }
+    }
 }

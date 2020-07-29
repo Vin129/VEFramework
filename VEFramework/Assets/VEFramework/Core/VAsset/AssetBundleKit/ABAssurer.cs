@@ -64,7 +64,7 @@ namespace VEFramework
 		}
 		private byte[] mBinary;
 		private AssetBundleCreateRequest mABCR;
-		private AsyncLoadState mAsyncState = AsyncLoadState.None;
+		private AssetLoadState mLoadState = AssetLoadState.None;
 
 
 		public float Process
@@ -102,7 +102,7 @@ namespace VEFramework
 			RealPath = null;
 			FileName = null;
 			DependFileList = null;
-			mAsyncState = AsyncLoadState.None;
+			mLoadState = AssetLoadState.None;
 			LoadFinishCallback = null;
 		}
 
@@ -140,6 +140,7 @@ namespace VEFramework
 
 		public override bool LoadSync()
 		{
+			mLoadState = AssetLoadState.Done;
 			if(!mFileExist)
 			{
 				Log.E("File Not Exist:{0}",RealPath);
@@ -169,18 +170,23 @@ namespace VEFramework
 
 		public override void LoadAsync()
 		{
-			if(mAsyncState != AsyncLoadState.None)
+			if(mLoadState != AssetLoadState.None)
 				return;
 			ABManager.Instance.PushInAsyncList(this);
-			mAsyncState = AsyncLoadState.Loading;
+			mLoadState = AssetLoadState.Loading;
 		}
 
         public override IEnumerator DoLoadAsync(System.Action finishCallback)
         {
+			if(mLoadState != AssetLoadState.Loading)
+			{
+				finishCallback();
+				yield break;
+			}
 			if(!mFileExist)
 			{
 				Log.E("File Not Exist:{0}",RealPath);
-				mAsyncState = AsyncLoadState.Done;
+				mLoadState = AssetLoadState.Done;
 				OnFail2Load();
 				finishCallback();
 				yield break;
@@ -193,17 +199,17 @@ namespace VEFramework
 				else
 					mABCR = AssetBundle.LoadFromMemoryAsync(mBinary);
 				yield return mABCR;
-				if (!mABCR.isDone)
+				if (!mABCR.isDone || mLoadState != AssetLoadState.Loading)
 				{
 					Log.E("AssetBundleCreateRequest Not Done! Path:" + RealPath);
-					mAsyncState = AsyncLoadState.Done;
+					mLoadState = AssetLoadState.Done;
 					OnFail2Load();
 					finishCallback();
 					yield break;
 				}
 				mAB = mABCR.assetBundle;
 			}
-			mAsyncState = AsyncLoadState.Done;
+			mLoadState = AssetLoadState.Done;
 			OnSuccess2Load();
 			finishCallback();
         }
@@ -214,33 +220,66 @@ namespace VEFramework
 			{
 				//TODO UnSafe Tip
 			}
+			ABManager.Instance.RemoveAssurer(this);
 			Rest();
 		}
 
 		public void ForceRecycle()
 		{
-			ABManager.Instance.RemoveAssurer(this);
-			EasyPool<ABAssurer>.Instance.Recycle(this);
+			mUseCount = 0;
+			if(mLoadState == AssetLoadState.Wait4Recycle)
+				return;
+			mLoadState = AssetLoadState.Wait4Recycle;
+			ABManager.Instance.WaitForRecycle(this);
+		}
+
+		public override void Retain()
+		{
+			base.Retain();
+			if(mLoadState == AssetLoadState.Wait4Recycle)
+			{
+				ABManager.Instance.ReUseAssurer(this);
+				if(mAB == null)
+					mLoadState = AssetLoadState.None;
+				else
+					mLoadState = AssetLoadState.Done;
+			}
 		}
 
 		protected override void Become2Useless()
 		{
 			Log.I("Become2Useless:{0}",AssetPath);
-			ABManager.Instance.RemoveAssurer(this);
-			EasyPool<ABAssurer>.Instance.Recycle(this);
+
+			if(mLoadState == AssetLoadState.Loading)
+			{
+				Log.E("Loading break off");
+				mLoadState = AssetLoadState.Done;
+				ABManager.Instance.PopUpAsyncList(this);
+			}
+			base.Become2Useless();
+			mLoadState = AssetLoadState.Wait4Recycle;
+			ABManager.Instance.WaitForRecycle(this);
 		}
 		protected override void OnSuccess2Load()
 		{
 			Log.I("OnSuccess2Load:{0}",AssetPath);
+
 			if(LoadFinishCallback != null)
+			{
 				LoadFinishCallback.Invoke(this);
-			//TODO add wait4recycle
+				LoadFinishCallback = null;
+			}
+			Release();
 		}
 		protected override void OnFail2Load()
 		{
 			Log.E("OnFail2Load:{0}",RealPath);
+
 			if(LoadFinishCallback != null)
+			{
 				LoadFinishCallback.Invoke(null);
+				LoadFinishCallback = null;
+			}
 			ForceRecycle();
 		}
 	}

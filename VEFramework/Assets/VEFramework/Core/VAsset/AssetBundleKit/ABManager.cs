@@ -26,39 +26,11 @@ namespace VEFramework
 	using UnityEngine;
 	using System.Collections.Generic;
     using System;
+    using System.Collections;
 
-    public class ABPathAnalysis:IReusable
-    {
-        public static ABPathAnalysis EasyGet()
-		{
-			var analysis = EasyPool<ABPathAnalysis>.Instance.Get();
-			return analysis;
-		}
-
-        public bool B_FileExist;
-        public bool B_UnloadTag;
-        public string AssetPath;
-        public string FileName;
-        public string RealPath;
-        public ABPathAnalysis(){}
-        public void Analyze(string AssetPath,bool bPostfix,bool bUnloadTag)
-        {
-            this.AssetPath = AssetPath;
-            this.B_UnloadTag = bUnloadTag;
-            this.RealPath = ABManager.Instance.GetAssetbundleRealPath(AssetPath,ref B_FileExist,ref FileName,bPostfix);
-        }
-        public void Reuse(){}
-        public void Recycle()
-        {
-            B_FileExist = false;
-            AssetPath = null;
-            FileName = null;
-            RealPath = null;
-        }
-    }
     ///<summary>
     ///规则：基于AssetPath(相对路径)来加载所需资源
-    ///1.搜寻优先级：PersistentABDir/AppSetting.AppABResVersion/AssetPath > AssetBundleDir/AssetPath
+    ///1.搜寻优先级：PersistentABDir/AppSetting.AppABResVersion/AssetPath 优先于 AssetBundleDir/AssetPath
     ///</summary>
     public class ABManager : VEManagers<ABManager>
 	{
@@ -84,6 +56,8 @@ namespace VEFramework
         /// Key:RealPath  
         ///</summary>
 		private Dictionary<string,ABAssurer> mAssurerList;
+        private List<ABAssurer> mWait4RecycleList;
+        private List<ABAssurer> mRecycleList;
         private AssetBundleManifest mManifest;
 		public override void Init()
 		{
@@ -91,6 +65,10 @@ namespace VEFramework
 			mRealABFilePath = new Dictionary<string, string>();
             mFilePathExistsList = new Dictionary<string, bool>();
 			mAssurerList = new Dictionary<string, ABAssurer>();
+            mWait4RecycleList = new List<ABAssurer>();
+            mRecycleList = new List<ABAssurer>();
+
+            StartCoroutine(RecycleUselessAssurer());
             LoadManifest();
 		}
 
@@ -102,7 +80,6 @@ namespace VEFramework
             var assurer = GetAssurer(ManifestPath,false);
             assurer.FileName = "AssetBundleManifest";            
             mManifest = assurer.LoadSync<AssetBundleManifest>();
-            assurer.Release();
         }
 
     # region Check Function
@@ -193,7 +170,7 @@ namespace VEFramework
     # endregion
 
 
-    #region 已扩展方式
+    #region 核心
         ///<param name="AssetPath">资产加载外部路径</param>
         ///<param name="bPostfix">资产文件是否存在后缀</param>
         ///<param name="bUnloadTag">资产释放模式</param>
@@ -309,6 +286,7 @@ namespace VEFramework
     #endregion
 
 
+    #region  管理
         public void PushInAsyncList(IAsyncTask task)
         {
             if (task == null)
@@ -317,6 +295,13 @@ namespace VEFramework
             }
             mAsyncTaskStack.AddLast(task);
             TryStartNextAsyncTask();
+        }
+
+        public void PopUpAsyncList(IAsyncTask task)
+        {
+            if(task == null)
+                return;
+            mAsyncTaskStack.Remove(task);
         }
 
 		private void OnAsyncTaskFinish()
@@ -342,6 +327,53 @@ namespace VEFramework
             StartCoroutine(task.DoLoadAsync(OnAsyncTaskFinish));
         }
 
+
+        IEnumerator RecycleUselessAssurer()
+        {
+            if(AssetCustomSetting.AssetUnLoadMode != AssetUnLoadModeType.I_DONT_CARE)
+                yield break;
+            while(true)
+            {
+                mRecycleList.Clear();
+                mWait4RecycleList.ForEach((aber)=>{
+                    if(aber.UseCount <= 0)
+                    {
+                        if(aber.KeepTime <= 0)
+                        {
+                            mRecycleList.Add(aber);
+                        }
+                        else
+                            aber.KeepTime -= Time.deltaTime;
+                    }
+                });
+                yield return null;
+                if(mRecycleList.Count > 0)
+                {
+                    mRecycleList.ForEach((aber)=>{mWait4RecycleList.Remove(aber);aber.RecycleSelf();});
+                    mRecycleList.Clear();
+                }
+            }
+        }
+        public void WaitForRecycle(ABAssurer aber)
+        {
+            if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE)
+                mWait4RecycleList.Add(aber);
+            else if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END)
+            {
+                //TODO 自我管理策略
+            }
+        }
+
+        public void ReUseAssurer(ABAssurer aber)
+        {
+            if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE)
+                 mWait4RecycleList.Remove(aber);
+            else if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END)
+            {
+                //TODO 自我管理策略
+            }
+        }
+
         public bool RemoveAssurer(ABAssurer aber)
 		{
             if(aber == null || aber.RealPath.IsEmptyOrNull())
@@ -354,4 +386,5 @@ namespace VEFramework
 			return true;	
 		}
 	}
+    #endregion
 }

@@ -35,7 +35,6 @@ namespace VEFramework
     public interface IAsset
     {
 		string AssetPath {get;set;}
-		bool AsyncMode {get;set;}
     }
 
 	public interface IAsyncTask

@@ -22,12 +22,30 @@
  * THE SOFTWARE.
  ****************************************************************************/
 using UnityEngine;
+using UnityEngine.UI;
 using VEFramework;
+
 public class GamePipeline : MonoBehaviour {
+	public GameObject Node;
+	public Image Img1;
+	public Image Img2;
 	private void Awake() 
 	{
 		//初始化VEManager
 		gameObject.AddComponent<VEManager>();
+		// "Texture/UI/JumpIcon/tz_icon_02"
+		Img1.sprite = ABManager.Instance.LoadSync<Sprite>("Image/UI/Formation/kp_h_03");
+		Img2.sprite = ABManager.Instance.LoadSync<Sprite>("Develop/TextureSta/UI/HeadIcon/txk_icon_01");
+
+		var Obj1 = GameObject.Instantiate(ABManager.Instance.LoadSync<GameObject>("Prefabs/UI/PlayerDetail/PlayerDetailView"));
+		Obj1.transform.parent = Node.transform;
+
+		ABManager.Instance.LoadAsync<GameObject>("Prefabs/UI/MatchEngine/MainView/MatchEngineView",(obj)=>{
+			if(obj == null)
+				return;
+			var Obj2 = GameObject.Instantiate(obj);
+			Obj2.transform.parent = Node.transform;
+		});
 
 	}
 }

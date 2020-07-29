@@ -30,19 +30,9 @@ namespace VEFramework
     {
 		protected string mAssetPath = string.Empty;
         public abstract string AssetPath {get;set;}
-		protected bool mAsyncMode = false;
-        public bool AsyncMode
-        {
-            get
-            {
-                return mAsyncMode;
-            }
 
-            set
-            {
-                mAsyncMode = value;
-            }
-        }
+        public float KeepTime = AssetCustomSetting.AssetKeepTime;
+
 		protected int mUseCount = 0;
         public int UseCount
         {
@@ -89,7 +79,10 @@ namespace VEFramework
 			mUseCount = 0;
         }
         public virtual void Reuse(){}
-        protected virtual void Become2Useless(){}
+        protected virtual void Become2Useless()
+        {
+            KeepTime = AssetCustomSetting.AssetKeepTime;
+        }
         protected virtual void OnSuccess2Load(){}
         protected virtual void OnFail2Load(){}
     }
