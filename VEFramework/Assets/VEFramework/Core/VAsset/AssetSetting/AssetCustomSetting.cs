@@ -43,6 +43,7 @@ namespace VEFramework
 	{
 		public static readonly float AssetKeepTime = 3f;
 		public static readonly AssetUnLoadModeType AssetUnLoadMode = AssetUnLoadModeType.I_DONT_CARE;
+		public static readonly string ResourceDir = UnityEngine.Application.dataPath + "/Resources";
 
 
 		///<summary>
@@ -53,7 +54,8 @@ namespace VEFramework
 		{
 			get
 			{
-				return string.Empty;
+				return "TestAB";
+				// return string.Empty;
 			}
 		}
 		public static string ABPostfix
@@ -68,8 +70,8 @@ namespace VEFramework
 			get
 			{
 				if(ABManifestFileName.IsEmptyOrNull())
-					return UnityEngine.Application.persistentDataPath;
-				return UnityEngine.Application.persistentDataPath + "/" + ABManifestFileName;
+					return UnityEngine.Application.persistentDataPath + "/";
+				return UnityEngine.Application.persistentDataPath + "/" + ABManifestFileName + "/";
 			}
 		}
 
@@ -78,8 +80,8 @@ namespace VEFramework
 			get
 			{
 				if(ABManifestFileName.IsEmptyOrNull())
-					return UnityEngine.Application.streamingAssetsPath;
-				return UnityEngine.Application.streamingAssetsPath + "/" + ABManifestFileName;
+					return UnityEngine.Application.streamingAssetsPath + "/";
+				return UnityEngine.Application.streamingAssetsPath + "/" + ABManifestFileName + "/";
 			}
 		}
 	}

@@ -183,6 +183,8 @@ namespace VEFramework
     public static string Res2ABPathConvert(string strPath)
     {
         string strABDir = AssetCustomSetting.AssetBundleDir;
+        if(strABDir.EndsWith("/"))
+            strABDir.Substring(0,strABDir.Length-1);
         strABDir = strABDir.Replace('\\','/');
         int iIdx = strABDir.LastIndexOf("/");
         strABDir = strABDir.Substring(iIdx+1);

@@ -122,9 +122,9 @@ namespace VEFramework
                 assetPath = assetPath.ToLower();
 
             if(AppSetting.AppABResVersion.IsEmptyOrNull())
-                abRealPath = AssetCustomSetting.PersistentABDir + "/" + assetPath;
+                abRealPath = AssetCustomSetting.PersistentABDir + assetPath;
             else
-                abRealPath = AssetCustomSetting.PersistentABDir + "/" + AppSetting.AppABResVersion + "/" + assetPath;
+                abRealPath = AssetCustomSetting.PersistentABDir + AppSetting.AppABResVersion + "/" + assetPath;
             if (mFilePathExistsList.ContainsKey(abRealPath))
                 return mFilePathExistsList[abRealPath];
             if (PathUtil.IsPersistentFileExists(abRealPath))
@@ -132,7 +132,7 @@ namespace VEFramework
                 mFilePathExistsList.Add(abRealPath, true);
                 return true;
             }
-            abRealPath = AssetCustomSetting.AssetBundleDir + "/" + assetPath;
+            abRealPath = AssetCustomSetting.AssetBundleDir + assetPath;
             if (mFilePathExistsList.ContainsKey(abRealPath))
                 return mFilePathExistsList[abRealPath];
             if (PathUtil.IsStreamingFileExists(abRealPath))
@@ -147,12 +147,12 @@ namespace VEFramework
         protected string GetAssetBundleName(string abRealPath)
         {
             var abName = abRealPath;
-            abName = abName.Replace(AssetCustomSetting.AssetBundleDir +"/","");
+            abName = abName.Replace(AssetCustomSetting.AssetBundleDir,"");
 
             if(AppSetting.AppABResVersion.IsEmptyOrNull())
-                abName = abName.Replace(AssetCustomSetting.PersistentABDir + "/", "");
+                abName = abName.Replace(AssetCustomSetting.PersistentABDir, "");
             else
-                abName = abName.Replace(AssetCustomSetting.PersistentABDir + "/" + AppSetting.AppABResVersion + "/", "");
+                abName = abName.Replace(AssetCustomSetting.PersistentABDir + AppSetting.AppABResVersion + "/", "");
             return abName;
         }
 
