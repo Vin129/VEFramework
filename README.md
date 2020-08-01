@@ -15,6 +15,8 @@
 
 ​		**— AssestBundleKit : AB资产模块**
 
+​		**— Rule：规则模块**
+
 
 
 **— GamePipeline : Easy化使用流（非开发者）**
@@ -29,9 +31,13 @@
 
 **7-29： AssetBundleKit 完成LazyRelease（I_DONT_CARE）模式**
 
+**7-31:    AssetBundleKit ABBuild模块初步构成**
+
 ## TODO：
 
 **~~1.AssetBundleKit 释放Assurer机制~~**
 
-**2.AssetBundleKit 制作对应的ABBuild工具**
+**~~2.AssetBundleKit 制作对应的ABBuild工具~~**
+
+**3.AssetBundleKit Editor工具模块**
 
