@@ -23,6 +23,7 @@
  ****************************************************************************/
 namespace VEFramework
 {
+	using UnityEngine;
 	public static class AppSetting
 	{
 		public static string AppVersion = string.Empty;

@@ -174,7 +174,10 @@ namespace VEFramework
         ///<param name="AssetPath">资产加载外部路径</param>
         ///<param name="bPostfix">资产文件是否存在后缀</param>
         ///<param name="bUnloadTag">资产释放模式</param>
-        public ABAssurer GetAssurer(string AssetPath,bool bPostfix = true,bool bUnloadTag = false)
+        ///<summary>
+        /// ABAssurer 唯一获取方式 目前对外开放存在风险 TODO解除风险
+        ///</summary>
+        private ABAssurer GetAssurer(string AssetPath,bool bPostfix = true,bool bUnloadTag = false)
         {
             string realPath;
             bool isContains = false;
@@ -201,6 +204,7 @@ namespace VEFramework
             if(!isContains)
                 mRealABFilePath.Add(assurer.AssetPath,assurer.RealPath);
             assurer.Retain();
+            Log.I("Assurer[AssetPath:{0},RealPath:{1},FileName:{2}]",assurer.AssetPath,assurer.RealPath,assurer.FileName);
             return assurer;
         }
     #endregion
@@ -291,6 +295,7 @@ namespace VEFramework
         {
             if (task == null)
             {
+                Log.E("AsynTask is null!");
                 return;
             }
             mAsyncTaskStack.AddLast(task);

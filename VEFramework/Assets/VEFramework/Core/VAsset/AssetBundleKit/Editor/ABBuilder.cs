@@ -57,6 +57,32 @@ namespace VEFramework
 			// EncryptProcess();
 		}
 
+		// public void Build(string strIn,SearchOption kSearchOpt = SearchOption.TopDirectoryOnly )
+		// {
+		// 	if(false == PathUtil.IsDirectory(strIn))
+		// 		return;
+		// 	string strABName = GetABName(strIn);
+		// 	if(null == strABName)
+		// 		return ;
+		// 	string strAssetPath = PathUtil.GetPathUnderAssets(strIn);
+		// 	List<string> strFileList = PathUtil.GetFileNameWithPostfix(strIn,strAssetPath,kSearchOpt);
+		// 	if(0 == strFileList.Count)
+		// 		return;
+		// 	string strOutPath = PathUtil.Res2ABPathConvert(strAssetPath);
+		// 	int iIdx = strOutPath.LastIndexOf("/"+strABName);
+		// 	if( -1 != iIdx)
+		// 		strOutPath = strOutPath.Substring(0,iIdx);
+		// 	PathUtil.CreateDirectory(Application.dataPath+"/../" + strOutPath);
+		// 	AssetBundleBuild[] kBuildMap = new AssetBundleBuild[1];
+		// 	kBuildMap[0].assetBundleName = strABName + AssetCustomSetting.ABPostfix;
+		// 	kBuildMap[0].assetNames = strFileList.ToArray();
+		// 	Log.I(strOutPath);
+		// 	AssetBundleManifest kManifest = BuildPipeline.BuildAssetBundles(strOutPath,kBuildMap,m_BuildOption,mBuildTarget);
+		// 	if(null == kManifest)
+		// 		Debug.LogError("Build AssetBundle Failed");
+		// }
+
+
 		public void SetAssetBundleNameByRule(ABRuleAsset RuleAsset)
 		{
 			if (null == RuleAsset)
@@ -69,20 +95,45 @@ namespace VEFramework
 				switch (ruleData.BuildType)
 				{
 					case ABRuleAsset.ABBuildType.AllPack:
-						BuildAllInOnePack(AssestPath);
+						SetAllInOnePack(AssestPath);
 						break;
 					case ABRuleAsset.ABBuildType.PathPack:
-						BuildPerPathOnePack(AssestPath);
+						SetPerPathOnePack(AssestPath);
 						break;
 					case ABRuleAsset.ABBuildType.FilePack:
-						BuildPerFileOnePack(AssestPath);
+						SetPerFileOnePack(AssestPath);
 						break;
 				}
 			}
 		}
 
+		public void SetAssetBundleNameBySelectList(List<string> selectList)
+		{
+			if(selectList.Count == 0)
+				return;
+			selectList.ForEach
+			(
+				(path)=>
+				{
+					var AssestPath = path.Replace("Assets/",Application.dataPath + "/");
+					switch (JudgeAssetPath(AssestPath))
+					{
+						// case ABRuleAsset.ABBuildType.AllPack:
+						// 	SetAllInOnePack(AssestPath);
+						// 	break;
+						case ABRuleAsset.ABBuildType.PathPack:
+							SetPerPathOnePack(AssestPath);
+							break;
+						case ABRuleAsset.ABBuildType.FilePack:
+							SetPerFileOnePack(AssestPath);
+							break;
+					}
+				}
+			);
+		}
+
 		//整包
-		private void BuildAllInOnePack(string AssestPath)
+		private void SetAllInOnePack(string AssestPath)
 		{
 			if(false == PathUtil.IsDirectory(AssestPath))
 				return;
@@ -103,7 +154,7 @@ namespace VEFramework
 		}
 
 		//目录分包
-		private void BuildPerPathOnePack(string AssestPath)
+		private void SetPerPathOnePack(string AssestPath)
 		{
 			List<string> strDirs = PathUtil.GetAllPath(AssestPath);
 			foreach(var dir in strDirs)
@@ -122,7 +173,7 @@ namespace VEFramework
 		}
 
 		//文件分包
-		private void BuildPerFileOnePack(string AssestPath)
+		private void SetPerFileOnePack(string AssestPath)
 		{
 			List<string> strFiles = PathUtil.GetAllFiles(AssestPath);
 			foreach(var file in strFiles)
@@ -154,8 +205,15 @@ namespace VEFramework
 				strPath = strPath.Substring(0,iIdx);
 			return strPath;
 		}
-
-
+		private void SetAssetsBundleName(List<string> strFileList,string strABName,bool bContainDependences)
+		{
+			for(int i = 0;i < strFileList.Count;i++)
+			{
+				string strFileName = strFileList[i];
+				EditorUtility.DisplayProgressBar("Set AssetName", "Setting AssetName...", 1.0f*i/strFileList.Count);
+				SetAssetBundleName(strFileName,strABName,bContainDependences);
+			}
+		}
 		private void SetAssetBundleName(string strFileName,string strABName,bool bContainDependences)
 		{
 			AssetImporter kAssetImporter = AssetImporter.GetAtPath(strFileName);
@@ -179,39 +237,19 @@ namespace VEFramework
 				}
 			}
 		}
-		private void SetAssetsBundleName(List<string> strFileList,string strABName,bool bContainDependences)
+		private ABRuleAsset.ABBuildType JudgeAssetPath(string AssetPath)
 		{
-		for(int i = 0;i < strFileList.Count;i++)
-			{
-				string strFileName = strFileList[i];
-				EditorUtility.DisplayProgressBar("Set AssetName", "Setting AssetName...", 1.0f*i/strFileList.Count);
-				SetAssetBundleName(strFileName,strABName,bContainDependences);
-			}
-	}
-		public void BuildFromPath(string strIn,SearchOption kSearchOpt = SearchOption.TopDirectoryOnly )
-		{
-			if(false == PathUtil.IsDirectory(strIn))
-				return;
-			string strABName = GetABName(strIn);
-			if(null == strABName)
-				return ;
-			string strAssetPath = PathUtil.GetPathUnderAssets(strIn);
-			List<string> strFileList = PathUtil.GetFileNameWithPostfix(strIn,strAssetPath,kSearchOpt);
-			if(0 == strFileList.Count)
-				return;
-			string strOutPath = PathUtil.Res2ABPathConvert(strAssetPath);
-			int iIdx = strOutPath.LastIndexOf("/"+strABName);
-			if( -1 != iIdx)
-				strOutPath = strOutPath.Substring(0,iIdx);
-			PathUtil.CreateDirectory(Application.dataPath+"/../" + strOutPath);
-			AssetBundleBuild[] kBuildMap = new AssetBundleBuild[1];
-			kBuildMap[0].assetBundleName = strABName + AssetCustomSetting.ABPostfix;
-			kBuildMap[0].assetNames = strFileList.ToArray();
-			Debug.Log(strOutPath);
-			AssetBundleManifest kManifest = BuildPipeline.BuildAssetBundles(strOutPath,kBuildMap,m_BuildOption,mBuildTarget);
-			if(null == kManifest)
-				Debug.LogError("Build AssetBundle Failed");
-		}
+			if(PathUtil.IsDirectory(AssetPath))
+				return ABRuleAsset.ABBuildType.PathPack;
+			else
+				return ABRuleAsset.ABBuildType.FilePack;
+		} 
+
+
+
+
+
+
 
 
 
@@ -254,5 +292,19 @@ namespace VEFramework
 
 		private BuildTarget mBuildTarget;
 		private BuildAssetBundleOptions m_BuildOption = BuildAssetBundleOptions.DeterministicAssetBundle;
+
+		public static BuildTarget AssetBundleBuildTarget
+		{
+			get
+			{
+				#if UNITY_ANDROID
+            		return BuildTarget.Android;
+				#elif UNITY_IOS
+            		return BuildTarget.iOS;
+				#else
+            		return BuildTarget.StandaloneWindows;
+				#endif
+			}
+		}
 	}
 }

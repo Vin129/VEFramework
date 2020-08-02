@@ -29,6 +29,16 @@ namespace VEFramework
 		{
 			return string.IsNullOrEmpty(str);
 		}
+
+		public static string EndWithAndRemove(this string str,string rstr)
+		{
+			if(str.EndsWith(rstr))
+			{
+				var idx = str.LastIndexOf(rstr);
+				str = str.Substring(0,idx);
+			}
+			return str;
+		}
 	}
 
 }

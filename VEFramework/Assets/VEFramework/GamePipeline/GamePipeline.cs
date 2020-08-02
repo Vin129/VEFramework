@@ -33,14 +33,9 @@ public class GamePipeline : MonoBehaviour {
 	{
 		//初始化VEManager
 		gameObject.AddComponent<VEManager>();
-		// "Texture/UI/JumpIcon/tz_icon_02"
-		Img1.sprite = ABManager.Instance.LoadSync<Sprite>("Image/UI/Formation/kp_h_03");
-		Img2.sprite = ABManager.Instance.LoadSync<Sprite>("Develop/TextureSta/UI/HeadIcon/txk_icon_01");
 
-		var Obj1 = GameObject.Instantiate(ABManager.Instance.LoadSync<GameObject>("Prefabs/UI/PlayerDetail/PlayerDetailView"));
-		Obj1.transform.parent = Node.transform;
-
-		ABManager.Instance.LoadAsync<GameObject>("Prefabs/UI/MatchEngine/MainView/MatchEngineView",(obj)=>{
+		ABManager.Instance.LoadAsync<GameObject>("Prefabs/Test1/TestView1",(obj)=>{
+			Log.E("1");
 			if(obj == null)
 				return;
 			var Obj2 = GameObject.Instantiate(obj);

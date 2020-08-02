@@ -32,16 +32,16 @@ namespace VEFramework
         ///<summary>
         ///contactPath + fileNameOrPath
         ///</summary>
-		public static List<string> GetAllFiles(string fileNameOrPath,string contactPath = "",SearchOption searchOpt = SearchOption.AllDirectories)
+		public static List<string> GetAllFiles(string rootPath,SearchOption searchOpt = SearchOption.AllDirectories)
 		{
 			List<string> strDirs ;
 			if(SearchOption.TopDirectoryOnly == searchOpt)
 			{
 				strDirs = new List<string>();
-				strDirs.Add(contactPath + fileNameOrPath);
+				strDirs.Add(rootPath);
 			}
 			else
-				strDirs = PathUtil.GetAllPath(fileNameOrPath,contactPath,searchOpt);
+				strDirs = PathUtil.GetAllPath(rootPath,searchOpt);
 			List<string> strFiles = new List<string>();
 			foreach(var dir in strDirs)
 			{
@@ -50,25 +50,28 @@ namespace VEFramework
 				{
 					if(file.EndsWith(".meta"))
 						continue;
-					string strFileName = file.Replace("\\","/");
-					strFiles.Add(contactPath + strFileName);
+					string filePath = file.Replace("\\","/");
+					strFiles.Add(filePath);
 				}
 			}
 			return strFiles;
 		}
     
-    public static List<string> GetAllPath(string fileNameOrPath,string contactPath = "",SearchOption searchOpt = SearchOption.AllDirectories)
+    public static List<string> GetAllPath(string rootPath,SearchOption searchOpt = SearchOption.AllDirectories)
     {
         List<string> strDirs = new List<string>();
-        strDirs.Add(contactPath + fileNameOrPath);
+        strDirs.Add(rootPath);
         if(SearchOption.TopDirectoryOnly == searchOpt)
             return strDirs;
         
-        string[] dirs = Directory.GetDirectories(fileNameOrPath,"*.*",searchOpt);
-        foreach(var dir in dirs)
+        string[] dirs = SaveGetDirectories(rootPath,"*.*",searchOpt);
+        if(dirs != null)
         {
-            string strDir = dir.Replace("\\","/");
-            strDirs.Add(contactPath + strDir);
+            foreach(var dir in dirs)
+            {
+                string strDir = dir.Replace("\\","/");
+                strDirs.Add(strDir);
+            }
         }
         return strDirs;
     }
@@ -152,6 +155,15 @@ namespace VEFramework
             strFiles.Add(strContactPath + strFile);
         }
         return strFiles;
+    }
+
+    public static string[] SaveGetDirectories(string path, string searchPattern, SearchOption searchOption)
+    {
+        if(IsDirectory(path))
+        {
+            return Directory.GetDirectories(path,searchPattern,searchOption);
+        }
+        return null;
     }
 
     public static bool IsDirectory(string strPath)

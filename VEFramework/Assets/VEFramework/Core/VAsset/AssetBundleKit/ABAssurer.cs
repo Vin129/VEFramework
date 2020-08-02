@@ -172,14 +172,15 @@ namespace VEFramework
 		{
 			if(mLoadState != AssetLoadState.None)
 				return;
-			ABManager.Instance.PushInAsyncList(this);
 			mLoadState = AssetLoadState.Loading;
+			ABManager.Instance.PushInAsyncList(this);
 		}
 
         public override IEnumerator DoLoadAsync(System.Action finishCallback)
         {
 			if(mLoadState != AssetLoadState.Loading)
 			{
+				Log.E("State isn`t AssetLoadState.Loading");
 				finishCallback();
 				yield break;
 			}
@@ -191,7 +192,6 @@ namespace VEFramework
 				finishCallback();
 				yield break;
 			}
-
 			if(mAB == null)
 			{
 				if(mBinary == null)
@@ -269,6 +269,7 @@ namespace VEFramework
 				LoadFinishCallback.Invoke(this);
 				LoadFinishCallback = null;
 			}
+			//TODO Release 的时机非常重要
 			Release();
 		}
 		protected override void OnFail2Load()
