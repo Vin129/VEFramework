@@ -23,12 +23,27 @@
  ****************************************************************************/
 namespace VEFramework
 {
-	using UnityEngine;
-	using System.Collections.Generic;
     using System;
-    using System.Collections;
+	using System.Collections.Generic;
 
-    public class VAssetManager : VEManagers<VAssetManager>,IAsyncTaskContainer
+    public class VAssetManager<T> : VAssetManager where T : MonoManager
+    {
+        private static T mInstance;
+        public static T Instance
+        {
+            get
+            {
+                if(mInstance == null)
+                {
+                    mInstance = VEManager.Instance.GetManagers<T>();
+                    mInstance.Init();
+                }
+                return mInstance;
+            }
+        }
+    }
+
+    public abstract class VAssetManager : MonoManager,IAsyncTaskContainer,IAssurerContainer
     {
         public override string ManagerName
         {
@@ -42,12 +57,15 @@ namespace VEFramework
         protected LinkedList<IAsyncTask> mAsyncTaskStack;
 
 		private Dictionary<string,Assurer> mAssurerList;
-		public override void Init()
+
+        public virtual event Action<Assurer> InitiativeRecycleAction;
+        public virtual event Action<Assurer> InitiativeReUseAction;
+
+        public override void Init()
 		{
 			mAsyncTaskStack = new LinkedList<IAsyncTask>();
 			mAssurerList = new Dictionary<string, Assurer>();
 		}
-
 	#region  管理
         public virtual void PushInAsyncList(IAsyncTask task)
         {
@@ -102,6 +120,30 @@ namespace VEFramework
 			}
 			return true;	
 		}
-	}
+
+        public virtual void RecycleAssurer(Assurer aber)
+        {
+            if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE)
+            {
+                aber.RecycleSelf();
+            } 
+            else if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END)
+            {
+                InitiativeRecycleAction.Invoke(aber);
+            }
+        }
+
+        public virtual void ReUseAssurer(Assurer aber)
+        {
+            if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE)
+            {
+                
+            } 
+            else if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END)
+            {
+                InitiativeReUseAction.Invoke(aber);
+            }
+        }
+    }
     #endregion
 }

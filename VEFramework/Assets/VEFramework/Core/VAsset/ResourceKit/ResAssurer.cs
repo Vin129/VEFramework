@@ -33,8 +33,8 @@ namespace VEFramework
 			var assurer = EasyPool<ResAssurer>.Instance.Get();
 			return assurer;
 		}
-
-		public event Action<ResAssurer> LoadFinishCallback;
+		//资源释放模式
+		public bool UnloadTag;
 		public override string AssetPath
 		{
 			get
@@ -46,12 +46,12 @@ namespace VEFramework
 				mAssetPath = value;
 			}
 		}
+		public event Action<ResAssurer> LoadFinishCallback;
 		private UnityEngine.Object mAsset;
 		private ResourceRequest mRESR;
 		private AssetLoadState mLoadState = AssetLoadState.None;
 
-
-		public float Process
+		public override float Process
 		{
 			get
 			{
@@ -61,21 +61,27 @@ namespace VEFramework
 			}
 		}
 
-		public void Init(string AssetPath)
+		public void Init(string AssetPath,bool bUnloadTag)
 		{
 			mAssetPath = AssetPath;
+			UnloadTag = bUnloadTag;
 		}
 
 		protected override void Rest()
 		{
+			Log.I("[ResAssurer]{0}:RecycleSelf",AssetPath);
 			base.Rest();
 			if(mRESR != null && !mRESR.isDone)
 				OnFail2Load();
+			if(mAsset != null && UnloadTag)
+				Resources.UnloadAsset(mAsset);
+			mAsset = null;
+			mRESR = null;
 			mLoadState = AssetLoadState.None;
 			LoadFinishCallback = null;
 		}
 
-		public T Get<T>() where T:UnityEngine.Object
+		public override T Get<T>()
 		{
 			if(mAsset != null)
 				return mAsset as T;
@@ -113,7 +119,7 @@ namespace VEFramework
 			if(mLoadState != AssetLoadState.None)
 				return;
 			mLoadState = AssetLoadState.Loading;
-			VAssetManager.Instance.PushInAsyncList(this);
+			ResManager.Instance.PushInAsyncList(this);
 		}
 
         public override IEnumerator DoLoadAsync(System.Action finishCallback)
@@ -149,7 +155,7 @@ namespace VEFramework
 			{
 				//TODO UnSafe Tip
 			}
-			VAssetManager.Instance.RemoveAssurer(this);
+			ResManager.Instance.RemoveAssurer(this);
 			Rest();
 		}
 
@@ -159,7 +165,7 @@ namespace VEFramework
 			if(mLoadState == AssetLoadState.Wait4Recycle)
 				return;
 			mLoadState = AssetLoadState.Wait4Recycle;
-			VAssetManager.Instance.WaitForRecycle(this);
+			ResManager.Instance.RecycleAssurer(this);
 		}
 
 		public override void Retain()
@@ -167,7 +173,7 @@ namespace VEFramework
 			base.Retain();
 			if(mLoadState == AssetLoadState.Wait4Recycle)
 			{
-				VAssetManager.Instance.ReUseAssurer(this);
+				ResManager.Instance.ReUseAssurer(this);
 				if(mAsset == null)
 					mLoadState = AssetLoadState.None;
 				else
@@ -183,11 +189,11 @@ namespace VEFramework
 			{
 				Log.E("Loading break off");
 				mLoadState = AssetLoadState.Done;
-				VAssetManager.Instance.PopUpAsyncList(this);
+				ResManager.Instance.PopUpAsyncList(this);
 			}
 			base.Become2Useless();
 			mLoadState = AssetLoadState.Wait4Recycle;
-			VAssetManager.Instance.WaitForRecycle(this);
+			ResManager.Instance.RecycleAssurer(this);
 		}
 		protected override void OnSuccess2Load()
 		{

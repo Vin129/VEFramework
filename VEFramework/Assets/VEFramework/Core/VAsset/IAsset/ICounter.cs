@@ -21,32 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  ****************************************************************************/
-using UnityEngine;
-using UnityEngine.UI;
-using VEFramework;
-
-public class GamePipeline : MonoBehaviour {
-	public GameObject Node;
-	public Image Img1;
-	public Image Img2;
-	private void Awake() 
+namespace VEFramework
+{
+	using System.Collections;
+	public interface ICounter
 	{
-		//初始化VEManager
-		gameObject.AddComponent<VEManager>();
-
-		ResManager.Instance.LoadAsync<GameObject>("Prefabs/Test2/TestView2",(obj)=>{
-			if(obj == null)
-				return;
-			var Obj2 = GameObject.Instantiate(obj);
-			Obj2.transform.parent = Node.transform;
-		});
-
-		ABManager.Instance.LoadAsync<GameObject>("Prefabs/Test1/TestView1",(obj)=>{
-			if(obj == null)
-				return;
-			var Obj2 = GameObject.Instantiate(obj);
-			Obj2.transform.parent = Node.transform;
-		});
-
+		int UseCount {get;set;}
+		//使用
+		void Retain();
+		//放弃使用
+		void Release();
 	}
 }

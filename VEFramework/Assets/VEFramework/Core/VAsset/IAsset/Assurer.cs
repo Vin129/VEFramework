@@ -23,12 +23,13 @@
  ****************************************************************************/
 namespace VEFramework
 {
+    using System;
     using System.Collections;
     //资产承保者：资产存放的最小单位
-    public abstract class Assurer : IAsset,IAsyncTask,ICounter, IReusable
+    public class Assurer : IAsset,IAsyncTask,ICounter,IReusable
     {
 		protected string mAssetPath = string.Empty;
-        public abstract string AssetPath {get;set;}
+        public virtual string AssetPath {get;set;}
 
         public float KeepTime = AssetCustomSetting.AssetKeepTime;
 
@@ -46,13 +47,25 @@ namespace VEFramework
             }
         }
 
+        public virtual float Process
+		{
+			get
+			{
+				return 0;
+			}
+		}
+
         public virtual bool LoadSync(){return true;}
         public virtual bool LoadSync(byte[] binary){return true;}
         public virtual void LoadAsync(){}
         public virtual void LoadAsync(byte[] binary){}
         public virtual IEnumerator DoLoadAsync(System.Action finishCallback){ finishCallback(); yield break;}
-       
-       
+
+        public virtual T Get<T>() where T:UnityEngine.Object
+		{
+			return null;
+		}
+
         public virtual void Retain()
         {
             mUseCount++;
@@ -85,4 +98,12 @@ namespace VEFramework
         protected virtual void OnSuccess2Load(){}
         protected virtual void OnFail2Load(){}
     }
+
+	public interface IAssurerContainer
+	{
+        event Action<Assurer> InitiativeRecycleAction;
+        event Action<Assurer> InitiativeReUseAction;
+		void RecycleAssurer(Assurer aber);
+		void ReUseAssurer(Assurer aber);
+	}
 }

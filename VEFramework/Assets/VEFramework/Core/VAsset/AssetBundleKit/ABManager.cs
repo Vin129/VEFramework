@@ -32,7 +32,7 @@ namespace VEFramework
     ///规则：基于AssetPath(相对路径)来加载所需资源
     ///1.搜寻优先级：PersistentABDir/AppSetting.AppABResVersion/AssetPath 优先于 AssetBundleDir/AssetPath
     ///</summary>
-    public class ABManager : VAssetManager
+    public class ABManager : VAssetManager<ABManager>
 	{
 		public override string ManagerName
         {
@@ -41,6 +41,9 @@ namespace VEFramework
                 return "ABManager";
             }
         }
+
+        public override event Action<Assurer> InitiativeRecycleAction;
+        public override event Action<Assurer> InitiativeReUseAction;
         ///<summary>
         /// Key:AssetPath 
         ///</summary>
@@ -53,8 +56,8 @@ namespace VEFramework
         /// Key:RealPath  
         ///</summary>
 		private Dictionary<string,ABAssurer> mAssurerList;
-        private List<ABAssurer> mWait4RecycleList;
-        private List<ABAssurer> mRecycleList;
+        private List<Assurer> mWait4RecycleList;
+        private List<Assurer> mRecycleList;
         private AssetBundleManifest mManifest;
 		public override void Init()
 		{
@@ -62,8 +65,8 @@ namespace VEFramework
 			mRealABFilePath = new Dictionary<string, string>();
             mFilePathExistsList = new Dictionary<string, bool>();
 			mAssurerList = new Dictionary<string, ABAssurer>();
-            mWait4RecycleList = new List<ABAssurer>();
-            mRecycleList = new List<ABAssurer>();
+            mWait4RecycleList = new List<Assurer>();
+            mRecycleList = new List<Assurer>();
 
             StartCoroutine(RecycleUselessAssurer());
             LoadManifest();
@@ -288,22 +291,31 @@ namespace VEFramework
 
 
     #region  管理
-        public override void PushInAsyncList(IAsyncTask task)
+    
+        public override void RecycleAssurer(Assurer aber)
         {
-            if (task == null)
+            if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE)
             {
-                Log.E("AsynTask is null!");
-                return;
+                WaitForRecycle(aber);
+            } 
+            else if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END)
+            {
+                InitiativeRecycleAction.Invoke(aber);
             }
-            mAsyncTaskStack.AddLast(task);
-            TryStartNextAsyncTask();
+        }
+        public override void ReUseAssurer(Assurer aber)
+        {
+            if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE)
+                 mWait4RecycleList.Remove(aber);
+            else if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END)
+            {
+                InitiativeReUseAction.Invoke(aber);
+            }
         }
 
-        public override void PopUpAsyncList(IAsyncTask task)
+        public void WaitForRecycle(Assurer aber)
         {
-            if(task == null)
-                return;
-            mAsyncTaskStack.Remove(task);
+            mWait4RecycleList.Add(aber);
         }
 
         IEnumerator RecycleUselessAssurer()
@@ -330,25 +342,6 @@ namespace VEFramework
                     mRecycleList.ForEach((aber)=>{mWait4RecycleList.Remove(aber);aber.RecycleSelf();});
                     mRecycleList.Clear();
                 }
-            }
-        }
-        public void WaitForRecycle(ABAssurer aber)
-        {
-            if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE)
-                mWait4RecycleList.Add(aber);
-            else if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END)
-            {
-                //TODO 自我管理策略
-            }
-        }
-
-        public void ReUseAssurer(ABAssurer aber)
-        {
-            if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE)
-                 mWait4RecycleList.Remove(aber);
-            else if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END)
-            {
-                //TODO 自我管理策略
             }
         }
 

@@ -66,8 +66,7 @@ namespace VEFramework
 		private AssetBundleCreateRequest mABCR;
 		private AssetLoadState mLoadState = AssetLoadState.None;
 
-
-		public float Process
+		public override float Process
 		{
 			get
 			{
@@ -91,6 +90,7 @@ namespace VEFramework
 
 		protected override void Rest()
 		{
+			Log.I("[ABAssurer]{0}:RecycleSelf",AssetPath);
 			base.Rest();
 			if(mABCR != null && !mABCR.isDone)
 				OnFail2Load();
@@ -106,7 +106,7 @@ namespace VEFramework
 			LoadFinishCallback = null;
 		}
 
-		public T Get<T>() where T:UnityEngine.Object
+		public override T Get<T>()
 		{
 			if(mAB == null || FileName.IsEmptyOrNull())
 				return null;

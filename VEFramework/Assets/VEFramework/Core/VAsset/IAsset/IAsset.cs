@@ -23,15 +23,6 @@
  ****************************************************************************/
 namespace VEFramework
 {
-	using System.Collections;
-	public interface ICounter
-	{
-		int UseCount {get;set;}
-		//使用
-		void Retain();
-		//放弃使用
-		void Release();
-	}
     public interface IAsset
     {
 		string AssetPath {get;set;}
