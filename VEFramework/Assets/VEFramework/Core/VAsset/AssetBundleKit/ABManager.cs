@@ -32,7 +32,7 @@ namespace VEFramework
     ///规则：基于AssetPath(相对路径)来加载所需资源
     ///1.搜寻优先级：PersistentABDir/AppSetting.AppABResVersion/AssetPath 优先于 AssetBundleDir/AssetPath
     ///</summary>
-    public class ABManager : VEManagers<ABManager>
+    public class ABManager : VAssetManager
 	{
 		public override string ManagerName
         {
@@ -41,9 +41,6 @@ namespace VEFramework
                 return "ABManager";
             }
         }
-		private int	mCurrentCoroutineCount = 0;
-        private int mMaxCoroutineCount = 8; //最快协成大概在6到8之间
-        private	LinkedList<IAsyncTask> mAsyncTaskStack;
         ///<summary>
         /// Key:AssetPath 
         ///</summary>
@@ -61,7 +58,7 @@ namespace VEFramework
         private AssetBundleManifest mManifest;
 		public override void Init()
 		{
-			mAsyncTaskStack = new LinkedList<IAsyncTask>();
+            base.Init();
 			mRealABFilePath = new Dictionary<string, string>();
             mFilePathExistsList = new Dictionary<string, bool>();
 			mAssurerList = new Dictionary<string, ABAssurer>();
@@ -291,7 +288,7 @@ namespace VEFramework
 
 
     #region  管理
-        public void PushInAsyncList(IAsyncTask task)
+        public override void PushInAsyncList(IAsyncTask task)
         {
             if (task == null)
             {
@@ -302,36 +299,12 @@ namespace VEFramework
             TryStartNextAsyncTask();
         }
 
-        public void PopUpAsyncList(IAsyncTask task)
+        public override void PopUpAsyncList(IAsyncTask task)
         {
             if(task == null)
                 return;
             mAsyncTaskStack.Remove(task);
         }
-
-		private void OnAsyncTaskFinish()
-        {
-            --mCurrentCoroutineCount;
-            TryStartNextAsyncTask();
-        }
-
-        private void TryStartNextAsyncTask()
-        {
-            if (mAsyncTaskStack.Count == 0)
-            {
-                return;
-            }
-
-            if (mCurrentCoroutineCount >= mMaxCoroutineCount)
-            {
-                return;
-            }
-            var task = mAsyncTaskStack.First.Value;
-            mAsyncTaskStack.RemoveFirst();
-            ++mCurrentCoroutineCount;
-            StartCoroutine(task.DoLoadAsync(OnAsyncTaskFinish));
-        }
-
 
         IEnumerator RecycleUselessAssurer()
         {

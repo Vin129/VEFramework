@@ -24,16 +24,16 @@
 namespace VEFramework
 {
 	using System.Collections;
-	public interface ICounter
-	{
-		int UseCount {get;set;}
-		//使用
-		void Retain();
-		//放弃使用
-		void Release();
-	}
-    public interface IAsset
+    using System.Collections.Generic;
+
+    public interface IAsyncTask
     {
-		string AssetPath {get;set;}
+        IEnumerator DoLoadAsync(System.Action finishCallback);
+    }
+
+    public interface IAsyncTaskContainer
+    {
+        void PushInAsyncList(IAsyncTask task);
+        void PopUpAsyncList(IAsyncTask task);
     }
 }

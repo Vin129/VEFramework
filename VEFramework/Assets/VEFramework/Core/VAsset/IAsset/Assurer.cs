@@ -21,10 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  ****************************************************************************/
-using System.Collections;
-
 namespace VEFramework
 {
+    using System.Collections;
     //资产承保者：资产存放的最小单位
     public abstract class Assurer : IAsset,IAsyncTask,ICounter, IReusable
     {
