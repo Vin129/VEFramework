@@ -13,6 +13,8 @@
 
 ​	**— VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**
 
+​		**— ResourceKit : Resources资产模块  【V0.1  ResManager + ResBuilder】**
+
 ​		**— AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】**
 
 ​		**— Rule：规则模块**
@@ -33,7 +35,9 @@
 
 **7-31:    AssetBundleKit ABBuild模块初步构成**
 
-**8-2:    AssetBundleKit V0.1版本构建完成（ABManager+ABBuilder） 注：ABAssurer若对外界开放则释放层面存在风险 **
+**8-2:    AssetBundleKit V0.1版本构建完成（ABManager+ABBuilder） 注：ABAssurer若对外界开放则释放层面存在风险**
+
+**8-4:  ResourceKit 完成**
 
 ## TODO
 
