@@ -13,6 +13,8 @@
 
 ​	**— VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**
 
+​		**— VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】**
+
 ​		**— ResourceKit : Resources资产模块  【V0.1  ResManager + ResBuilder】**
 
 ​		**— AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】**
@@ -39,6 +41,8 @@
 
 **8-4:  ResourceKit 完成**
 
+**8-5:  VAsset 设立对外总入口**
+
 ## TODO
 
 **~~1.AssetBundleKit 释放Assurer机制~~**
@@ -47,6 +51,8 @@
 
 **~~3.AssetBundleKit Editor工具模块~~**
 
-**4.ABAssurer 释放存在风险，设计一套安全的方式**
+**~~4.ABAssurer 释放存在风险，设计一套安全的方式~~**
 
-**5.VAsset 完善Resources部分与AssetLoad部分**
+**~~5.VAsset 完善Resources部分与AssetLoad部分~~**
+
+**6.VAssetKit 统筹管理：Asset、Resource、AssetBundle、WWW**
