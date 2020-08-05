@@ -42,8 +42,13 @@ namespace VEFramework
             }
         }
 
+
+        ///<summary>
+        ///BEGIN_AND_END模式下：可以注册自我回收机制
+        ///<summary>
         public override event Action<Assurer> InitiativeRecycleAction;
         public override event Action<Assurer> InitiativeReUseAction;
+
         ///<summary>
         /// Key:AssetPath 
         ///</summary>
@@ -81,6 +86,37 @@ namespace VEFramework
             assurer.FileName = "AssetBundleManifest";            
             mManifest = assurer.LoadSync<AssetBundleManifest>();
         }
+
+
+    #region 对外方法
+        public ABAssurer GetAssurerSync(string AssetPath)
+        {
+            var assurer = LoadSync(AssetPath);
+            if(assurer != null)
+                assurer.AutoRelease = false;
+            return assurer;
+        }
+
+        public ABAssurer GetAssurerAsync(string AssetPath)
+        {
+            var assurer = LoadAsync(AssetPath,null,false);
+            if(assurer != null)
+                assurer.AutoRelease = false;
+            return assurer;
+        }
+
+        public override T LoadSync<T>(string AssetPath)
+        {
+            return LoadSync<T>(AssetPath,false);
+        }
+
+        public override void LoadAsync<T>(string AssetPath,Action<T> finishCallback = null)
+        {
+            LoadAsync(AssetPath,(assurer)=>{GetResOnFinish<T>(assurer as ABAssurer,finishCallback);},false);
+        }
+    #endregion
+
+
 
     # region Check Function
         public string GetAssetbundleRealPath(string assetPath,ref bool fileExist,ref string fileName,bool bPostfix = true)
@@ -207,29 +243,27 @@ namespace VEFramework
             Log.I("Assurer[AssetPath:{0},RealPath:{1},FileName:{2}]",assurer.AssetPath,assurer.RealPath,assurer.FileName);
             return assurer;
         }
+
     #endregion
 
     #region Sync Load
-        public ABAssurer LoadSync(string AssetPath)
+        protected T LoadSync<T>(string AssetPath,bool bDepLoad) where T : UnityEngine.Object
+        {
+            var assurer = LoadSync(AssetPath,bDepLoad);
+            return assurer.Get<T>();
+        }
+
+        protected ABAssurer LoadSync(string AssetPath)
         {
             return LoadSync(AssetPath,false);
         }
-        public ABAssurer LoadSync(string AssetPath,bool bDepLoad)
+        protected ABAssurer LoadSync(string AssetPath,bool bDepLoad)
         {
             var assurer = GetAssurer(AssetPath);
             if(bDepLoad == false)
                 LoadDependenciesSync(GetAssetBundleName(assurer.RealPath),ref assurer.DependFileList);
             assurer.LoadSync();
             return assurer;
-        }
-        public T LoadSync<T>(string AssetPath) where T : UnityEngine.Object
-        {
-            return LoadSync<T>(AssetPath,false);
-        }
-        public T LoadSync<T>(string AssetPath,bool bDepLoad) where T : UnityEngine.Object
-        {
-            var assurer = LoadSync(AssetPath,bDepLoad);
-            return assurer.Get<T>();
         }
 
         protected void LoadDependenciesSync(string abName,ref string[] dflist)
@@ -255,36 +289,33 @@ namespace VEFramework
                 callback(null);
             callback(assurer.Get<T>());
         }
-        public void LoadAsync<T>(string AssetPath,Action<T> finishCallback = null) where T:UnityEngine.Object
-        {
-            LoadAsync(AssetPath,(assurer)=>{GetResOnFinish<T>(assurer,finishCallback);},false);
-        }
-
-        protected void LoadAsync(string AssetPath,Action<ABAssurer> finishCallback = null)
+        protected void LoadAsync(string AssetPath,Action<Assurer> finishCallback = null)
         {
             LoadAsync(AssetPath,finishCallback,false);
         }
-        protected void LoadAsync(string AssetPath,Action<ABAssurer> finishCallback,bool bDepLoad)
+        protected ABAssurer LoadAsync(string AssetPath,Action<Assurer> finishCallback,bool bDepLoad)
         {
             var assurer = GetAssurer(AssetPath);
             if(bDepLoad == false)
-                LoadDependenciesAsync(GetAssetBundleName(assurer.RealPath),ref assurer.DependFileList);
+                LoadDependenciesAsync(GetAssetBundleName(assurer.RealPath),ref assurer.DependFileList,ref assurer.DependAssurerList);
             if(finishCallback != null)
                 assurer.LoadFinishCallback += finishCallback;
             assurer.LoadAsync();
+            return assurer;
         }
 
-        protected void LoadDependenciesAsync(string abName,ref string[] dflist)
+        protected void LoadDependenciesAsync(string abName,ref string[] dflist,ref List<ABAssurer> dAssurerlist)
         {
             if (mManifest == null)
                 return;
             abName = GetAssetBundleRelativeName(abName);
             dflist = mManifest.GetAllDependencies(abName);
+            dAssurerlist = new List<ABAssurer>();
             for(int i = 0;i < dflist.Length;i++)
             {
                 if(string.IsNullOrEmpty(dflist[i]))
                     continue;
-                LoadAsync(dflist[i],null,true);
+                dAssurerlist.Add(LoadAsync(dflist[i],null,true));
             }
         }
     #endregion

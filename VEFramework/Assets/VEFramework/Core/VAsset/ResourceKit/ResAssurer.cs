@@ -46,10 +46,9 @@ namespace VEFramework
 				mAssetPath = value;
 			}
 		}
-		public event Action<ResAssurer> LoadFinishCallback;
+		public override event Action<Assurer> LoadFinishCallback;
 		private UnityEngine.Object mAsset;
 		private ResourceRequest mRESR;
-		private AssetLoadState mLoadState = AssetLoadState.None;
 
 		public override float Process
 		{
@@ -77,7 +76,6 @@ namespace VEFramework
 				Resources.UnloadAsset(mAsset);
 			mAsset = null;
 			mRESR = null;
-			mLoadState = AssetLoadState.None;
 			LoadFinishCallback = null;
 		}
 

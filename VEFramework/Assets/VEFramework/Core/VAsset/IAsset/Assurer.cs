@@ -47,6 +47,36 @@ namespace VEFramework
             }
         }
 
+        protected AssetLoadState mLoadState = AssetLoadState.None;
+        public AssetLoadState LoadState
+        {
+            get
+            {
+                return mLoadState;
+            }
+
+            set
+            {
+				mLoadState = value;
+            }
+        }
+
+        protected bool mAutoRelease = true;
+        public bool AutoRelease
+        {
+            get
+            {
+                return mAutoRelease;
+            }
+
+            set
+            {
+				mAutoRelease = value;
+            }
+        }
+
+        public virtual event Action<Assurer> LoadFinishCallback;
+
         public virtual float Process
 		{
 			get
@@ -89,6 +119,8 @@ namespace VEFramework
         {
             mAssetPath = null;
 			mUseCount = 0;
+            mAutoRelease = true;
+            mLoadState = AssetLoadState.None;
         }
         public virtual void Reuse(){}
         protected virtual void Become2Useless()

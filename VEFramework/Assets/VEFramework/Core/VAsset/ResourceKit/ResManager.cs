@@ -45,6 +45,38 @@ namespace VEFramework
 			mAssurerList = new Dictionary<string, ResAssurer>();
 		}
 
+
+    #region 对外方法
+        public ResAssurer GetAssurerSync(string AssetPath)
+        {
+            var assurer = LoadSync(AssetPath);
+            if(assurer != null)
+                assurer.AutoRelease = false;
+            return assurer;
+        }
+        public ResAssurer GetAssurerAsync(string AssetPath)
+        {
+           var assurer = LoadAsync(AssetPath,null);
+            if(assurer != null)
+                assurer.AutoRelease = false;
+            return assurer;
+        }
+        public override T LoadSync<T>(string AssetPath)
+        {
+			var assurer = LoadSync(AssetPath);
+            return assurer.Get<T>();
+        }
+        public override void LoadAsync<T>(string AssetPath,Action<T> finishCallback = null) 
+        {
+            LoadAsync(AssetPath,(assurer)=>{GetResOnFinish<T>(assurer as ResAssurer,finishCallback);});
+        }
+    #endregion
+
+
+
+
+
+    #region 核心
         private ResAssurer GetAssurer(string AssetPath,bool bUnloadTag = false)
         {
 			ResAssurer assurer = null;
@@ -63,19 +95,14 @@ namespace VEFramework
             Log.I("Assurer[AssetPath:{0}]",assurer.AssetPath);
             return assurer;
         }
+    #endregion
 
  	#region Sync Load
-        public ResAssurer LoadSync(string AssetPath)
+        protected ResAssurer LoadSync(string AssetPath)
         {
 			var assurer = GetAssurer(AssetPath);
 			assurer.LoadSync();
             return assurer;
-        }
-
-        public T LoadSync<T>(string AssetPath) where T : UnityEngine.Object
-        {
-			var assurer = LoadSync(AssetPath);
-            return assurer.Get<T>();
         }
 	#endregion
 
@@ -88,16 +115,13 @@ namespace VEFramework
                 callback(null);
             callback(assurer.Get<T>());
         }
-        public void LoadAsync<T>(string AssetPath,Action<T> finishCallback = null) where T:UnityEngine.Object
-        {
-            LoadAsync(AssetPath,(assurer)=>{GetResOnFinish<T>(assurer,finishCallback);});
-        }
-		protected void LoadAsync(string AssetPath,Action<ResAssurer> finishCallback = null)
+		protected ResAssurer LoadAsync(string AssetPath,Action<Assurer> finishCallback = null)
         {
 			var assurer = GetAssurer(AssetPath);
             if(finishCallback != null)
                 assurer.LoadFinishCallback += finishCallback;
             assurer.LoadAsync();
+            return assurer;
         }
 	#endregion
 	}

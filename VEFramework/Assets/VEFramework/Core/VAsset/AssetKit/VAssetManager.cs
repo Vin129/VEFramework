@@ -66,6 +66,22 @@ namespace VEFramework
 			mAsyncTaskStack = new LinkedList<IAsyncTask>();
 			mAssurerList = new Dictionary<string, Assurer>();
 		}
+
+        public void DoInit()
+        {
+            
+        }
+
+    #region  对外资源加载
+        public virtual T LoadSync<T>(string AssetPath) where T : UnityEngine.Object
+        {
+			return null;
+        }
+        public virtual void LoadAsync<T>(string AssetPath,Action<T> finishCallback = null) where T:UnityEngine.Object
+        {}
+    #endregion
+
+
 	#region  管理
         public virtual void PushInAsyncList(IAsyncTask task)
         {

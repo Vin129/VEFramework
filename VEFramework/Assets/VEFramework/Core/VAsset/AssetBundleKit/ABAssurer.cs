@@ -25,6 +25,7 @@ namespace VEFramework
 {
 	using System;
     using System.Collections;
+    using System.Collections.Generic;
     using UnityEngine;
     public class ABAssurer : Assurer
     {
@@ -43,7 +44,8 @@ namespace VEFramework
 		public string FileName;
 		//依赖文件List
 		public string[] DependFileList;
-		public event Action<ABAssurer> LoadFinishCallback;
+		public List<ABAssurer> DependAssurerList;
+		public override event Action<Assurer> LoadFinishCallback;
 		public override string AssetPath
 		{
 			get
@@ -64,15 +66,30 @@ namespace VEFramework
 		}
 		private byte[] mBinary;
 		private AssetBundleCreateRequest mABCR;
-		private AssetLoadState mLoadState = AssetLoadState.None;
 
 		public override float Process
 		{
 			get
 			{
-				if(mABCR == null)
+				if(mLoadState == AssetLoadState.None)
 					return 0;
-				return mABCR.progress;
+				else if(mLoadState == AssetLoadState.Loading)
+				{
+					float tempValue = 0; 
+					int count = 1;
+					if(DependAssurerList != null)
+					{
+						DependAssurerList.ForEach(assurer=>{tempValue += assurer.Process;});
+						count += DependAssurerList.Count;
+					}
+					if(mABCR == null)
+						return tempValue/count;
+					return (tempValue + mABCR.progress)/count;
+				} 
+				else
+				{
+					return 1;
+				}
 			}
 		}
 
@@ -102,7 +119,11 @@ namespace VEFramework
 			RealPath = null;
 			FileName = null;
 			DependFileList = null;
-			mLoadState = AssetLoadState.None;
+			if(DependAssurerList != null)
+			{
+				DependAssurerList.Clear();
+				DependAssurerList = null;
+			}
 			LoadFinishCallback = null;
 		}
 
@@ -207,6 +228,21 @@ namespace VEFramework
 					finishCallback();
 					yield break;
 				}
+				if(DependAssurerList != null)
+				{
+					while(DependAssurerList.Count > 0)
+					{
+						for(int i = 0;i<DependAssurerList.Count;i++)
+						{
+							if(DependAssurerList[i].Process >= 1)
+							{
+								DependAssurerList.RemoveAt(i);
+								i--;
+							}
+						}
+						yield return null;
+					}
+				}
 				mAB = mABCR.assetBundle;
 			}
 			mLoadState = AssetLoadState.Done;
@@ -269,8 +305,8 @@ namespace VEFramework
 				LoadFinishCallback.Invoke(this);
 				LoadFinishCallback = null;
 			}
-			//TODO Release 的时机非常重要
-			Release();
+			if(AutoRelease)
+				Release();
 		}
 		protected override void OnFail2Load()
 		{

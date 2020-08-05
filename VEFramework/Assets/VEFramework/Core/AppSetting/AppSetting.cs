@@ -28,6 +28,7 @@ namespace VEFramework
 	{
 		public static string AppVersion = string.Empty;
 		public static string AppABResVersion = string.Empty;
+		public static bool AssetBundleOpen = true;
 	}
 
 }
