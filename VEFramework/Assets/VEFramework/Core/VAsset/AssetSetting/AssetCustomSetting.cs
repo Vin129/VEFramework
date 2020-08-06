@@ -45,7 +45,8 @@ namespace VEFramework
 		public static readonly AssetUnLoadModeType AssetUnLoadMode = AssetUnLoadModeType.I_DONT_CARE;
 		public static readonly string ResourceDir = UnityEngine.Application.dataPath + "/Resources/";
 		public static readonly string AssetBundlerRuleAssetPath = UnityEngine.Application.dataPath + "/VEFramework/Core/VAsset/AssetRule/AssetBundleRules.asset";
-
+		public static readonly string ExternalAssetDir = PersistentABDir + "ExternalAsset/";
+		
 		///<summary>
 		///Empty：默认StreamingAssets为AssetBundle文件根目录
 		///若需要指定文件夹为AB文件根目录请修改此值在StreamingAssets下创建专属文件夹。 

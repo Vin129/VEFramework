@@ -24,7 +24,8 @@
 namespace VEFramework
 {
     using System;
-	using System.Collections.Generic;
+    using System.Collections;
+    using System.Collections.Generic;
 
     public class VAsset : VEManagers<VAsset>
     {
@@ -44,7 +45,7 @@ namespace VEFramework
 		}
 
 
-	#region 资源加载接口
+	#region 一般资源加载接口
 		public T LoadSync<T>(string AssetPath) where T : UnityEngine.Object
         {
 			T kObj = null;
@@ -79,6 +80,17 @@ namespace VEFramework
 		}
 
 	#endregion
+
+
+	#region 适合扩展修改的加载接口
+	public void DownloadAsset(string url) 
+	{
+        
+    }
+
+	#endregion
+
+
 
 
 	#region 辅助

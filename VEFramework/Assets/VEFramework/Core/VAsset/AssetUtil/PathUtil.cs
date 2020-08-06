@@ -29,6 +29,21 @@ namespace VEFramework
 
     public class PathUtil
 	{
+        public static void SaveExternalAsset(string url,byte[] bytes)
+        {
+            CreateDirectory(AssetCustomSetting.ExternalAssetDir);
+            var AssetPath = AssetCustomSetting.ExternalAssetDir + url.GetHashCode();
+            File.WriteAllBytes(AssetPath,bytes);
+        }
+
+        public static bool ExternalAssetExist(string url,ref string AssetPath)
+        {
+            CreateDirectory(AssetCustomSetting.ExternalAssetDir);
+            AssetPath = AssetCustomSetting.ExternalAssetDir + url.GetHashCode();
+            return IsPersistentFileExists(AssetPath);
+        }
+
+
         ///<summary>
         ///contactPath + fileNameOrPath
         ///</summary>

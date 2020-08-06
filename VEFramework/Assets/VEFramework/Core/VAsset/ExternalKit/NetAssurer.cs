@@ -26,11 +26,13 @@ namespace VEFramework
 	using System;
     using System.Collections;
     using UnityEngine;
-    public class ResAssurer : Assurer
+    using UnityEngine.Networking;
+
+    public class NetAssurer : Assurer
     {
-		public static ResAssurer EasyGet()
+		public static NetAssurer EasyGet()
 		{
-			var assurer = EasyPool<ResAssurer>.Instance.Get();
+			var assurer = EasyPool<NetAssurer>.Instance.Get();
 			return assurer;
 		}
 		//资源释放模式
@@ -47,22 +49,41 @@ namespace VEFramework
 			}
 		}
 		public override event Action<Assurer> LoadFinishCallback;
+
+		private bool mBSave = false;
+		private Type mAssetType;
+		private byte[] mBytesAsset;
+		private string mTextAsset;
+		private AssetBundle mABAsset;
 		private UnityEngine.Object mAsset;
-		private ResourceRequest mRESR;
+		private UnityWebRequest mWBER;
 
 		public override float Progress
 		{
 			get
 			{
-				if(mRESR == null)
+				if(mWBER == null)
 					return 0;
-				return mRESR.progress;
+				return mWBER.downloadProgress;
 			}
 		}
 
-		public void Init(string AssetPath,bool bUnloadTag)
+		public void Init(string AssetPath,Type AssetType,bool bUnloadTag = false,bool bSave = false,bool bLocalFirst = false)
 		{
-			mAssetPath = AssetPath;
+			if(bLocalFirst)
+			{
+				string localPath = string.Empty;
+				if(PathUtil.ExternalAssetExist(AssetPath,ref localPath))
+					mAssetPath = "file://" + localPath;
+				else
+					mAssetPath = AssetPath;
+			}
+			else
+			{
+				mAssetPath = AssetPath;
+			}
+			mAssetType = AssetType;
+			mBSave = bSave;
 			UnloadTag = bUnloadTag;
 		}
 
@@ -70,12 +91,19 @@ namespace VEFramework
 		{
 			Log.I("[ResAssurer]{0}:RecycleSelf",AssetPath);
 			base.Rest();
-			if(mRESR != null && !mRESR.isDone)
+			if(mWBER != null && !mWBER.isDone)
 				OnFail2Load();
 			if(mAsset != null && UnloadTag)
 				Resources.UnloadAsset(mAsset);
+			mBSave = false;
+			mAssetType = null;
 			mAsset = null;
-			mRESR = null;
+			mBytesAsset = null;
+			mTextAsset = null;
+			mABAsset = null;
+			if(mWBER != null)
+				mWBER.Dispose();
+			mWBER = null;
 			LoadFinishCallback = null;
 		}
 
@@ -83,42 +111,38 @@ namespace VEFramework
 		{
 			if(mAsset != null)
 				return mAsset as T;
+			if(mBytesAsset != null)
+				return null;
 			Log.E("Asset Not Exist:{0}",AssetPath);
 			return null;
 		}
 
-		public T LoadSync<T>() where T : UnityEngine.Object
-		{
-			if(!LoadSync())
-				return null;
-			return Get<T>();
-		}
-
-		public override bool LoadSync()
-		{
-			mLoadState = AssetLoadState.Done;
-			mAsset = Resources.Load(AssetPath);
-			return DoLoadSync();
-		}
-
-		public bool DoLoadSync()
-		{
-			if(mAsset == null)
-			{
-				OnFail2Load();
-				return false;
-			}
-			OnSuccess2Load();
-			return true;
-		}
-
-		public override void LoadAsync()
+		public void Download()
 		{
 			if(mLoadState != AssetLoadState.None)
 				return;
+			if(mAssetType == typeof(AssetBundle))
+			{
+				mWBER = UnityWebRequest.GetAssetBundle(AssetPath);
+			}
+            else if (mAssetType == typeof(AudioClip))
+            {
+                mWBER = UnityWebRequestMultimedia.GetAudioClip(AssetPath,AudioType.WAV);
+            }
+            else if (mAssetType == typeof(Texture2D))
+            {
+                mWBER = UnityWebRequestTexture.GetTexture(AssetPath);
+            }
+            else
+            {
+                mWBER = new UnityWebRequest(AssetPath);
+                mWBER.downloadHandler = new DownloadHandlerBuffer();
+            }
+            mWBER.SendWebRequest();
 			mLoadState = AssetLoadState.Loading;
 			ResManager.Instance.PushInAsyncList(this);
 		}
+
 
         public override IEnumerator DoLoadAsync(System.Action finishCallback)
         {
@@ -130,9 +154,8 @@ namespace VEFramework
 			}
 			if(mAsset == null)
 			{
-				mRESR = Resources.LoadAsync(AssetPath);
-				yield return mRESR;
-				if (!mRESR.isDone || mLoadState != AssetLoadState.Loading)
+				yield return mWBER;
+				if (!mWBER.isDone || mLoadState != AssetLoadState.Loading)
 				{
 					Log.E("AssetBundleCreateRequest Not Done! Path:" + AssetPath);
 					mLoadState = AssetLoadState.Done;
@@ -140,7 +163,33 @@ namespace VEFramework
 					finishCallback();
 					yield break;
 				}
-				mAsset = mRESR.asset;
+				
+
+				if (mAssetType != typeof(Texture2D))
+				{
+					if (mAssetType != typeof(TextAsset))
+					{
+						if (mAssetType != typeof(AudioClip))
+						{
+							if(mAssetType != typeof(AssetBundle))
+								mBytesAsset = mWBER.downloadHandler.data;
+							else
+								mABAsset = DownloadHandlerAssetBundle.GetContent(mWBER);
+						}
+						else
+							mAsset = DownloadHandlerAudioClip.GetContent(mWBER);
+					}
+					else
+					{
+						mTextAsset = mWBER.downloadHandler.text;
+					}
+				}
+				else
+				{
+					mAsset = DownloadHandlerTexture.GetContent(mWBER);
+					if(mBSave)
+						PathUtil.SaveExternalAsset(AssetPath,(mAsset as Texture2D).EncodeToPNG());
+				}
 			}
 			mLoadState = AssetLoadState.Done;
 			OnSuccess2Load();
@@ -219,3 +268,4 @@ namespace VEFramework
 	}
 
 }
+

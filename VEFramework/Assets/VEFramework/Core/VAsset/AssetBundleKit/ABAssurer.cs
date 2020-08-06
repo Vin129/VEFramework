@@ -67,7 +67,7 @@ namespace VEFramework
 		private byte[] mBinary;
 		private AssetBundleCreateRequest mABCR;
 
-		public override float Process
+		public override float Progress
 		{
 			get
 			{
@@ -79,7 +79,7 @@ namespace VEFramework
 					int count = 1;
 					if(DependAssurerList != null)
 					{
-						DependAssurerList.ForEach(assurer=>{tempValue += assurer.Process;});
+						DependAssurerList.ForEach(assurer=>{tempValue += assurer.Progress;});
 						count += DependAssurerList.Count;
 					}
 					if(mABCR == null)
@@ -234,7 +234,7 @@ namespace VEFramework
 					{
 						for(int i = 0;i<DependAssurerList.Count;i++)
 						{
-							if(DependAssurerList[i].Process >= 1)
+							if(DependAssurerList[i].Progress >= 1)
 							{
 								DependAssurerList.RemoveAt(i);
 								i--;

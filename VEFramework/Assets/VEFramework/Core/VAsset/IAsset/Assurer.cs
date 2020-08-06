@@ -77,7 +77,7 @@ namespace VEFramework
 
         public virtual event Action<Assurer> LoadFinishCallback;
 
-        public virtual float Process
+        public virtual float Progress
 		{
 			get
 			{
