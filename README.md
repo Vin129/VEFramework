@@ -19,6 +19,8 @@
 
 ​		**— AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】**
 
+​		**— NetAssetKit : 网络资产模块  **
+
 ​		**— Rule：规则模块**
 
 
