@@ -70,22 +70,31 @@ namespace VEFramework
 			else
 				return ResManager.Instance.GetAssurerSync(AssetPath); 
 		}
-
-		public Assurer GetAssurerAsync(string AssetPath)
+		public Assurer GetAssurerAsync(string AssetPath) 
 		{
 			if(AppSetting.AssetBundleOpen)
 				return ABManager.Instance.GetAssurerAsync(AssetPath);
 			else
 				return ResManager.Instance.GetAssurerAsync(AssetPath); 
 		}
+		public Assurer GetAssurerAsync<T>(string AssetPath,Action<T> finishCallback = null) where T :UnityEngine.Object
+		{
+			if(AppSetting.AssetBundleOpen)
+				return ABManager.Instance.GetAssurerAsync(AssetPath,finishCallback);
+			else
+				return ResManager.Instance.GetAssurerAsync(AssetPath,finishCallback); 
+		}
 
 	#endregion
 
 
 	#region 适合扩展修改的加载接口
-	public void DownloadAsset(string url) 
+	///<summary>
+	///下载网络资源
+	///</summary>
+	public void DownloadAsset<T>(string Url,Action<T> finishCallback = null,bool bUnloadTag = false,bool bSave = false,bool bLocalFirst = false) where T : UnityEngine.Object
 	{
-        
+        NetAssetManager.Instance.Download<T>(Url,finishCallback,bUnloadTag:bUnloadTag,bSave:bSave,bLocalFirst:bLocalFirst);
     }
 
 	#endregion

@@ -34,6 +34,7 @@ namespace VEFramework
             CreateDirectory(AssetCustomSetting.ExternalAssetDir);
             var AssetPath = AssetCustomSetting.ExternalAssetDir + url.GetHashCode();
             File.WriteAllBytes(AssetPath,bytes);
+            Log.I("SaveAsset:{0}",url);
         }
 
         public static bool ExternalAssetExist(string url,ref string AssetPath)

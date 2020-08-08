@@ -75,6 +75,28 @@ namespace VEFramework
             }
         }
 
+        protected string mErrorMessage = string.Empty;
+        public string ErrorMessage
+        {
+            get
+            {
+                return mErrorMessage;
+            }
+
+            set
+            {
+				mErrorMessage = value;
+            }
+        }
+
+        public bool Error 
+        {
+            get
+            {
+                return !mErrorMessage.IsEmptyOrNull();
+            }
+        }
+
         public virtual event Action<Assurer> LoadFinishCallback;
 
         public virtual float Progress
@@ -121,6 +143,8 @@ namespace VEFramework
 			mUseCount = 0;
             mAutoRelease = true;
             mLoadState = AssetLoadState.None;
+            mErrorMessage = string.Empty;
+            LoadFinishCallback = null;
         }
         public virtual void Reuse(){}
         protected virtual void Become2Useless()

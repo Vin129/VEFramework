@@ -104,6 +104,14 @@ namespace VEFramework
                 assurer.AutoRelease = false;
             return assurer;
         }
+        
+        public ABAssurer GetAssurerAsync<T>(string AssetPath,Action<T> finishCallback = null) where T:UnityEngine.Object
+        {
+            var assurer = LoadAsync(AssetPath,(ar)=>{GetResOnFinish<T>(ar as ABAssurer,finishCallback);},false);
+            if(assurer != null)
+                assurer.AutoRelease = false;
+            return assurer;
+        }
 
         public override T LoadSync<T>(string AssetPath)
         {
@@ -240,7 +248,7 @@ namespace VEFramework
             if(!isContains)
                 mRealABFilePath.Add(assurer.AssetPath,assurer.RealPath);
             assurer.Retain();
-            Log.I("Assurer[AssetPath:{0},RealPath:{1},FileName:{2}]",assurer.AssetPath,assurer.RealPath,assurer.FileName);
+            Log.IColor("ABAssurer[AssetPath:{0},RealPath:{1},FileName:{2}]",LogColor.Green,assurer.AssetPath,assurer.RealPath,assurer.FileName);
             return assurer;
         }
 

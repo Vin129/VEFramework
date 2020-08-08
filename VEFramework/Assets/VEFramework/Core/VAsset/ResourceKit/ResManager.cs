@@ -56,11 +56,19 @@ namespace VEFramework
         }
         public ResAssurer GetAssurerAsync(string AssetPath)
         {
-           var assurer = LoadAsync(AssetPath,null);
+           var assurer = LoadAsync(AssetPath);
             if(assurer != null)
                 assurer.AutoRelease = false;
             return assurer;
         }
+        public ResAssurer GetAssurerAsync<T>(string AssetPath,Action<T> finishCallback = null)where T:UnityEngine.Object
+        {
+           var assurer = LoadAsync(AssetPath,(ar)=>{GetResOnFinish<T>(ar as ResAssurer,finishCallback);});
+            if(assurer != null)
+                assurer.AutoRelease = false;
+            return assurer;
+        }
+
         public override T LoadSync<T>(string AssetPath)
         {
 			var assurer = LoadSync(AssetPath);
@@ -88,7 +96,7 @@ namespace VEFramework
                 mAssurerList.Add(assurer.AssetPath,assurer);
             }
             assurer.Retain();
-            Log.I("Assurer[AssetPath:{0}]",assurer.AssetPath);
+            Log.IColor("ResAssurer[AssetPath:{0}]",LogColor.Orange,assurer.AssetPath);
             return assurer;
         }
     #endregion

@@ -68,10 +68,13 @@ namespace VEFramework
 
 		protected override void Rest()
 		{
-			Log.I("[ResAssurer]{0}:RecycleSelf",AssetPath);
+			Log.IColor("[ResAssurer]{0}:RecycleSelf",LogColor.Orange,AssetPath);
 			base.Rest();
 			if(mRESR != null && !mRESR.isDone)
+			{
+				ErrorMessage = "ResourceRequest has not Done";
 				OnFail2Load();
+			}
 			if(mAsset != null && UnloadTag)
 				Resources.UnloadAsset(mAsset);
 			mAsset = null;
@@ -105,6 +108,7 @@ namespace VEFramework
 		{
 			if(mAsset == null)
 			{
+				ErrorMessage = "Asset is Null";
 				OnFail2Load();
 				return false;
 			}
@@ -114,8 +118,17 @@ namespace VEFramework
 
 		public override void LoadAsync()
 		{
+			if(mLoadState == AssetLoadState.Done)
+			{
+				if(Error)
+					OnFail2Load();
+				else
+					OnSuccess2Load();
+				return;
+			}
 			if(mLoadState != AssetLoadState.None)
 				return;
+
 			mLoadState = AssetLoadState.Loading;
 			ResManager.Instance.PushInAsyncList(this);
 		}
@@ -134,8 +147,8 @@ namespace VEFramework
 				yield return mRESR;
 				if (!mRESR.isDone || mLoadState != AssetLoadState.Loading)
 				{
-					Log.E("AssetBundleCreateRequest Not Done! Path:" + AssetPath);
 					mLoadState = AssetLoadState.Done;
+					ErrorMessage = "AssetBundleCreateRequest Not Done! Path:" + AssetPath;
 					OnFail2Load();
 					finishCallback();
 					yield break;
@@ -202,13 +215,13 @@ namespace VEFramework
 				LoadFinishCallback.Invoke(this);
 				LoadFinishCallback = null;
 			}
-			//TODO Release 的时机非常重要
-			Release();
+			if(AutoRelease)
+				Release();
 		}
 		protected override void OnFail2Load()
 		{
 			Log.E("OnFail2Load:{0}",AssetPath);
-
+			Log.E(ErrorMessage);
 			if(LoadFinishCallback != null)
 			{
 				LoadFinishCallback.Invoke(null);

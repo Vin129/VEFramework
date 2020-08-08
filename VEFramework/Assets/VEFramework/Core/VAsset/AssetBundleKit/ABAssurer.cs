@@ -107,10 +107,13 @@ namespace VEFramework
 
 		protected override void Rest()
 		{
-			Log.I("[ABAssurer]{0}:RecycleSelf",AssetPath);
+			Log.IColor("[ABAssurer]{0}:RecycleSelf",LogColor.Green,AssetPath);
 			base.Rest();
 			if(mABCR != null && !mABCR.isDone)
+			{
+				ErrorMessage = "AssetBundleCreateRequest has not Done";
 				OnFail2Load();
+			}
 			if(mAB != null)
 				mAB.Unload(UnloadTag);
 			mBinary = null;
@@ -139,7 +142,7 @@ namespace VEFramework
 			{
 				if(assetsNames[i].Contains(FileName))
 				{
-					Log.I("Get:{0}",assetsNames[i]);
+					Log.IColor("Get:{0}",LogColor.Green,assetsNames[i]);
 					string strVal = assetsNames[i].Substring(assetsNames[i].IndexOf(FileName));
 					int iIdx = strVal.LastIndexOf(".");
 					if(-1 != iIdx)
@@ -164,7 +167,7 @@ namespace VEFramework
 			mLoadState = AssetLoadState.Done;
 			if(!mFileExist)
 			{
-				Log.E("File Not Exist:{0}",RealPath);
+				ErrorMessage = string.Format("File Not Exist:{0}",RealPath);
 				OnFail2Load();
 				return false;
 			}
@@ -182,6 +185,7 @@ namespace VEFramework
 		{
 			if(mAB == null)
 			{
+				ErrorMessage = "AssetBundle is Null!";
 				OnFail2Load();
 				return false;
 			}
@@ -191,6 +195,14 @@ namespace VEFramework
 
 		public override void LoadAsync()
 		{
+			if(mLoadState == AssetLoadState.Done)
+			{
+				if(Error)
+					OnFail2Load();
+				else
+					OnSuccess2Load();
+				return;
+			}
 			if(mLoadState != AssetLoadState.None)
 				return;
 			mLoadState = AssetLoadState.Loading;
@@ -207,7 +219,7 @@ namespace VEFramework
 			}
 			if(!mFileExist)
 			{
-				Log.E("File Not Exist:{0}",RealPath);
+				ErrorMessage = string.Format("File Not Exist:{0}",RealPath);
 				mLoadState = AssetLoadState.Done;
 				OnFail2Load();
 				finishCallback();
@@ -222,7 +234,7 @@ namespace VEFramework
 				yield return mABCR;
 				if (!mABCR.isDone || mLoadState != AssetLoadState.Loading)
 				{
-					Log.E("AssetBundleCreateRequest Not Done! Path:" + RealPath);
+					ErrorMessage = "AssetBundleCreateRequest Not Done! Path:" + RealPath;
 					mLoadState = AssetLoadState.Done;
 					OnFail2Load();
 					finishCallback();
@@ -311,7 +323,7 @@ namespace VEFramework
 		protected override void OnFail2Load()
 		{
 			Log.E("OnFail2Load:{0}",RealPath);
-
+			Log.E(ErrorMessage);
 			if(LoadFinishCallback != null)
 			{
 				LoadFinishCallback.Invoke(null);

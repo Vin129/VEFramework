@@ -68,6 +68,9 @@ namespace VEFramework
 			}
 		}
 
+		///<param name="bUnloadTag">释放模式</param>
+		///<param name="bSave">下载完成后是否保存</param>
+		///<param name="bLocalFirst">是否先加载本地</param>
 		public void Init(string AssetPath,Type AssetType,bool bUnloadTag = false,bool bSave = false,bool bLocalFirst = false)
 		{
 			if(bLocalFirst)
@@ -89,10 +92,13 @@ namespace VEFramework
 
 		protected override void Rest()
 		{
-			Log.I("[ResAssurer]{0}:RecycleSelf",AssetPath);
+			Log.IColor("[NetAssurer]{0}:RecycleSelf",LogColor.Blue,AssetPath);
 			base.Rest();
 			if(mWBER != null && !mWBER.isDone)
+			{
+				ErrorMessage = "UnityWebRequest has not Done";
 				OnFail2Load();
+			}
 			if(mAsset != null && UnloadTag)
 				Resources.UnloadAsset(mAsset);
 			mBSave = false;
@@ -107,18 +113,53 @@ namespace VEFramework
 			LoadFinishCallback = null;
 		}
 
+		///</summary>
+		///网络资源建议封装成AssetBundle 或自行修改此处进行处理mBytesAsset
+		///</summary>
 		public override T Get<T>()
 		{
-			if(mAsset != null)
-				return mAsset as T;
-			if(mBytesAsset != null)
+			try
+			{
+				var type = typeof(T);
+				if(type == typeof(AssetBundle))
+				{
+					return mABAsset as T;
+				}
+				else if (type == typeof(AudioClip))
+				{
+					return mAsset as T;
+				}
+				else if (type == typeof(Texture2D))
+				{
+					return mAsset as T;
+				}
+				else if (type == typeof(TextAsset))
+				{
+					return mTextAsset as T;
+				}
+			}
+			catch(Exception e)
+			{
+				ErrorMessage = e.ToString();
+			}
+			if(Error)
+			{
+				Log.E(ErrorMessage);
 				return null;
-			Log.E("Asset Not Exist:{0}",AssetPath);
+			}
 			return null;
 		}
 
 		public void Download()
 		{
+			if(mLoadState == AssetLoadState.Done)
+			{
+				if(Error)
+					OnFail2Load();
+				else
+					OnSuccess2Load();
+				return;
+			}
 			if(mLoadState != AssetLoadState.None)
 				return;
 			if(mAssetType == typeof(AssetBundle))
@@ -140,7 +181,7 @@ namespace VEFramework
             }
             mWBER.SendWebRequest();
 			mLoadState = AssetLoadState.Loading;
-			ResManager.Instance.PushInAsyncList(this);
+			NetAssetManager.Instance.PushInAsyncList(this);
 		}
 
 
@@ -155,15 +196,19 @@ namespace VEFramework
 			if(mAsset == null)
 			{
 				yield return mWBER;
-				if (!mWBER.isDone || mLoadState != AssetLoadState.Loading)
+				yield return mWBER.downloadHandler;
+				while(!mWBER.isDone)
 				{
-					Log.E("AssetBundleCreateRequest Not Done! Path:" + AssetPath);
-					mLoadState = AssetLoadState.Done;
-					OnFail2Load();
-					finishCallback();
-					yield break;
+					if (mWBER.isNetworkError || mLoadState != AssetLoadState.Loading)
+					{
+						ErrorMessage = "AssetBundleCreateRequest Not Done! Path:" + AssetPath;
+						mLoadState = AssetLoadState.Done;
+						OnFail2Load();
+						finishCallback();
+						yield break;
+					}
+					yield return null;
 				}
-				
 
 				if (mAssetType != typeof(Texture2D))
 				{
@@ -172,17 +217,25 @@ namespace VEFramework
 						if (mAssetType != typeof(AudioClip))
 						{
 							if(mAssetType != typeof(AssetBundle))
+							{
 								mBytesAsset = mWBER.downloadHandler.data;
+							}
 							else
+							{
 								mABAsset = DownloadHandlerAssetBundle.GetContent(mWBER);
+							}
 						}
 						else
+						{
 							mAsset = DownloadHandlerAudioClip.GetContent(mWBER);
+						}
 					}
 					else
 					{
 						mTextAsset = mWBER.downloadHandler.text;
 					}
+					if(mBSave && mWBER.downloadHandler.data != null)
+						PathUtil.SaveExternalAsset(AssetPath,mWBER.downloadHandler.data);
 				}
 				else
 				{
@@ -202,7 +255,7 @@ namespace VEFramework
 			{
 				//TODO UnSafe Tip
 			}
-			ResManager.Instance.RemoveAssurer(this);
+			NetAssetManager.Instance.RemoveAssurer(this);
 			Rest();
 		}
 
@@ -212,7 +265,7 @@ namespace VEFramework
 			if(mLoadState == AssetLoadState.Wait4Recycle)
 				return;
 			mLoadState = AssetLoadState.Wait4Recycle;
-			ResManager.Instance.RecycleAssurer(this);
+			NetAssetManager.Instance.RecycleAssurer(this);
 		}
 
 		public override void Retain()
@@ -220,7 +273,7 @@ namespace VEFramework
 			base.Retain();
 			if(mLoadState == AssetLoadState.Wait4Recycle)
 			{
-				ResManager.Instance.ReUseAssurer(this);
+				NetAssetManager.Instance.ReUseAssurer(this);
 				if(mAsset == null)
 					mLoadState = AssetLoadState.None;
 				else
@@ -236,11 +289,11 @@ namespace VEFramework
 			{
 				Log.E("Loading break off");
 				mLoadState = AssetLoadState.Done;
-				ResManager.Instance.PopUpAsyncList(this);
+				NetAssetManager.Instance.PopUpAsyncList(this);
 			}
 			base.Become2Useless();
 			mLoadState = AssetLoadState.Wait4Recycle;
-			ResManager.Instance.RecycleAssurer(this);
+			NetAssetManager.Instance.RecycleAssurer(this);
 		}
 		protected override void OnSuccess2Load()
 		{
@@ -251,13 +304,13 @@ namespace VEFramework
 				LoadFinishCallback.Invoke(this);
 				LoadFinishCallback = null;
 			}
-			//TODO Release 的时机非常重要
-			Release();
+			if(AutoRelease)
+				Release();
 		}
 		protected override void OnFail2Load()
 		{
 			Log.E("OnFail2Load:{0}",AssetPath);
-
+			Log.E(ErrorMessage);
 			if(LoadFinishCallback != null)
 			{
 				LoadFinishCallback.Invoke(null);

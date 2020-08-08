@@ -47,7 +47,20 @@ namespace VEFramework.Editor
 			}
 		}
 
+		[MenuItem ("VETool/VAsset/Open/OpenPersistentDataPath",false,1)]
+		public static void OpenPersistentDataPath()
+		{
+			string path = AssetCustomSetting.PersistentABDir.Replace('/', '\\');
+			System.Diagnostics.Process.Start("explorer.exe", path);
+		}
 
+
+		[MenuItem ("VETool/VAsset/Open/OpenExternalAssetPath",false,1)]
+		public static void OpenExternalAssetPath()
+		{
+			string path = AssetCustomSetting.ExternalAssetDir.Replace('/', '\\');
+			System.Diagnostics.Process.Start("explorer.exe", path);
+		}
 
 		[MenuItem ("VETool/VAsset/Clear/ClearAllABName",false,1)]
 		public static void ClearAllABName()

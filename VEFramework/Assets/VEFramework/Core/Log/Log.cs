@@ -25,6 +25,7 @@ namespace VEFramework
 {
 	using System;
     using System.Linq;
+    using UnityEngine;
 
     public static class Log {
 		#region Base		
@@ -44,6 +45,10 @@ namespace VEFramework
 		public static void I(object message, params object[] args)
 		{
 			UnityEngine.Debug.LogFormat(message.ToString(),args);
+		}
+		public static void IColor(object message,string color,params object[] args)
+		{
+			UnityEngine.Debug.LogFormat("<color=#{0}>{1}</color>",color,string.Format(message.ToString(),args));
 		}
 		public static void W(object message, params object[] args)
 		{
