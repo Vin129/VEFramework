@@ -15,11 +15,11 @@
 
 ​		**— VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】**
 
-​		**— ResourceKit : Resources资产模块  【V0.1  ResManager + ResBuilder】**
+​		**— ResourceKit : Resources资产模块  【V0.1  ResManager 】**
 
 ​		**— AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】**
 
-​		**— NetAssetKit : 网络资产模块  **
+​		**— NetAssetKit : 网络资产模块  【V0.1  NetAssetManager 】**
 
 ​		**— Rule：规则模块**
 
@@ -41,9 +41,11 @@
 
 **8-2:    AssetBundleKit V0.1版本构建完成（ABManager+ABBuilder） 注：ABAssurer若对外界开放则释放层面存在风险**
 
-**8-4:  ResourceKit 完成**
+**8-4:  ResourceKit 完成 v0.1**
 
 **8-5:  VAsset 设立对外总入口**
+
+**8-8:  NetAssetKit 完成 v0.1**
 
 ## TODO
 
@@ -57,4 +59,7 @@
 
 **~~5.VAsset 完善Resources部分与AssetLoad部分~~**
 
-**6.VAssetKit 统筹管理：Asset、Resource、AssetBundle、WWW**
+**~~6.VAssetKit 统筹管理：Asset、Resource、AssetBundle、WWW~~**
+
+**7.VAsset 完成 v0.1版本**
+
