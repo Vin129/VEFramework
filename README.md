@@ -33,6 +33,8 @@
 
 ## TimeLine
 
+### 8月
+
 **7-26 :   AssetBundleKit 初步完成（基于相对路径的资源加载模式）**
 
 **7-29： AssetBundleKit 完成LazyRelease（I_DONT_CARE）模式**
