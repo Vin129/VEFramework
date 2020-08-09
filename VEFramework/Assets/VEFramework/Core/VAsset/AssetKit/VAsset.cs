@@ -90,12 +90,20 @@ namespace VEFramework
 
 	#region 适合扩展修改的加载接口
 	///<summary>
-	///下载网络资源
+	///下载网络资产
 	///</summary>
 	public void DownloadAsset<T>(string Url,Action<T> finishCallback = null,bool bUnloadTag = false,bool bSave = false,bool bLocalFirst = false) where T : UnityEngine.Object
 	{
         NetAssetManager.Instance.Download<T>(Url,finishCallback,bUnloadTag:bUnloadTag,bSave:bSave,bLocalFirst:bLocalFirst);
     }
+	///<summary>
+	///下载网络资产 byte
+	///</summary>
+	public void DownloadAsset(string Url,Action<byte[]> finishCallback = null,bool bUnloadTag = false,bool bSave = false,bool bLocalFirst = false)
+	{
+        NetAssetManager.Instance.Download(Url,finishCallback,bUnloadTag:bUnloadTag,bSave:bSave,bLocalFirst:bLocalFirst);
+    }
+
 
 	#endregion
 

@@ -114,7 +114,7 @@ namespace VEFramework
 		}
 
 		///</summary>
-		///网络资源建议封装成AssetBundle 或自行修改此处进行处理mBytesAsset
+		///网络资产建议封装成AssetBundle 或自行修改此处进行处理mBytesAsset
 		///</summary>
 		public override T Get<T>()
 		{
@@ -147,6 +147,13 @@ namespace VEFramework
 				Log.E(ErrorMessage);
 				return null;
 			}
+			return null;
+		}
+
+		public byte[] Get()
+		{
+			if(mBytesAsset != null)
+				return mBytesAsset;
 			return null;
 		}
 
@@ -209,18 +216,15 @@ namespace VEFramework
 					}
 					yield return null;
 				}
-
+				if(mWBER.downloadHandler != null)
+					mBytesAsset = mWBER.downloadHandler.data;
 				if (mAssetType != typeof(Texture2D))
 				{
 					if (mAssetType != typeof(TextAsset))
 					{
 						if (mAssetType != typeof(AudioClip))
 						{
-							if(mAssetType != typeof(AssetBundle))
-							{
-								mBytesAsset = mWBER.downloadHandler.data;
-							}
-							else
+							if(mAssetType == typeof(AssetBundle))
 							{
 								mABAsset = DownloadHandlerAssetBundle.GetContent(mWBER);
 							}
@@ -234,7 +238,7 @@ namespace VEFramework
 					{
 						mTextAsset = mWBER.downloadHandler.text;
 					}
-					if(mBSave && mWBER.downloadHandler.data != null)
+					if(mBSave && mWBER.downloadHandler != null && mWBER.downloadHandler.data != null)
 						PathUtil.SaveExternalAsset(AssetPath,mWBER.downloadHandler.data);
 				}
 				else

@@ -61,10 +61,22 @@ namespace VEFramework
             return assurer;
         }
 
+        ///<summary>
+        ///Texture2D、AudioClip、AssetBundle 之外资产建议封装为AB进行下载，或自行使用byte[]自行处理
+        ///</summary>
         public void Download<T>(string Url,Action<T> finishCallback = null,bool bUnloadTag = false,bool bSave = false,bool bLocalFirst = false) where T : UnityEngine.Object
         {
             Download(Url,typeof(T),(assurer)=>{GetResOnFinish<T>(assurer as NetAssurer,finishCallback);},bUnloadTag:bUnloadTag,bSave:bSave,bLocalFirst:bLocalFirst);
         }
+
+        ///<summary>
+        ///自定义 byte[] 资产 
+        ///</summary>
+        public void Download(string Url,Action<byte[]> finishCallback = null,bool bUnloadTag = false,bool bSave = false,bool bLocalFirst = false)
+        {
+            Download(Url,typeof(byte[]),(assurer)=>{GetByteResOnFinish(assurer as NetAssurer,finishCallback);},bUnloadTag:bUnloadTag,bSave:bSave,bLocalFirst:bLocalFirst);
+        }
+
     #endregion
 
     #region 核心
@@ -100,6 +112,16 @@ namespace VEFramework
                 callback(null);
             callback(assurer.Get<T>());
         }
+
+        private void GetByteResOnFinish(NetAssurer assurer,Action<byte[]> callback)
+        {
+            if(callback == null)
+                return;
+            if(assurer == null)
+                callback(null);
+            callback(assurer.Get());
+        }
+
 		protected NetAssurer Download(string Url,Type AssetType,Action<Assurer> finishCallback = null,bool bUnloadTag = false,bool bSave = false,bool bLocalFirst = false)
         {
 			var assurer = GetAssurer(Url,AssetType,bUnloadTag:bUnloadTag,bSave:bSave,bLocalFirst:bLocalFirst);

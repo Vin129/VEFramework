@@ -60,9 +60,18 @@ public class GamePipeline : MonoBehaviour {
 		// 	// Obj2.transform.parent = Node.transform;
 		// };
 		var url = "https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png";
-		VAsset.Instance.DownloadAsset<Texture2D>(url,(Image)=>{
-			if(Image == null)
+		// VAsset.Instance.DownloadAsset<Texture2D>(url,(Image)=>{
+		// 	if(Image == null)
+		// 		return;
+		// 	Img1.sprite = Sprite.Create(Image,new Rect(0,0,Image.width,Image.height),Img1.rectTransform.pivot);
+		// },bSave:true,bLocalFirst:true);
+
+
+		VAsset.Instance.DownloadAsset(url,(bytes)=>{
+			if(bytes == null)
 				return;
+			var Image = new Texture2D(500,400);	
+			Image.LoadImage(bytes);
 			Img1.sprite = Sprite.Create(Image,new Rect(0,0,Image.width,Image.height),Img1.rectTransform.pivot);
 		},bSave:true,bLocalFirst:true);
 

@@ -34,7 +34,7 @@ namespace VEFramework.Editor
 		[MenuItem ("VETool/VAsset/Create/CreateAssetBundleRule",false,0)]
 		public static void CreateAssetBundleRule()
 		{
-			Log.I("CreateAssetBundleRule");
+			Log.IColor("CreateAssetBundleRule",LogColor.OrangeRed);
 			if(File.Exists(AssetCustomSetting.AssetBundlerRuleAssetPath))
 				Log.E("AssetBundleReulAsset already existed");
 			else
@@ -62,10 +62,24 @@ namespace VEFramework.Editor
 			System.Diagnostics.Process.Start("explorer.exe", path);
 		}
 
-		[MenuItem ("VETool/VAsset/Clear/ClearAllABName",false,1)]
+
+		[MenuItem ("VETool/VAsset/Clear/ClearExternalAsset",false,2)]
+		public static void ClearExternalAsset()
+		{
+			string path = AssetCustomSetting.ExternalAssetDir.Replace('/', '\\');
+			if(Directory.Exists(path))
+			{
+				Directory.Delete(path,true);
+				PathUtil.CreateDirectory(path);
+				Log.IColor("ClearExternalAsset",LogColor.OrangeRed);
+			}
+		}
+
+
+		[MenuItem ("VETool/VAsset/Clear/ClearAllABName",false,2)]
 		public static void ClearAllABName()
 		{
-			Log.I("ClearAllABName");
+			Log.IColor("ClearAllABName",LogColor.OrangeRed);
         	string[] names = AssetDatabase.GetAllAssetBundleNames();
 			for (int j = 0; j < names.Length; j++)
 				AssetDatabase.RemoveAssetBundleName(names[j], true);
@@ -75,10 +89,10 @@ namespace VEFramework.Editor
 				Log.E("Not Find ABName");
 		}
 
-		[MenuItem ("VETool/VAsset/Clear/DeleteAssetBundleDirectory",false,1)]
+		[MenuItem ("VETool/VAsset/Clear/DeleteAssetBundleDirectory",false,2)]
 		public static void DeleteAssetBundleDirectory()
 		{
-			Log.I("Delete AssetBundle Directory");
+			Log.IColor("Delete AssetBundle Directory",LogColor.OrangeRed);
 			var ABDir = AssetCustomSetting.AssetBundleDir.EndWithAndRemove("/");
 
 			if (File.Exists(ABDir))
@@ -96,7 +110,7 @@ namespace VEFramework.Editor
 		public static void EasyBuild()
 		{
 			AssetBundleEasyBuild();
-			Log.I("Build Over");
+			Log.IColor("Build Over",LogColor.OrangeRed);
 		}
 
 		[MenuItem ("VETool/VAsset/SetABNameByRule")]
@@ -108,7 +122,7 @@ namespace VEFramework.Editor
 		public static void Build()
 		{
 			OnlyBuildAB();
-			Log.I("Build Over");
+			Log.IColor("Build Over",LogColor.OrangeRed);
 		}
 
 
@@ -146,7 +160,7 @@ namespace VEFramework.Editor
 
 		public static bool SetABName4Rule()
 		{
-			Log.I("SetABNameByRule");
+			Log.IColor("SetABNameByRule",LogColor.OrangeRed);
 			var Rule = GetABRuleAsset();
 			if(Rule == null)
 				return false;
