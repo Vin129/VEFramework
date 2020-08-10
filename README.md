@@ -35,19 +35,13 @@
 
 ### 8月
 
-**7-26 :   AssetBundleKit 初步完成（基于相对路径的资源加载模式）**
-
-**7-29： AssetBundleKit 完成LazyRelease（I_DONT_CARE）模式**
-
-**7-31:    AssetBundleKit ABBuild模块初步构成**
-
-**8-2:    AssetBundleKit V0.1版本构建完成（ABManager+ABBuilder） 注：ABAssurer若对外界开放则释放层面存在风险**
-
-**8-4:  ResourceKit 完成 v0.1**
-
-**8-5:  VAsset 设立对外总入口**
-
-**8-8:  NetAssetKit 完成 v0.1**
+- **AssetBundleKit 初步完成（基于相对路径的资源加载模式**
+- **AssetBundleKit 完成LazyRelease（I_DONT_CARE）模式**
+- **AssetBundleKit ABBuild模块初步构成**
+- **AssetBundleKit V0.1版本构建完成（ABManager+ABBuilder）**
+- **ResourceKit 完成 v0.1**
+- **VAsset 设立对外总入口**
+- **NetAssetKit 完成 v0.1**
 
 ## TODO
 
