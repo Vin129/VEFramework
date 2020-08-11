@@ -89,6 +89,7 @@ namespace VEFramework
 
 
 	#region 适合扩展修改的加载接口
+	
 	///<summary>
 	///下载网络资产
 	///</summary>
@@ -110,7 +111,7 @@ namespace VEFramework
 
 
 
-	#region 辅助
+	#region 辅助方法
 		private void GetAssetOnFinish<T>(Assurer assurer,Action<T> callback) where T:UnityEngine.Object
         {
             if(callback == null)
