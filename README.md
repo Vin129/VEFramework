@@ -11,6 +11,8 @@
 
 ​	**— Manager : ManagerOfManagers   对外由VEManager来统领全部**
 
+​	**— EasyLog：三层Log输出，轻松查询日志（Unity、GUI、File）**
+
 ​	**— VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**
 
 ​		**— VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】**
