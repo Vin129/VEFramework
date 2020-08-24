@@ -5,25 +5,40 @@
 
 # V0.0.1
 
-**— Core**
+- **Core**
 
-​	**— DisignMode  : 设计模式**
+  - **DisignMode  : 设计模式** 
 
-​	**— Manager : ManagerOfManagers   对外由VEManager来统领全部**
+  - **Manager : ManagerOfManagers   对外由VEManager来统领全部**
 
-​	**— EasyLog：三层Log输出，轻松查询日志（Unity、GUI、File）**
 
-​	**— VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**
+  - **EasyLog：三层Log输出，轻松查询日志（Unity、GUI、File）**
 
-​		**— VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】**
+  - **VUI: UI层框架**
 
-​		**— ResourceKit : Resources资产模块  【V0.1  ResManager 】**
+    - **VUIKit: UI框架**
 
-​		**— AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】**
+    - **VUGUI: UGUI改良**
 
-​		**— NetAssetKit : 网络资产模块  【V0.1  NetAssetManager 】**
+  -  **VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管U理**  
 
-​		**— Rule：规则模块**
+    - **VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】**
+
+
+    - **ResourceKit : Resources资产模块  【V0.1  ResManager 】**
+
+
+    -  **AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】**
+
+
+    - **NetAssetKit : 网络资产模块  【V0.1  NetAssetManager 】**
+
+
+    - **Rule：规则模块**
+
+  
+
+​	
 
 ​		
 
