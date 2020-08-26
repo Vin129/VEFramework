@@ -14,6 +14,8 @@
 
   - **EasyLog：三层Log输出，轻松查询日志（Unity、GUI、File）**
 
+  - **EasyNet：兼容HTTP、Socket、WebSocket**
+
   - **VUI: UI层框架**
 
     - **VUIKit: UI框架**
