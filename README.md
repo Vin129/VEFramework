@@ -16,6 +16,13 @@
 
   - **EasyNet：兼容HTTP、Socket、WebSocket**
 
+
+      - **EasyHTTP**
+
+    - **EasySocket**
+
+    - **EasyWebSocket**
+
   - **VUI: UI层框架**
 
     - **VUIKit: UI框架**
