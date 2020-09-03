@@ -25,7 +25,7 @@
 
     - **VUGUI: UGUI改良**
 
-  -  **VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管U理**  
+  -  **VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**  
 
     - **VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】**
     
@@ -84,3 +84,6 @@
 **8.EasyLog模块**
 
 **9.尝试IOC设计**
+
+**10.EasyNet模块整理**
+
