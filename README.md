@@ -3,6 +3,10 @@
 
 
 
+
+
+
+
 # V0.0.1
 
 **Core**
@@ -64,6 +68,14 @@
 - **ResourceKit 完成 v0.1**
 - **VAsset 设立对外总入口**
 - **NetAssetKit 完成 v0.1**
+
+### 9月
+
+- **EasyLog模块**
+
+
+
+
 
 ## TODO
 
