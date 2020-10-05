@@ -3,17 +3,42 @@
 
 
 
-
-
-
-
 # V0.0.1
+
+- **Core**
+
+  - **DisignMode  : 设计模式** 
+
+  - **Manager : ManagerOfManagers   对外由VEManager来统领全部**
+
+
+    - **EasyLog： BaseLog **
+
+
+    - **VUI: UI层框架**
+      - **VUIKit: UI框架**
+
+    - **VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**  
+      - **VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】**
+
+      - **ResourceKit : Resources资产模块  【V0.1  ResManager 】**
+
+      - **AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】**
+
+      - **NetAssetKit : 网络资产模块  【V0.1  NetAssetManager 】**
+
+      - **Rule：规则模块**
+
+
+
+
+# V0.0.2
 
 **Core**
 
-- **DisignMode  : 设计模式** 
+- **~~DisignMode  : 设计模式~~** 
 
-- **Manager : ManagerOfManagers   对外由VEManager来统领全部**
+- **~~Manager : ManagerOfManagers   对外由VEManager来统领全部~~**
 
 
   - **EasyLog：三层Log输出，轻松查询日志（Unity、GUI、File）**
@@ -31,23 +56,23 @@
 
   -  **VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**  
 
-    - **VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】**
+    - **~~VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】~~**
     
-    -  **ResourceKit : Resources资产模块  【V0.1  ResManager 】**
+    -  **~~ResourceKit : Resources资产模块  【V0.1  ResManager 】~~**
     
-    -  **AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】**
+    -  **~~AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】~~**
     
-    -  **NetAssetKit : 网络资产模块  【V0.1  NetAssetManager 】**
+    -  **~~NetAssetKit : 网络资产模块  【V0.1  NetAssetManager 】~~**
     
-    - **Rule：规则模块**
+    - **~~Rule：规则模块~~**
     
-    - **AssetFinder：资产使用可视化**
+    - **AssetFinder：资产使用可视化** 
+    
+      
     
       
     
       
-    
-       
 
 
 
@@ -74,6 +99,10 @@
 ### 9月
 
 - **EasyLog模块**
+
+### 10月
+
+- **VUI**
 
 
 
