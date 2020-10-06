@@ -55,8 +55,8 @@ namespace VEFramework
 		{
 			get
 			{
-				return "TestAB";
-				// return string.Empty;
+				// return "TestAB";
+				return string.Empty;
 			}
 		}
 		public static string ABPostfix

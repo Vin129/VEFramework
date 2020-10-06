@@ -67,13 +67,21 @@ public class GamePipeline : MonoBehaviour {
 		// },bSave:true,bLocalFirst:true);
 
 
-		VAsset.Instance.DownloadAsset(url,(bytes)=>{
-			if(bytes == null)
+		// VAsset.Instance.DownloadAsset(url,(bytes)=>{
+		// 	if(bytes == null)
+		// 		return;
+		// 	var Image = new Texture2D(500,400);	
+		// 	Image.LoadImage(bytes);
+		// 	Img1.sprite = Sprite.Create(Image,new Rect(0,0,Image.width,Image.height),Img1.rectTransform.pivot);
+		// },bSave:true,bLocalFirst:true);
+
+		VAsset.Instance.LoadAsync<GameObject>("Prefabs/Test1/TestView1",(obj)=>{
+			if(obj == null)
 				return;
-			var Image = new Texture2D(500,400);	
-			Image.LoadImage(bytes);
-			Img1.sprite = Sprite.Create(Image,new Rect(0,0,Image.width,Image.height),Img1.rectTransform.pivot);
-		},bSave:true,bLocalFirst:true);
+			var Obj2 = GameObject.Instantiate(obj);
+			Obj2.transform.parent = Node.transform;
+		});
+
 
 	}
 

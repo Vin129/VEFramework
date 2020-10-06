@@ -23,8 +23,12 @@
  ****************************************************************************/
 namespace VEFramework
 {
-    interface IBaseUI
+    public interface IBaseUI
 	{
 		string Name {get;}
+		void Init(string Name,bool bMonoBehaviour);
+		void Show();
+		void Hide();
+		void Close();
 	}
 }

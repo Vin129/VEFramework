@@ -37,15 +37,25 @@ namespace VEFramework
                 return mName;
             }
         }
-        public VBaseUI(string Name,bool bMonoBehaviour = false)
+
+        public virtual void Init(string Name,bool bMonoBehaviour = false)
         {
             mName = Name;
             this.bMonoBehaviour = bMonoBehaviour;
             mAssetPaths = new List<string>();
-            Init();
         }
 
-        protected virtual void Init()
+        public virtual void Show()
+        {
+            
+        }
+
+        public virtual void Hide()
+        {
+           
+        }
+
+        public virtual void Close()
         {
             
         }
@@ -112,7 +122,7 @@ namespace VEFramework
         {
             ExecuteBehaviour(ExecuteBehaviourType.OnDestroy);            
         }
-    #endregion
+        #endregion
     }
 }
 

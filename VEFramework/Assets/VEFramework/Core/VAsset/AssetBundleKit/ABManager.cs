@@ -294,7 +294,10 @@ namespace VEFramework
             if(callback == null)
                 return;
             if(assurer == null)
+            {
                 callback(null);
+                return;
+            }
             callback(assurer.Get<T>());
         }
         protected void LoadAsync(string AssetPath,Action<Assurer> finishCallback = null)

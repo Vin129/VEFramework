@@ -23,13 +23,14 @@
  ****************************************************************************/
 namespace VEFramework
 {
-    using System;
-    using System.Collections;
+	using UnityEngine;
     using System.Collections.Generic;
+    using System;
 
     public class VUIManager : VEManagers<VUIManager>
     {
-		private Dictionary<string,VBaseUI> mUIList;
+		private Dictionary<string,IBaseUI> mUIOpenList;
+		private Dictionary<string,IBaseUI> mUIHideList;
         public override string ManagerName
         {
             get
@@ -40,19 +41,117 @@ namespace VEFramework
 
 		public override void Init()
 		{
-			mUIList = new Dictionary<string, VBaseUI>();
+			mUIOpenList = new Dictionary<string, IBaseUI>();
+			mUIHideList = new Dictionary<string, IBaseUI>();
 		}
 
 
 	#region 对外方法
-		public void Open(string AssestPath,bool bMonoBehaviour)
+		//TODO:GameObject.Instantiate  UICanvase
+		public IBaseUI Open(string AssestPath,bool bMonoBehaviour = false)
 		{
-			
+			IBaseUI UI = CheckCache(AssestPath);
+			if(UI != null)
+				return UI;
+			UI = CreateUISync(AssestPath);
+			if(UI == null)
+				return UI;
+			UI.Init(AssestPath,bMonoBehaviour);
+			mUIOpenList.Add(AssestPath,UI);
+			UI.Show();
+			return UI;
 		}
-		public void Close()
-		{
 
+		public void OpenAsync(string AssestPath,Action<IBaseUI> finishCallback,bool bMonoBehaviour = false)
+		{
+			IBaseUI ui = CheckCache(AssestPath);
+			if(ui != null)
+			{
+				finishCallback.Invoke(ui);
+				return;
+			}
+			CreateUIAsync(AssestPath,(UI)=>{
+				if(UI == null)
+					finishCallback.Invoke(null);
+				UI.Init(AssestPath,bMonoBehaviour);
+				mUIOpenList.Add(AssestPath,UI);
+				UI.Show();
+				finishCallback.Invoke(UI);
+			});
+		}
+
+		public bool Hide(string AssestPath)
+		{
+			if(mUIOpenList.ContainsKey(AssestPath))
+			{
+				var UI = mUIOpenList[AssestPath];
+				mUIOpenList.Remove(AssestPath);
+				mUIHideList.Add(AssestPath,UI);
+				UI.Hide();
+				return true;
+			}	
+			return false;
+		}
+
+		//TODO 资源清理逻辑
+		public bool Close(string AssestPath)
+		{
+			if(mUIOpenList.ContainsKey(AssestPath))
+			{
+				var UI = mUIOpenList[AssestPath];
+				mUIOpenList.Remove(AssestPath);
+				UI.Close();
+				return true;
+			}
+			if(mUIHideList.ContainsKey(AssestPath))
+			{
+				var UI = mUIHideList[AssestPath];
+				mUIHideList.Remove(AssestPath);
+				UI.Close();
+				return true;
+			}
+			return false;
 		}
 	#endregion
+		private IBaseUI CheckCache(string AssestPath)
+		{
+			if(mUIOpenList.ContainsKey(AssestPath))
+				return mUIOpenList[AssestPath];
+			if(mUIHideList.ContainsKey(AssestPath))
+			{
+				var UI = mUIHideList[AssestPath];
+				mUIHideList.Remove(AssestPath);
+				mUIOpenList.Add(AssestPath,UI);
+				UI.Show();
+				return UI;
+			}
+			return null;
+		}
+		private IBaseUI CreateUISync(string AssestPath)
+		{
+			var gameobject = VAsset.Instance.LoadSync<GameObject>(AssestPath);
+			if(gameobject == null)
+				return null;
+			var	UI = gameObject.GetComponent<IBaseUI>();
+			if(UI == null)
+				UI = gameObject.AddComponent<VBaseUI>();
+			return UI;
+		}
+
+		private void CreateUIAsync(string AssestPath,Action<IBaseUI> finishCallback)
+		{
+			VAsset.Instance.LoadAsync<GameObject>(AssestPath,(gameobject)=>{
+				if(gameobject == null)
+				{
+					finishCallback.Invoke(null);
+					return;
+				}
+				var	UI = gameObject.GetComponent<IBaseUI>();
+				if(UI == null)
+					UI = gameObject.AddComponent<VBaseUI>();
+				finishCallback.Invoke(UI);				
+			});
+		}
+
 	}
 }

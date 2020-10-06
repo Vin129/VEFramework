@@ -24,7 +24,7 @@
 namespace VEFramework
 {
 	//热语言标志性接口
-	interface IHotUI       
+	public interface IHotUI       
 	{
 		void HotAwake();
 		void HotStart();
