@@ -24,8 +24,7 @@
 namespace VEFramework
 {
     using System;
-    using System.Collections;
-    using System.Collections.Generic;
+    using UnityEngine;
 
     public class VAsset : VEManagers<VAsset>
     {
@@ -53,14 +52,39 @@ namespace VEFramework
 				kObj = ABManager.Instance.LoadSync<T>(AssetPath);
 			if(kObj == null)
 				kObj = ResManager.Instance.LoadSync<T>(AssetPath);
+			if(typeof(T) == typeof(GameObject) && kObj != null)
+			{
+				kObj = GameObject.Instantiate(kObj);
+				if(kObj != null)
+					kObj.name = kObj.name.Replace("(Clone)","");
+			}
 			return kObj;
         }
         public void LoadAsync<T>(string AssetPath,Action<T> finishCallback = null) where T:UnityEngine.Object
         {
-			if(AppSetting.AssetBundleOpen)
-				ABManager.Instance.LoadAsync<T>(AssetPath,finishCallback);
+			if(typeof(T) == typeof(GameObject))
+			{
+				Action<T> tempfinishcallback = (gameobject)=>{
+					T obj = null;
+					if(gameObject != null)
+						obj = GameObject.Instantiate(gameobject);
+					if(obj != null)
+						obj.name = obj.name.Replace("(Clone)","");
+					if(finishCallback != null)
+						finishCallback.Invoke(obj);
+				};
+				if(AppSetting.AssetBundleOpen)
+					ABManager.Instance.LoadAsync<T>(AssetPath,tempfinishcallback);
+				else
+					ResManager.Instance.LoadAsync<T>(AssetPath,tempfinishcallback);
+			}
 			else
-				ResManager.Instance.LoadAsync<T>(AssetPath,finishCallback);
+			{
+				if(AppSetting.AssetBundleOpen)
+					ABManager.Instance.LoadAsync<T>(AssetPath,finishCallback);
+				else
+					ResManager.Instance.LoadAsync<T>(AssetPath,finishCallback);
+			}
 		}
 
 		public Assurer GetAssurerSync(string AssetPath)

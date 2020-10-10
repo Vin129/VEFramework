@@ -29,8 +29,12 @@ namespace VEFramework
 
     public class VUIManager : VEManagers<VUIManager>
     {
+		private const string mVrootAssetPath = "VEFramework/Core/VUI/Resources/VRoot";
 		private Dictionary<string,IBaseUI> mUIOpenList;
 		private Dictionary<string,IBaseUI> mUIHideList;
+
+		public static VRoot MainRoot;
+
         public override string ManagerName
         {
             get
@@ -43,11 +47,23 @@ namespace VEFramework
 		{
 			mUIOpenList = new Dictionary<string, IBaseUI>();
 			mUIHideList = new Dictionary<string, IBaseUI>();
+			GameObject vroot = null;
+			var roottrs = transform.Find("VRoot");
+			if(roottrs == null)
+			{
+				vroot = VAsset.Instance.LoadSync<GameObject>(mVrootAssetPath);
+				if(vroot != null)
+					vroot.transform.SetParent(transform,false);
+			}
+			else
+			{
+				vroot = roottrs.gameObject;
+			}
+			MainRoot = new VRoot(vroot);
 		}
 
 
 	#region 对外方法
-		//TODO:GameObject.Instantiate  UICanvase
 		public IBaseUI Open(string AssestPath,bool bMonoBehaviour = false)
 		{
 			IBaseUI UI = CheckCache(AssestPath);
@@ -132,6 +148,7 @@ namespace VEFramework
 			var gameobject = VAsset.Instance.LoadSync<GameObject>(AssestPath);
 			if(gameobject == null)
 				return null;
+			gameobject.transform.SetParent(MainRoot.UIAttach,false);
 			var	UI = gameObject.GetComponent<IBaseUI>();
 			if(UI == null)
 				UI = gameObject.AddComponent<VBaseUI>();
@@ -146,6 +163,7 @@ namespace VEFramework
 					finishCallback.Invoke(null);
 					return;
 				}
+				gameobject.transform.SetParent(MainRoot.UIAttach,false);
 				var	UI = gameObject.GetComponent<IBaseUI>();
 				if(UI == null)
 					UI = gameObject.AddComponent<VBaseUI>();

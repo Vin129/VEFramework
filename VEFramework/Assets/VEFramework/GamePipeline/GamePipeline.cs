@@ -75,13 +75,9 @@ public class GamePipeline : MonoBehaviour {
 		// 	Img1.sprite = Sprite.Create(Image,new Rect(0,0,Image.width,Image.height),Img1.rectTransform.pivot);
 		// },bSave:true,bLocalFirst:true);
 
-		VAsset.Instance.LoadAsync<GameObject>("Prefabs/Test1/TestView1",(obj)=>{
-			if(obj == null)
-				return;
-			var Obj2 = GameObject.Instantiate(obj);
-			Obj2.transform.parent = Node.transform;
-		});
+		VUIManager.Instance.Open("Prefabs/Test1/TestView1");
 
+		
 
 	}
 

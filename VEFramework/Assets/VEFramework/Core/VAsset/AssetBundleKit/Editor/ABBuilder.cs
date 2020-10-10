@@ -25,8 +25,8 @@ namespace VEFramework
 {
 	using UnityEngine;
 	using UnityEditor;
-	using System.Collections.Generic;
 	using System.IO;
+	using System.Collections.Generic;
 	public class ABBuilder
 	{
 		public ABBuilder(BuildTarget kTarget)
@@ -132,6 +132,39 @@ namespace VEFramework
 			);
 		}
 
+		public void CopyABNameBySelectList(List<string> selectList)
+		{
+			if(selectList.Count == 0)
+				return;
+			string copyContent = string.Empty;
+			selectList.ForEach
+			(
+				(path)=>
+				{
+					var AssestPath = path.Replace("Assets/",Application.dataPath + "/");
+					switch (JudgeAssetPath(AssestPath))
+					{
+						// case ABRuleAsset.ABBuildType.AllPack:
+						// 	SetAllInOnePack(AssestPath);
+						// 	break;
+						case ABRuleAsset.ABBuildType.PathPack:
+							GetPerPathABName(AssestPath,ref copyContent);
+							break;
+						case ABRuleAsset.ABBuildType.FilePack:
+							GetPerFileABName(AssestPath,ref copyContent);
+							break;
+					}
+				}
+			);
+			if(!copyContent.Equals(string.Empty))
+			{
+				UnityEngine.GUIUtility.systemCopyBuffer = copyContent;
+				Log.IColor(copyContent,LogColor.OrangeRed);
+			}
+		}
+
+
+
 		//整包
 		private void SetAllInOnePack(string AssestPath)
 		{
@@ -171,6 +204,24 @@ namespace VEFramework
 				EditorUtility.ClearProgressBar(); 
 			}
 		}
+		private void GetPerPathABName(string AssestPath,ref string content)
+		{
+			List<string> strDirs = PathUtil.GetAllPath(AssestPath);
+			foreach(var dir in strDirs)
+			{
+				if(false == PathUtil.IsDirectory(dir))
+					return;
+				string strABName = GetABName(dir);
+				if(null == strABName)
+					return;
+				if(content.Equals(string.Empty))
+					content = strABName;
+				else
+					content += "," + strABName;
+			}
+		}
+
+
 
 		//文件分包
 		private void SetPerFileOnePack(string AssestPath)
@@ -190,13 +241,30 @@ namespace VEFramework
 			}
 		}
 
+		private void GetPerFileABName(string AssestPath,ref string content)
+		{
+			List<string> strFiles = PathUtil.GetAllFiles(AssestPath);
+			foreach(var file in strFiles)
+			{
+				if(false == PathUtil.IsFileExists(file))
+					return;
+				string strABName = GetABName(file);
+				if(null == strABName)
+					return ;
+				if(content.Equals(string.Empty))
+					content = strABName;
+				else
+					content += "," + strABName;
+			}
+		}
+
 
 		private string GetABName(string strPath)
 		{
 			if(string.IsNullOrEmpty(strPath))
 				return null;
 			strPath = strPath.Replace("\\","/");
-			if(strPath.Contains("Resources"))
+			if(strPath.Contains(AssetCustomSetting.ResourceDir))
 				strPath = strPath.Replace(AssetCustomSetting.ResourceDir,"");
 			else
 				strPath = strPath.Replace(Application.dataPath + "/","");

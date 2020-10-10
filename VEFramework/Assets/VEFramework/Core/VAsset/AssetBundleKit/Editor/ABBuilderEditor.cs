@@ -134,6 +134,14 @@ namespace VEFramework.Editor
 		}
 
 
+		[MenuItem ("Assets/VAsset/CopyABNameBySelect")]
+		public static void CopyABNameBySelect()
+		{
+			GetABBuilder().CopyABNameBySelectList(GetSelectedPathList());;
+			AssetDatabase.Refresh();
+		}
+
+
 	#region General function
 		public static ABBuilder GetABBuilder()
 		{
