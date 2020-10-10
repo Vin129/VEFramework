@@ -128,7 +128,7 @@
 
 **~~6.VAssetKit 统筹管理：Asset、Resource、AssetBundle、WWW~~**
 
-**7.VAsset 完成 v0.1版本**
+**~~7.VAsset 完成 v0.1版本~~**
 
 **8.EasyLog模块**
 
@@ -140,4 +140,6 @@
 
 **12.AssetFinder**
 
-**13.UIKit (UICanvas)**
+**~~13.UIKit (UICanvas)~~**
+
+**14.BaseUI &  LuaKit**
