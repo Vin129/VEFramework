@@ -16,7 +16,7 @@
 
 
   - **VUI: UI层框架**
-    - **VUIKit: UI框架**
+    - **VUIKit: UI框架  【V0.1 最小可用UI模块】**
 
   - **VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**  
 
@@ -143,3 +143,4 @@
 **~~13.UIKit (UICanvas)~~**
 
 **14.BaseUI &  LuaKit**
+
