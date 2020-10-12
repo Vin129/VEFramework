@@ -92,8 +92,6 @@
 
 ## TimeLine
 
-### 8月
-
 - **AssetBundleKit 初步完成（基于相对路径的资源加载模式**
 - **AssetBundleKit 完成LazyRelease（I_DONT_CARE）模式**
 - **AssetBundleKit ABBuild模块初步构成**
@@ -102,13 +100,25 @@
 - **VAsset 设立对外总入口**
 - **NetAssetKit 完成 v0.1**
 
-### 9月
+
+
+***
+
+
 
 - **EasyLog模块**
 
-### 10月
+
+
+***
+
+
 
 - **VUI**
+
+
+
+***
 
 
 
@@ -143,4 +153,6 @@
 **~~13.UIKit (UICanvas)~~**
 
 **14.BaseUI &  LuaKit**
+
+**15.VAsset : Addressable Asset System**
 
