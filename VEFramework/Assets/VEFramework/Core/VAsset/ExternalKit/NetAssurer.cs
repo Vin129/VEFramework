@@ -171,7 +171,7 @@ namespace VEFramework
 				return;
 			if(mAssetType == typeof(AssetBundle))
 			{
-				mWBER = UnityWebRequest.GetAssetBundle(AssetPath);
+				mWBER = UnityWebRequestAssetBundle.GetAssetBundle(AssetPath);
 			}
             else if (mAssetType == typeof(AudioClip))
             {
