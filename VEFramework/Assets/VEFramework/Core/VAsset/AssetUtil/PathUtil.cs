@@ -61,14 +61,22 @@ namespace VEFramework
 			List<string> strFiles = new List<string>();
 			foreach(var dir in strDirs)
 			{
-				string[] kFiles = Directory.GetFiles(dir, "*.*");
-				foreach(var file in kFiles)
-				{
-					if(file.EndsWith(".meta"))
-						continue;
-					string filePath = file.Replace("\\","/");
-					strFiles.Add(filePath);
-				}
+                if(false == IsDirectory(dir) && IsFileExists(dir) && !dir.EndsWith(".meta"))
+                {
+                        string filePath = dir.Replace("\\","/");
+                        strFiles.Add(filePath);
+                }
+				else
+                {
+                    string[] kFiles = Directory.GetFiles(dir, "*.*");
+                    foreach(var file in kFiles)
+                    {
+                        if(file.EndsWith(".meta"))
+                            continue;
+                        string filePath = file.Replace("\\","/");
+                        strFiles.Add(filePath);
+                    }
+                }
 			}
 			return strFiles;
 		}
