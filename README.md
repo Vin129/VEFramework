@@ -120,6 +120,12 @@
 
 ***
 
+#  工作流 
+
+ **1.十月计划：VUI + LuaKit + VisualizeScript**
+
+
+
 
 
 
@@ -150,9 +156,9 @@
 
 **12.AssetFinder**
 
-**~~13.UIKit (UICanvas)~~**
+**~~13.UIKit (UICanvas) v0.1~~**
 
-**14.BaseUI &  LuaKit**
+**14.BaseUI &  LuaKit  & 可视化 Script**
 
-**15.VAsset : Addressable Asset System**
+**~~【Obsolete】15.VAsset : Addressable Asset System~~**
 
