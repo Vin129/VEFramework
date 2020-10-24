@@ -11,7 +11,7 @@ namespace  VEFramework
 	using UnityEditor;
 	using EGL = UnityEditor.EditorGUILayout;
 	using GL = UnityEngine.GUILayout;
-
+	using VEFramework.HotScriptKit;
 	public class QuickLuaViewer
 	{
 		private Action<string> debugger;
@@ -36,7 +36,7 @@ namespace  VEFramework
 			var luaName = filePath.Substring(filePath.LastIndexOf("/") + 1,filePath.Length - filePath.LastIndexOf("/") - 1).Replace(".lua","");
 			GL.BeginVertical("OL box");
 			GL.Label(luaName,EditorStyles.boldLabel);
-			if(mExecuteFunctionDirt.Count() < 1)
+			if(mExecuteFunctionDirt == null || mExecuteFunctionDirt.Count() < 1)
 			{
 				EGL.HelpBox("没有可以被执行的方法",MessageType.Warning);
 			}
@@ -105,14 +105,15 @@ namespace  VEFramework
 			}
 			if(mFocusLuaTab == null)
 			{
-				var resultString = Regex.Split(filePath,LuaConst.luaDir.Replace(Application.dataPath,"") + "/", RegexOptions.IgnoreCase);
+				var resultString = Regex.Split(filePath,ScriptBaseSetting.LuaGamePath.Replace(Application.dataPath,"") + "/", RegexOptions.IgnoreCase);
 				if(resultString.Length < 2)
 				{
 					var msg = "PathError: Not Found {0}/...";
-					Report(string.Format(msg,LuaConst.luaDir));
+					Report(string.Format(msg,ScriptBaseSetting.LuaGamePath));
 					return;
 				}
 				filePath = resultString[1];	
+				Debug.LogError(filePath);
 				LuaFunction func = mLuaState.GetFunction(CreateLuaFile);
 				if (null == func)
 				{

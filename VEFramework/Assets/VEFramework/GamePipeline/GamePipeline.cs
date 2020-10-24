@@ -24,17 +24,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 using VEFramework;
-
-public class GamePipeline : MonoBehaviour {
-	public GameObject Node;
-	public Image Img1;
-	public Image Img2;
-
-	private Assurer mAssurer;
+using VEFramework.HotScriptKit;
+public class GamePipeline : MonoBehaviour 
+{
 	private void Awake() 
 	{
 		//初始化VEManager
 		gameObject.AddComponent<VEManager>();
+		VLua.Instance.FakeInit();
+
 
 		// ResManager.Instance.LoadAsync<GameObject>("Prefabs/Test2/TestView2",(obj)=>{
 		// 	if(obj == null)
@@ -59,7 +57,7 @@ public class GamePipeline : MonoBehaviour {
 		// 	// var Obj2 = GameObject.Instantiate(obj);
 		// 	// Obj2.transform.parent = Node.transform;
 		// };
-		var url = "https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png";
+		// var url = "https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png";
 		// VAsset.Instance.DownloadAsset<Texture2D>(url,(Image)=>{
 		// 	if(Image == null)
 		// 		return;
@@ -75,7 +73,7 @@ public class GamePipeline : MonoBehaviour {
 		// 	Img1.sprite = Sprite.Create(Image,new Rect(0,0,Image.width,Image.height),Img1.rectTransform.pivot);
 		// },bSave:true,bLocalFirst:true);
 
-		VUIManager.Instance.Open("Prefabs/Test1/TestView1");
+		// VUIManager.Instance.Open("Prefabs/Test1/TestView1");
 
 		
 

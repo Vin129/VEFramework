@@ -27,7 +27,7 @@ namespace VEFramework
     using System.Collections.Generic;
     using System;
     using System.Collections;
-    using UnityEngine.AddressableAssets;
+    // using UnityEngine.AddressableAssets;
 
     public class AddressablesAssetManager : VAssetManager<AddressablesAssetManager>
 	{
@@ -42,7 +42,7 @@ namespace VEFramework
 		public override void Init()
 		{
             base.Init();
-            Addressables.LoadAssetAsync<GameObject>("Test");
+            // Addressables.LoadAssetAsync<GameObject>("Test");
 		}
     }
 }

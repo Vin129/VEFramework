@@ -1,4 +1,5 @@
-﻿/****************************************************************************
+﻿
+/****************************************************************************
  * Copyright (c) 2020 vin129
  *  
  * May the Force be with you :)
@@ -21,38 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  ****************************************************************************/
-
-namespace VEFramework
+namespace VEFramework.HotScriptKit  
 {
-	using UnityEngine;
-	public interface IManager
-	{
-		void Dispose();
-	}
-
-    public abstract class MonoManager : MonoBehaviour, IManager
+    using System;
+    using UnityEngine;
+    public class VLua : VEManagers<VLua>
     {
-        public abstract string ManagerName{get;}
-        public virtual void Init(){}
-        public virtual void FakeInit(){}
-
-        public virtual void Dispose(){}
-    }
-
-    public abstract class VEManagers<T> : MonoManager where T : MonoManager
-    {
-        private static T mInstance;
-        public static T Instance
+        public override string ManagerName
         {
             get
             {
-                if(mInstance == null)
-                {
-                    mInstance = VEManager.Instance.GetManagers<T>();
-                    mInstance.Init();
-                }
-                return mInstance;
+                return "VLua";
             }
+        }
+
+        private Action<float> LuaUpdateFunction;
+		public override void Init()
+		{
+            ToLuaManager.Instance.BindMonoUpdate(ref LuaUpdateFunction);
+		}
+
+        private void Update() 
+        {
+            if(LuaUpdateFunction != null)
+                LuaUpdateFunction.Invoke(Time.deltaTime);
         }
     }
 }
