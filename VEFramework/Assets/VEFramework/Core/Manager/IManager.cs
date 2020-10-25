@@ -34,6 +34,7 @@ namespace VEFramework
     {
         public abstract string ManagerName{get;}
         public virtual void Init(){}
+        public virtual void FakeInit(){}
 
         public virtual void Dispose(){}
     }
