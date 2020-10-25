@@ -1,5 +1,3 @@
-module("Command",package.seeall)
-
 local Controller = class("Controller")
 
 function Controller:ctor()

@@ -23,15 +23,18 @@
  ****************************************************************************/
 namespace VEFramework
 {
+	using System;
 	using UnityEngine;
     using System.Collections.Generic;
-    using System;
 
     public class VUIManager : VEManagers<VUIManager>
     {
 		private const string mVrootAssetPath = "VEFramework/Core/VUI/Resources/VRoot";
-		private Dictionary<string,IBaseUI> mUIOpenList;
-		private Dictionary<string,IBaseUI> mUIHideList;
+
+		private List<IBaseUI> mUIStack;
+
+		private VUIData mDefault_ViewData;
+		private VUIData mDefault_WindowData;
 
 		public static VRoot MainRoot;
 
@@ -45,8 +48,9 @@ namespace VEFramework
 
 		public override void Init()
 		{
-			mUIOpenList = new Dictionary<string, IBaseUI>();
-			mUIHideList = new Dictionary<string, IBaseUI>();
+			mUIStack = new List<IBaseUI>();
+			mDefault_ViewData = new VUIData(true,false);
+			mDefault_WindowData = new VUIData(false,true);
 			GameObject vroot = null;
 			var roottrs = transform.Find("VRoot");
 			if(roottrs == null)
@@ -64,7 +68,16 @@ namespace VEFramework
 
 
 	#region 对外方法
-		public IBaseUI Open(string AssestPath,bool bMonoBehaviour = false)
+		public IBaseUI OpenView(string AssestPath,bool bMonoBehaviour = false)
+		{
+			return Open(AssestPath,mDefault_ViewData,bMonoBehaviour);
+		}
+		public IBaseUI OpenWindow(string AssestPath,bool bMonoBehaviour = false)
+		{
+			return Open(AssestPath,mDefault_WindowData,bMonoBehaviour);
+		}
+
+		public IBaseUI Open(string AssestPath,IUIData UIData,bool bMonoBehaviour = false)
 		{
 			IBaseUI UI = CheckCache(AssestPath);
 			if(UI != null)
@@ -72,13 +85,24 @@ namespace VEFramework
 			UI = CreateUISync(AssestPath);
 			if(UI == null)
 				return UI;
-			UI.Init(AssestPath,bMonoBehaviour);
-			mUIOpenList.Add(AssestPath,UI);
+
+			Push(UI,UIData);
+			UI.Init(AssestPath,UIData,bMonoBehaviour);
 			UI.Show();
+
 			return UI;
 		}
 
-		public void OpenAsync(string AssestPath,Action<IBaseUI> finishCallback,bool bMonoBehaviour = false)
+		public void OpenViewAsync(string AssestPath,Action<IBaseUI> finishCallback,bool bMonoBehaviour = false)
+		{
+			OpenAsync(AssestPath,finishCallback,mDefault_ViewData,bMonoBehaviour);
+		}
+		public void OpenWindowAsync(string AssestPath,Action<IBaseUI> finishCallback,bool bMonoBehaviour = false)
+		{
+			OpenAsync(AssestPath,finishCallback,mDefault_WindowData,bMonoBehaviour);
+		}
+
+		public void OpenAsync(string AssestPath,Action<IBaseUI> finishCallback,IUIData UIData,bool bMonoBehaviour = false)
 		{
 			IBaseUI ui = CheckCache(AssestPath);
 			if(ui != null)
@@ -89,58 +113,54 @@ namespace VEFramework
 			CreateUIAsync(AssestPath,(UI)=>{
 				if(UI == null)
 					finishCallback.Invoke(null);
-				UI.Init(AssestPath,bMonoBehaviour);
-				mUIOpenList.Add(AssestPath,UI);
+
+				Push(UI,UIData);
+				UI.Init(AssestPath,UIData,bMonoBehaviour);
 				UI.Show();
+
 				finishCallback.Invoke(UI);
 			});
 		}
 
-		public bool Hide(string AssestPath)
+
+		public void Hide(IBaseUI UI)
 		{
-			if(mUIOpenList.ContainsKey(AssestPath))
-			{
-				var UI = mUIOpenList[AssestPath];
-				mUIOpenList.Remove(AssestPath);
-				mUIHideList.Add(AssestPath,UI);
-				UI.Hide();
-				return true;
-			}	
-			return false;
+			UI.Hide();
 		}
 
 		//TODO 资源清理逻辑
-		public bool Close(string AssestPath)
+		public bool Close(IBaseUI UI)
 		{
-			if(mUIOpenList.ContainsKey(AssestPath))
-			{
-				var UI = mUIOpenList[AssestPath];
-				mUIOpenList.Remove(AssestPath);
-				UI.Close();
-				return true;
-			}
-			if(mUIHideList.ContainsKey(AssestPath))
-			{
-				var UI = mUIHideList[AssestPath];
-				mUIHideList.Remove(AssestPath);
-				UI.Close();
-				return true;
-			}
-			return false;
+			var bPop = Pop(UI);
+			UI.Close();
+			return bPop;
 		}
 	#endregion
+		private void Push(IBaseUI UI,IUIData UIData)
+		{
+			if(UIData.InQueue)
+			{
+				if(mUIStack.Count > 0)
+					Hide(mUIStack[mUIStack.Count - 1]);
+				mUIStack.Add(UI);
+			}
+		}
+
+		private bool Pop(IBaseUI UI)
+		{
+			if(!UI.UIData.InQueue)
+				return false;
+			if(mUIStack.Count == 0 || !(mUIStack[mUIStack.Count - 1] == UI))
+				return false;
+			mUIStack.Remove(UI);	
+			if(mUIStack.Count > 0)
+				mUIStack[mUIStack.Count - 1].Show();
+			return true;
+		}
+
+
 		private IBaseUI CheckCache(string AssestPath)
 		{
-			if(mUIOpenList.ContainsKey(AssestPath))
-				return mUIOpenList[AssestPath];
-			if(mUIHideList.ContainsKey(AssestPath))
-			{
-				var UI = mUIHideList[AssestPath];
-				mUIHideList.Remove(AssestPath);
-				mUIOpenList.Add(AssestPath,UI);
-				UI.Show();
-				return UI;
-			}
 			return null;
 		}
 		private IBaseUI CreateUISync(string AssestPath)
@@ -170,6 +190,5 @@ namespace VEFramework
 				finishCallback.Invoke(UI);				
 			});
 		}
-
 	}
 }

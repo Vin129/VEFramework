@@ -29,35 +29,38 @@ namespace VEFramework
     {	
         protected List<string> mAssetPaths;
         protected string mName;
+        protected IUIData mUIData;
         protected bool bMonoBehaviour = false;   
-        public string Name
-        {
-            get
-            {
-                return mName;
-            }
-        }
+        public string Name { get{return mName;} }
+        public IUIData UIData { get{return mUIData;} }
 
-        public virtual void Init(string Name,bool bMonoBehaviour = false)
-        {
+        public virtual void Init(string Name,IUIData UIData,bool bMonoBehaviour = false)
+        { 
             mName = Name;
+            mUIData = UIData;
             this.bMonoBehaviour = bMonoBehaviour;
             mAssetPaths = new List<string>();
+            OnInit();
+        }
+
+        public virtual void OnInit()
+        {
+
         }
 
         public virtual void Show()
         {
-            
+            gameObject.SetActive(true);
         }
 
         public virtual void Hide()
         {
-           
+           gameObject.SetActive(false);
         }
 
         public virtual void Close()
         {
-            
+            GameObject.Destroy(gameObject);
         }
 
         protected virtual void Destroy()
@@ -122,6 +125,7 @@ namespace VEFramework
         {
             ExecuteBehaviour(ExecuteBehaviourType.OnDestroy);            
         }
+
         #endregion
     }
 }

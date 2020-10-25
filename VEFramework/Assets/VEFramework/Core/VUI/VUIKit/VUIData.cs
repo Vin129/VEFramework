@@ -23,14 +23,23 @@
  ****************************************************************************/
 namespace VEFramework
 {
-    public interface IBaseUI
-	{
-		string Name {get;}
-		IUIData UIData{get;}
-		void Init(string Name,IUIData UIData,bool bMonoBehaviour);
-		void OnInit();
-		void Show();
-		void Hide();
-		void Close();
-	}
+    public interface IUIData
+    {
+        bool InQueue{get;}
+        bool CreateNew{get;}
+    }
+    public class VUIData:IUIData
+    {
+        //被UI队列管理意味着自动的显影
+        private bool mInQueue;
+        private bool mCreateNew;
+        public bool InQueue { get{return mInQueue;} }
+        public bool CreateNew { get{return mCreateNew;} }
+        public VUIData(bool inQueue = true,bool createNew = true)
+        {
+            mInQueue = inQueue;
+            mCreateNew = createNew;
+        }
+    }
 }
+

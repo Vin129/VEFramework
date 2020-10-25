@@ -2,18 +2,21 @@ FRAMEWORK_INITED = false
 
 if not FRAMEWORK_INITED then
 	require ("Framework/Function")
-	-- require("Framework/Common/LuaExtension")
+	require ("Framework/Common/LuaExtension")
 	require ("Framework/Define")
 	require ("Framework/Utility")
-	require ("Framework/MsgDispatcher")
 	require ("Framework/FSM")	
 	require ("Framework/Common/TimerMgr")	
-	-- require ("Framework/Logic/Command/ICommand") -- 暂时先不处理消息
+	require ("Framework/Logic/Command/ICommand")
 	require ("Framework/LuaBehaviour")
 	require ("Framework/LuaDebug")
 
-	function Main() 
+	UIManager = require("Framework/Logic/UI/UIManager")
+	CommandManager = require("Framework/Logic/Command/CommandManager")
+	
 
+	function Main() 
+		log("Main")
 	end
 
 	--创建lua文件
@@ -28,16 +31,10 @@ if not FRAMEWORK_INITED then
 		if nil ~= TimerMgr then
 			TimerMgr:Update(DeltaTime);
 		end
+		CommandManager:Update()
 	end
-
-	-- function ReadLuaFile(luaFilePath)
-	-- 	log("ReadLuaFile:"..luaFilePath)
-	-- 	local luaTable = nil
-	-- 	luaTable = dofile(luaFilePath).new()
-	-- 	return luaTable
-	-- end
 
 	FRAMEWORK_INITED = true
 
-	log("Init Sucess")
+	Main()
 end 

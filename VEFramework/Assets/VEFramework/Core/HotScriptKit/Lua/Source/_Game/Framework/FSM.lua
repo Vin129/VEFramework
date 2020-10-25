@@ -1,7 +1,3 @@
---
--- Author: Your Name
--- Date: 2016-10-29 00:24:29
---
 --状态基类
 FSMState = class("FSMState");
 

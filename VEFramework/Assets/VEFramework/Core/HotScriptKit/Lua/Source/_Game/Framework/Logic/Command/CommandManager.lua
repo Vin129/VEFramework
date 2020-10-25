@@ -1,11 +1,8 @@
-module("Command",package.seeall)
-
 local CommandManager = class("CommandManager")
 
 function CommandManager:ctor()  
     self.mController = require("logic/Command/Controller")
     self.mPostCmdList = {}
-    self:RegisterCommand(CommandConst.CloseWindow,require("logic/Command/CloseWindowCommand"))
 end
 
 function CommandManager:RegisterCommand(cmdName,view)
