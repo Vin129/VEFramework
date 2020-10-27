@@ -19,16 +19,15 @@
     - **VUIKit: UI框架  【V0.1 最小可用UI模块】**
 
   - **VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**  
-
-    - **VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】**
-
-    - **ResourceKit : Resources资产模块  【V0.1  ResManager 】**
-
-    - **AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】**
-
-    - **NetAssetKit : 网络资产模块  【V0.1  NetAssetManager 】**
-
-    - **Rule：规则模块**
+- **VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】**
+    
+- **ResourceKit : Resources资产模块  【V0.1  ResManager 】**
+    
+- **AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】**
+    
+- **NetAssetKit : 网络资产模块  【V0.1  NetAssetManager 】**
+    
+- **Rule：规则模块**
 
 
 
@@ -56,29 +55,34 @@
 
   - **VUI: UI层框架**
 
-    - **VUIKit: UI框架**
-
+    - **VUIKit: UI框架 **
+      - **提供三种写UI的支持：纯C#、C#+lua、纯lua**
+      - **UI界面管理+层级控制+自定义层级支持 **
+      - **资源无忧释放**
+      - **VisualizeScript 脚本可视化**
     - **VUGUI: UGUI改良**
 
   -  **VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**  
 
     - **~~VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】~~**
-    
-    -  **~~ResourceKit : Resources资产模块  【V0.1  ResManager 】~~**
-    
-    -  **~~AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】~~**
-    
-    -  **~~NetAssetKit : 网络资产模块  【V0.1  NetAssetManager 】~~**
-    
+    - **~~ResourceKit : Resources资产模块  【V0.1  ResManager 】~~**
+    - **~~AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】~~**
+    - **~~NetAssetKit : 网络资产模块  【V0.1  NetAssetManager 】~~**
     - **~~Rule：规则模块~~**
-    
     - **AssetFinder：资产使用可视化** 
     
-      
-    
-      
-    
-      
+- **HotScriptKit**
+
+  
+- **LuaKit**
+  
+  - **~~ToLua~~**
+  
+  
+  
+  
+  
+  
 
 
 
@@ -100,21 +104,10 @@
 - **VAsset 设立对外总入口**
 - **NetAssetKit 完成 v0.1**
 
+- **EasyLog模块 v0.1**
 
-
-***
-
-
-
-- **EasyLog模块**
-
-
-
-***
-
-
-
-- **VUI**
+- **VUI v0.1**
+- **HotScript v0.1**
 
 
 
@@ -158,7 +151,9 @@
 
 **~~13.UIKit (UICanvas) v0.1~~**
 
-**14.BaseUI &  LuaKit  & 可视化 Script**
+**~~14.BaseUI &  LuaKit~~**
+
+**15.可视化 UIScript**
 
 **~~【Obsolete】15.VAsset : Addressable Asset System~~**
 
