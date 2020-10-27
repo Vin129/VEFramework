@@ -68,18 +68,26 @@ namespace VEFramework
 
 
 	#region 对外方法
+		//打开界面的方法
 		public IBaseUI OpenView(string AssestPath,bool bMonoBehaviour = false)
 		{
 			return Open(AssestPath,mDefault_ViewData,bMonoBehaviour);
 		}
+		//打开窗口的方法
 		public IBaseUI OpenWindow(string AssestPath,bool bMonoBehaviour = false)
 		{
 			return Open(AssestPath,mDefault_WindowData,bMonoBehaviour);
 		}
-
+		
+		/// <summary>
+        /// 通用打开方法
+        /// </summary>
+        /// <param name="AssestPath">资产路径</param>
+        /// <param name="UIData">UI数据</param>
+        /// <param name="bMonoBehaviour">UI是否开启生命周期</param>
 		public IBaseUI Open(string AssestPath,IUIData UIData,bool bMonoBehaviour = false)
 		{
-			IBaseUI UI = CheckCache(AssestPath);
+			IBaseUI UI = CheckCache(AssestPath,UIData);
 			if(UI != null)
 				return UI;
 			UI = CreateUISync(AssestPath);
@@ -104,7 +112,7 @@ namespace VEFramework
 
 		public void OpenAsync(string AssestPath,Action<IBaseUI> finishCallback,IUIData UIData,bool bMonoBehaviour = false)
 		{
-			IBaseUI ui = CheckCache(AssestPath);
+			IBaseUI ui = CheckCache(AssestPath,UIData);
 			if(ui != null)
 			{
 				finishCallback.Invoke(ui);
@@ -122,21 +130,30 @@ namespace VEFramework
 			});
 		}
 
-
 		public void Hide(IBaseUI UI)
 		{
 			UI.Hide();
 		}
 
-		//TODO 资源清理逻辑
 		public bool Close(IBaseUI UI)
 		{
 			var bPop = Pop(UI);
 			UI.Close();
+			UI.ClearAssest();
 			return bPop;
 		}
 	#endregion
 		private void Push(IBaseUI UI,IUIData UIData)
+		{
+			if(UIData.InQueue)
+			{
+				if(mUIStack.Count > 0)
+					Hide(mUIStack[mUIStack.Count - 1]);
+				mUIStack.Add(UI);
+			}
+		}
+
+		private void RePush(IBaseUI UI,IUIData UIData)
 		{
 			if(UIData.InQueue)
 			{
@@ -159,8 +176,19 @@ namespace VEFramework
 		}
 
 
-		private IBaseUI CheckCache(string AssestPath)
+		private IBaseUI CheckCache(string AssestPath,IUIData UIData)
 		{
+			if(UIData.InQueue && !UIData.CreateNew)
+			{
+				for(int i = 0;i<mUIStack.Count;i++)
+				{
+					if(mUIStack[i].Name.Equals(AssestPath))
+					{
+						mUIStack.Remove(mUIStack[i]);
+						return mUIStack[i];
+					}
+				}
+			}
 			return null;
 		}
 		private IBaseUI CreateUISync(string AssestPath)

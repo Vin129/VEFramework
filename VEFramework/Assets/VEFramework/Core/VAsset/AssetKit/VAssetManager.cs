@@ -67,11 +67,6 @@ namespace VEFramework
 			mAssurerList = new Dictionary<string, Assurer>();
 		}
 
-        public void DoInit()
-        {
-            
-        }
-
     #region  对外资源加载
         public virtual T LoadSync<T>(string AssetPath) where T : UnityEngine.Object
         {

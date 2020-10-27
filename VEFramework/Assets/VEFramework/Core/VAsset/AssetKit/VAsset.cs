@@ -25,9 +25,11 @@ namespace VEFramework
 {
     using System;
     using UnityEngine;
-
+	using System.Collections.Generic;
     public class VAsset : VEManagers<VAsset>
     {
+		private Dictionary<string,int> mUIAssurerMap;
+
         public override string ManagerName
         {
             get
@@ -38,9 +40,10 @@ namespace VEFramework
 
 		public override void Init()
 		{
+			mUIAssurerMap = new Dictionary<string, int>();
 			if(AppSetting.AssetBundleOpen)
-				ABManager.Instance.DoInit();
-			ResManager.Instance.DoInit();
+				ABManager.Instance.FakeInit();
+			ResManager.Instance.FakeInit();
 		}
 
 

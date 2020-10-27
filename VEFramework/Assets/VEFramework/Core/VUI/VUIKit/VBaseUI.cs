@@ -31,6 +31,11 @@ namespace VEFramework
         protected string mName;
         protected IUIData mUIData;
         protected bool bMonoBehaviour = false;   
+
+		/// <summary>
+        /// 资源释放开关,可自行控制
+        /// </summary>
+        protected bool bClearAsset = false;
         public string Name { get{return mName;} }
         public IUIData UIData { get{return mUIData;} }
 
@@ -61,6 +66,14 @@ namespace VEFramework
         public virtual void Close()
         {
             GameObject.Destroy(gameObject);
+        }
+
+        //TODO:资源加载
+        public virtual void ClearAssest()
+        {
+
+            if(!bClearAsset)
+                return;
         }
 
         protected virtual void Destroy()

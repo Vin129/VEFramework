@@ -32,5 +32,6 @@ namespace VEFramework
 		void Show();
 		void Hide();
 		void Close();
+		void ClearAssest();
 	}
 }
