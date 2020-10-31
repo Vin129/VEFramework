@@ -20,13 +20,13 @@
 
   - **VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**  
 - **VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】**
-    
+  
 - **ResourceKit : Resources资产模块  【V0.1  ResManager 】**
-    
+  
 - **AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】**
-    
+  
 - **NetAssetKit : 网络资产模块  【V0.1  NetAssetManager 】**
-    
+  
 - **Rule：规则模块**
 
 
@@ -73,7 +73,6 @@
     
 - **HotScriptKit**
 
-  
 - **LuaKit**
   
   - **~~ToLua~~**
@@ -117,7 +116,7 @@
 
  **1.十月计划：VUI + LuaKit + VisualizeScript**
 
-
+ **2.十一月计划：VUI  + 可视化 UIScript**
 
 
 
