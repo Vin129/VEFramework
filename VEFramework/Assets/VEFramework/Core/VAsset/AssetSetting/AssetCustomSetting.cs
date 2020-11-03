@@ -42,7 +42,7 @@ namespace VEFramework
 	public static class AssetCustomSetting
 	{
 		public static readonly float AssetKeepTime = 3f;
-		public static readonly AssetUnLoadModeType AssetUnLoadMode = AssetUnLoadModeType.I_DONT_CARE;
+		public static readonly AssetUnLoadModeType AssetUnLoadMode = AssetUnLoadModeType.BEGIN_AND_END;
 		public static readonly string ResourceDir = UnityEngine.Application.dataPath + "/Resources/";
 		public static readonly string AssetBundlerRuleAssetPath = UnityEngine.Application.dataPath + "/VEFramework/Core/VAsset/AssetRule/AssetBundleRules.asset";
 		public static readonly string ExternalAssetDir = PersistentABDir + "ExternalAsset/";

@@ -49,7 +49,8 @@ namespace VEFramework
 			}
 		}
 		public override event Action<Assurer> LoadFinishCallback;
-
+		public override event Action<Assurer> LoadSuccessCallback;
+		public override event Action<Assurer> LoadFailCallback;
 		private bool mBSave = false;
 		private Type mAssetType;
 		private byte[] mBytesAsset;
@@ -308,8 +309,6 @@ namespace VEFramework
 				LoadFinishCallback.Invoke(this);
 				LoadFinishCallback = null;
 			}
-			if(AutoRelease)
-				Release();
 		}
 		protected override void OnFail2Load()
 		{

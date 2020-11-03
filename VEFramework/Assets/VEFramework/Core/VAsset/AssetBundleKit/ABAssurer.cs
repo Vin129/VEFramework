@@ -46,6 +46,8 @@ namespace VEFramework
 		public string[] DependFileList;
 		public List<ABAssurer> DependAssurerList;
 		public override event Action<Assurer> LoadFinishCallback;
+		public override event Action<Assurer> LoadSuccessCallback;
+		public override event Action<Assurer> LoadFailCallback;
 		public override string AssetPath
 		{
 			get
@@ -317,8 +319,10 @@ namespace VEFramework
 				LoadFinishCallback.Invoke(this);
 				LoadFinishCallback = null;
 			}
-			if(AutoRelease)
-				Release();
+			if(LoadSuccessCallback != null)
+			{
+				LoadSuccessCallback.Invoke(this);
+			}
 		}
 		protected override void OnFail2Load()
 		{
@@ -329,7 +333,10 @@ namespace VEFramework
 				LoadFinishCallback.Invoke(null);
 				LoadFinishCallback = null;
 			}
-			ForceRecycle();
+			if(LoadFailCallback != null)
+			{
+				LoadFailCallback.Invoke(this);
+			}
 		}
 	}
 }

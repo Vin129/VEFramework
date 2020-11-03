@@ -61,7 +61,7 @@ namespace VEFramework
             }
         }
 
-        protected bool mAutoRelease = true;
+        protected bool mAutoRelease = AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE;
         public bool AutoRelease
         {
             get
@@ -98,6 +98,8 @@ namespace VEFramework
         }
 
         public virtual event Action<Assurer> LoadFinishCallback;
+        public virtual event Action<Assurer> LoadSuccessCallback;
+        public virtual event Action<Assurer> LoadFailCallback;
 
         public virtual float Progress
 		{

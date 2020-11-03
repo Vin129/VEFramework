@@ -47,6 +47,8 @@ namespace VEFramework
 			}
 		}
 		public override event Action<Assurer> LoadFinishCallback;
+		public override event Action<Assurer> LoadSuccessCallback;
+		public override event Action<Assurer> LoadFailCallback;
 		private UnityEngine.Object mAsset;
 		private ResourceRequest mRESR;
 
@@ -215,8 +217,6 @@ namespace VEFramework
 				LoadFinishCallback.Invoke(this);
 				LoadFinishCallback = null;
 			}
-			if(AutoRelease)
-				Release();
 		}
 		protected override void OnFail2Load()
 		{
