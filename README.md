@@ -156,5 +156,7 @@
 
 **16.参考AddressableAsset 引用计数升级VAsset**
 
+**17.VAsset升级，Assurer管理模块改造，更适合各种环境下合理使用。**
+
 **~~【Obsolete】15.VAsset : Addressable Asset System~~**
 
