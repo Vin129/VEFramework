@@ -149,6 +149,7 @@ namespace VEFramework
             LoadFinishCallback = null;
         }
         public virtual void Reuse(){}
+        public virtual void ForceRecycle(){}
         protected virtual void Become2Useless()
         {
             KeepTime = AssetCustomSetting.AssetKeepTime;
@@ -159,8 +160,6 @@ namespace VEFramework
 
 	public interface IAssurerContainer
 	{
-        event Action<Assurer> InitiativeRecycleAction;
-        event Action<Assurer> InitiativeReUseAction;
 		void RecycleAssurer(Assurer aber);
 		void ReUseAssurer(Assurer aber);
 	}

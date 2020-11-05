@@ -59,6 +59,12 @@ namespace VEFramework
 		{
 			UnityEngine.Debug.LogErrorFormat(message.ToString(),args);
 		}
+
+		public static void EColor(object message,string color,params object[] args)
+		{
+			UnityEngine.Debug.LogErrorFormat("<color=#{0}>{1}</color>",color,string.Format(message.ToString(),args));
+		}
+
 		# endregion
 
 

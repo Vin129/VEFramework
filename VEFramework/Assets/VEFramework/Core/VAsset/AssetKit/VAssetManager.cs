@@ -56,10 +56,7 @@ namespace VEFramework
         protected int mMaxCoroutineCount = 8; //最快协成大概在6到8之间
         protected LinkedList<IAsyncTask> mAsyncTaskStack;
 
-		private Dictionary<string,Assurer> mAssurerList;
-
-        public virtual event Action<Assurer> InitiativeRecycleAction;
-        public virtual event Action<Assurer> InitiativeReUseAction;
+		protected Dictionary<string,Assurer> mAssurerList;
 
         public override void Init()
 		{
@@ -119,6 +116,23 @@ namespace VEFramework
             StartCoroutine(task.DoLoadAsync(OnAsyncTaskFinish));
         }
 
+        public virtual void MarkAssurer(Assurer aber)
+        {
+            aber.LoadSuccessCallback += OnAssurerLoaded;
+            aber.LoadFailCallback += OnAssurerLoadedFail;
+        }
+
+        public virtual void OnAssurerLoaded(Assurer aber)
+		{
+            if(aber.AutoRelease)
+                aber.Release();
+		}
+        public virtual void OnAssurerLoadedFail(Assurer aber)
+		{
+            if(aber.AutoRelease)
+                aber.ForceRecycle();
+		}
+        
 
         public virtual bool RemoveAssurer(Assurer aber)
 		{
@@ -134,26 +148,12 @@ namespace VEFramework
 
         public virtual void RecycleAssurer(Assurer aber)
         {
-            if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE)
-            {
-                aber.RecycleSelf();
-            } 
-            else if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END)
-            {
-                InitiativeRecycleAction.Invoke(aber);
-            }
+            aber.RecycleSelf();
         }
 
         public virtual void ReUseAssurer(Assurer aber)
         {
-            if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE)
-            {
-                
-            } 
-            else if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END)
-            {
-                InitiativeReUseAction.Invoke(aber);
-            }
+
         }
     }
     #endregion

@@ -37,12 +37,9 @@ namespace VEFramework
                 return "NetAssetManager";
             }
         }
-
-		private Dictionary<string,NetAssurer> mNetAssurerList;
 		public override void Init()
 		{
             base.Init();
-			mNetAssurerList = new Dictionary<string, NetAssurer>();
 		}
 
 
@@ -86,16 +83,17 @@ namespace VEFramework
         private NetAssurer GetAssurer(string Url,Type AssetType,bool bUnloadTag = false,bool bSave = false,bool bLocalFirst = false)
         {
 			NetAssurer assurer = null;
-            if(mNetAssurerList.ContainsKey(Url))
+            if(mAssurerList.ContainsKey(Url))
             {
-                assurer = mNetAssurerList[Url];
+                assurer = mAssurerList[Url] as NetAssurer;
                 assurer.Init(Url,AssetType,bUnloadTag,bSave,bLocalFirst);
             }
             if(assurer == null)
             {
                 assurer = NetAssurer.EasyGet();
+                MarkAssurer(assurer);
                 assurer.Init(Url,AssetType,bUnloadTag,bSave,bLocalFirst);
-                mNetAssurerList.Add(assurer.AssetPath,assurer);
+                mAssurerList.Add(assurer.AssetPath,assurer);
             }
             assurer.Retain();
             Log.IColor("NetAssurer[AssetPath:{0}]",LogColor.Blue,assurer.AssetPath);

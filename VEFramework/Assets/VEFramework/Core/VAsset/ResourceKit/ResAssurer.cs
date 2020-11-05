@@ -166,13 +166,13 @@ namespace VEFramework
 		{
 			if(mUseCount > 0)
 			{
-				//TODO UnSafe Tip
+				Log.EColor("UnSaveRecycle:{0}[AssetPath:{1}]",LogColor.ErrorTipLv1,mUseCount,AssetPath);
 			}
 			ResManager.Instance.RemoveAssurer(this);
 			Rest();
 		}
 
-		public void ForceRecycle()
+		public override void ForceRecycle()
 		{
 			mUseCount = 0;
 			if(mLoadState == AssetLoadState.Wait4Recycle)
@@ -217,6 +217,10 @@ namespace VEFramework
 				LoadFinishCallback.Invoke(this);
 				LoadFinishCallback = null;
 			}
+			if(LoadSuccessCallback != null)
+			{
+				LoadSuccessCallback.Invoke(this);
+			}
 		}
 		protected override void OnFail2Load()
 		{
@@ -227,7 +231,10 @@ namespace VEFramework
 				LoadFinishCallback.Invoke(null);
 				LoadFinishCallback = null;
 			}
-			ForceRecycle();
+			if(LoadSuccessCallback != null)
+			{
+				LoadFailCallback.Invoke(this);
+			}
 		}
 	}
 

@@ -32,6 +32,7 @@ namespace VEFramework
 		public static readonly string Green = "008000";
 		public static readonly string Orange = "FFA500";
 		public static readonly string OrangeRed = "FF4500";
+		public static readonly string ErrorTipLv1 = "FFE600";
 	}
 
 }

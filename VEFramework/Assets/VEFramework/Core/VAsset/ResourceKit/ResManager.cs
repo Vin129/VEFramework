@@ -38,11 +38,9 @@ namespace VEFramework
             }
         }
 
-		private Dictionary<string,ResAssurer> mAssurerList;
 		public override void Init()
 		{
             base.Init();
-			mAssurerList = new Dictionary<string, ResAssurer>();
 		}
 
 
@@ -86,12 +84,13 @@ namespace VEFramework
 			ResAssurer assurer = null;
             if(mAssurerList.ContainsKey(AssetPath))
             {
-                assurer = mAssurerList[AssetPath];
+                assurer = mAssurerList[AssetPath] as ResAssurer;
                 assurer.Init(AssetPath,bUnloadTag);
             }
             if(assurer == null)
             {
                 assurer = ResAssurer.EasyGet();
+                MarkAssurer(assurer);
                 assurer.Init(AssetPath,bUnloadTag);
                 mAssurerList.Add(assurer.AssetPath,assurer);
             }

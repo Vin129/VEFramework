@@ -268,13 +268,13 @@ namespace VEFramework
 		{
 			if(mUseCount > 0)
 			{
-				//TODO UnSafe Tip
+				Log.EColor("UnSaveRecycle:{0}[AssetPath:{1},RealPath:{2},FileName:{3}]",LogColor.ErrorTipLv1,mUseCount,AssetPath,RealPath,FileName);
 			}
 			ABManager.Instance.RemoveAssurer(this);
 			Rest();
 		}
 
-		public void ForceRecycle()
+		public override void ForceRecycle()
 		{
 			mUseCount = 0;
 			if(mLoadState == AssetLoadState.Wait4Recycle)

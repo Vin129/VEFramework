@@ -42,13 +42,6 @@ namespace VEFramework
             }
         }
 
-
-        ///<summary>
-        ///BEGIN_AND_END模式下：可以注册自我回收机制
-        ///<summary>
-        public override event Action<Assurer> InitiativeRecycleAction;
-        public override event Action<Assurer> InitiativeReUseAction;
-
         ///<summary>
         /// Key:AssetPath 
         ///</summary>
@@ -242,6 +235,7 @@ namespace VEFramework
             if(assurer == null)
             {
                 assurer = ABAssurer.EasyGet();
+                MarkAssurer(assurer);
                 assurer.Init(ABAnlysis);
                 mAssurerList.Add(assurer.RealPath,assurer);
             }
@@ -333,26 +327,13 @@ namespace VEFramework
 
 
     #region  管理
-    
         public override void RecycleAssurer(Assurer aber)
         {
-            if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE)
-            {
-                WaitForRecycle(aber);
-            } 
-            else if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END)
-            {
-                InitiativeRecycleAction.Invoke(aber);
-            }
+            WaitForRecycle(aber);
         }
         public override void ReUseAssurer(Assurer aber)
         {
-            if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE)
-                 mWait4RecycleList.Remove(aber);
-            else if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END)
-            {
-                InitiativeReUseAction.Invoke(aber);
-            }
+            mWait4RecycleList.Remove(aber);
         }
 
         public void WaitForRecycle(Assurer aber)
@@ -362,8 +343,6 @@ namespace VEFramework
 
         IEnumerator RecycleUselessAssurer()
         {
-            if(AssetCustomSetting.AssetUnLoadMode != AssetUnLoadModeType.I_DONT_CARE)
-                yield break;
             while(true)
             {
                 mRecycleList.Clear();
@@ -375,7 +354,16 @@ namespace VEFramework
                             mRecycleList.Add(aber);
                         }
                         else
-                            aber.KeepTime -= Time.deltaTime;
+                        {
+                            if(AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE)
+                            {
+                                aber.KeepTime -= Time.deltaTime; 
+                            }
+                            else
+                            {
+                                mRecycleList.Add(aber);
+                            }
+                        }     
                     }
                 });
                 yield return null;
