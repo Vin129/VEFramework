@@ -158,5 +158,9 @@
 
 **17.VAsset升级，Assurer管理模块改造，更适合各种环境下合理使用。**
 
+
+
+**N.VSDK**
+
 **~~【Obsolete】15.VAsset : Addressable Asset System~~**
 
