@@ -42,6 +42,8 @@ namespace VEFramework
 		public string RealPath;
 		//AB文件
 		public string FileName;
+		//依赖加载
+		public bool DepLoad = false;
 		//依赖文件List
 		public string[] DependFileList;
 		public List<ABAssurer> DependAssurerList;
@@ -107,22 +109,29 @@ namespace VEFramework
 			analysis = null;
 		}
 
-		protected override void Rest()
+		public override void Release()
+        {
+			ABManager.Instance.ReleaseDepend(DependFileList);
+            base.Release();
+        }
+
+		protected override void Reset()
 		{
 			Log.IColor("[ABAssurer]{0}:RecycleSelf",LogColor.Green,AssetPath);
-			base.Rest();
+			base.Reset();
 			if(mABCR != null && !mABCR.isDone)
 			{
 				ErrorMessage = "AssetBundleCreateRequest has not Done";
 				OnFail2Load();
 			}
 			if(mAB != null)
-				mAB.Unload(UnloadTag);
+				ABManager.Instance.UnloadAsset(mAB,UnloadTag);
 			mBinary = null;
 			mAB = null;
 			mABCR = null;
 			RealPath = null;
 			FileName = null;
+			DepLoad = false;
 			DependFileList = null;
 			if(DependAssurerList != null)
 			{
@@ -150,7 +159,19 @@ namespace VEFramework
 					if(-1 != iIdx)
 						strVal = strVal.Substring(0,iIdx);
 					if(strVal == FileName)
-						return mAB.LoadAsset<T>(assetsNames[i]);
+					{
+						if(typeof(T) == typeof(GameObject) )
+						{
+							var kObj = GameObject.Instantiate(mAB.LoadAsset<T>(assetsNames[i]));
+							if(kObj != null)
+								kObj.name = kObj.name.Replace("(Clone)","");
+							return kObj;
+						}
+						else
+						{
+							return mAB.LoadAsset<T>(assetsNames[i]);
+						}		
+					}		
 				}
         	}
 			Log.E("No Get:{0}",FileName);
@@ -271,7 +292,7 @@ namespace VEFramework
 				Log.EColor("UnSaveRecycle:{0}[AssetPath:{1},RealPath:{2},FileName:{3}]",LogColor.ErrorTipLv1,mUseCount,AssetPath,RealPath,FileName);
 			}
 			ABManager.Instance.RemoveAssurer(this);
-			Rest();
+			Reset();
 		}
 
 		public override void ForceRecycle()
@@ -310,6 +331,7 @@ namespace VEFramework
 			mLoadState = AssetLoadState.Wait4Recycle;
 			ABManager.Instance.WaitForRecycle(this);
 		}
+		
 		protected override void OnSuccess2Load()
 		{
 			Log.I("OnSuccess2Load:{0}",AssetPath);

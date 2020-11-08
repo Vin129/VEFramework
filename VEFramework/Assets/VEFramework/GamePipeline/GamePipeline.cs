@@ -32,7 +32,7 @@ public class GamePipeline : MonoBehaviour
 		//初始化VEManager
 		gameObject.AddComponent<VEManager>();
 		VLua.Instance.FakeInit();
-
+		VUIManager.Instance.OpenViewAsync("Prefabs/Test1/TestView1");
 
 		// ResManager.Instance.LoadAsync<GameObject>("Prefabs/Test2/TestView2",(obj)=>{
 		// 	if(obj == null)
@@ -73,7 +73,6 @@ public class GamePipeline : MonoBehaviour
 		// 	Img1.sprite = Sprite.Create(Image,new Rect(0,0,Image.width,Image.height),Img1.rectTransform.pivot);
 		// },bSave:true,bLocalFirst:true);
 
-		// VUIManager.Instance.Open("Prefabs/Test1/TestView1");
 
 		
 

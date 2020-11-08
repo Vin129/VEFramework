@@ -26,7 +26,7 @@ namespace VEFramework
 	///<summary>
 	///资源释放模式
 	///I_DONT_CARE:I dont care 模式,由VE代管资源释放（延迟释放策略），使用延迟释放策略但不会释放内存中的资源
-	///BEGIN_AND_END: Begin and End 模式，有始有终，资源释放完全取决于你
+	///BEGIN_AND_END: Begin and End 模式，有始有终，资源严格计数并释放
 	///</summary>
 	public enum AssetUnLoadModeType
 	{

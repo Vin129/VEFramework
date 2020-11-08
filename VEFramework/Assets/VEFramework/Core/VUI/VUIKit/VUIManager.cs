@@ -90,44 +90,49 @@ namespace VEFramework
 			IBaseUI UI = CheckCache(AssestPath,UIData);
 			if(UI != null)
 				return UI;
-			UI = CreateUISync(AssestPath);
+			IAssurerLoader loader = VLoader.EasyGet();
+			UI = CreateUISync(AssestPath,ref loader);
 			if(UI == null)
 				return UI;
 
 			Push(UI,UIData);
-			UI.Init(AssestPath,UIData,bMonoBehaviour);
+			UI.Init(AssestPath,UIData,loader,bMonoBehaviour);
 			UI.Show();
 
 			return UI;
 		}
 
-		public void OpenViewAsync(string AssestPath,Action<IBaseUI> finishCallback,bool bMonoBehaviour = false)
+		public void OpenViewAsync(string AssestPath,Action<IBaseUI> finishCallback = null,bool bMonoBehaviour = false)
 		{
-			OpenAsync(AssestPath,finishCallback,mDefault_ViewData,bMonoBehaviour);
+			OpenAsync(AssestPath,mDefault_ViewData,finishCallback,bMonoBehaviour);
 		}
-		public void OpenWindowAsync(string AssestPath,Action<IBaseUI> finishCallback,bool bMonoBehaviour = false)
+		public void OpenWindowAsync(string AssestPath,Action<IBaseUI> finishCallback = null,bool bMonoBehaviour = false)
 		{
-			OpenAsync(AssestPath,finishCallback,mDefault_WindowData,bMonoBehaviour);
+			OpenAsync(AssestPath,mDefault_WindowData,finishCallback,bMonoBehaviour);
 		}
 
-		public void OpenAsync(string AssestPath,Action<IBaseUI> finishCallback,IUIData UIData,bool bMonoBehaviour = false)
+		public void OpenAsync(string AssestPath,IUIData UIData,Action<IBaseUI> finishCallback = null,bool bMonoBehaviour = false)
 		{
 			IBaseUI ui = CheckCache(AssestPath,UIData);
 			if(ui != null)
 			{
-				finishCallback.Invoke(ui);
+				if(finishCallback != null)
+					finishCallback.Invoke(ui);
 				return;
 			}
+			IAssurerLoader loader = VLoader.EasyGet();
 			CreateUIAsync(AssestPath,(UI)=>{
-				if(UI == null)
+				if(UI == null && finishCallback != null)
+				{
 					finishCallback.Invoke(null);
-
+					return;
+				}
 				Push(UI,UIData);
-				UI.Init(AssestPath,UIData,bMonoBehaviour);
+				UI.Init(AssestPath,UIData,loader,bMonoBehaviour);
 				UI.Show();
-
-				finishCallback.Invoke(UI);
-			});
+				if(finishCallback != null)
+					finishCallback.Invoke(UI);
+			},ref loader);
 		}
 
 		public void Hide(IBaseUI UI)
@@ -191,30 +196,30 @@ namespace VEFramework
 			}
 			return null;
 		}
-		private IBaseUI CreateUISync(string AssestPath)
+		private IBaseUI CreateUISync(string AssestPath,ref IAssurerLoader Loader)
 		{
-			var gameobject = VAsset.Instance.LoadSync<GameObject>(AssestPath);
-			if(gameobject == null)
+			var obj = Loader.LoadSync<GameObject>(AssestPath);
+			if(obj == null)
 				return null;
-			gameobject.transform.SetParent(MainRoot.UIAttach,false);
-			var	UI = gameObject.GetComponent<IBaseUI>();
+			obj.transform.SetParent(MainRoot.UIAttach,false);
+			var	UI = obj.GetComponent<IBaseUI>();
 			if(UI == null)
-				UI = gameObject.AddComponent<VBaseUI>();
+				UI = obj.AddComponent<VBaseUI>();
 			return UI;
 		}
 
-		private void CreateUIAsync(string AssestPath,Action<IBaseUI> finishCallback)
+		private void CreateUIAsync(string AssestPath,Action<IBaseUI> finishCallback,ref IAssurerLoader Loader)
 		{
-			VAsset.Instance.LoadAsync<GameObject>(AssestPath,(gameobject)=>{
-				if(gameobject == null)
+			Loader.LoadAsync<GameObject>(AssestPath,(obj)=>{
+				if(obj == null)
 				{
 					finishCallback.Invoke(null);
 					return;
 				}
-				gameobject.transform.SetParent(MainRoot.UIAttach,false);
-				var	UI = gameObject.GetComponent<IBaseUI>();
+				obj.transform.SetParent(MainRoot.UIAttach,false);
+				var	UI = obj.GetComponent<IBaseUI>();
 				if(UI == null)
-					UI = gameObject.AddComponent<VBaseUI>();
+					UI = obj.AddComponent<VBaseUI>();
 				finishCallback.Invoke(UI);				
 			});
 		}

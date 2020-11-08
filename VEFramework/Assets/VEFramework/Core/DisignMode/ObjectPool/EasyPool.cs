@@ -67,6 +67,10 @@ namespace VEFramework
 
 	public static class EasyPoolExtension
 	{
+		public static void RecycleSelf(this VLoader loader)
+        {
+            EasyPool<VLoader>.Instance.Recycle(loader);
+        }
 		public static void RecycleSelf(this Assurer aber)
         {
             EasyPool<Assurer>.Instance.Recycle(aber);

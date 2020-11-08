@@ -91,10 +91,10 @@ namespace VEFramework
 			UnloadTag = bUnloadTag;
 		}
 
-		protected override void Rest()
+		protected override void Reset()
 		{
 			Log.IColor("[NetAssurer]{0}:RecycleSelf",LogColor.Blue,AssetPath);
-			base.Rest();
+			base.Reset();
 			if(mWBER != null && !mWBER.isDone)
 			{
 				ErrorMessage = "UnityWebRequest has not Done";
@@ -261,7 +261,7 @@ namespace VEFramework
 				Log.EColor("UnSaveRecycle:{0}[AssetPath:{1}]",LogColor.ErrorTipLv1,mUseCount,AssetPath);
 			}
 			NetAssetManager.Instance.RemoveAssurer(this);
-			Rest();
+			Reset();
 		}
 
 		public override void ForceRecycle()

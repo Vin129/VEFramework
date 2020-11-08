@@ -79,7 +79,7 @@ namespace VEFramework
     #endregion
 
     #region 核心
-        private ResAssurer GetAssurer(string AssetPath,bool bUnloadTag = false)
+        private ResAssurer GetAssurer(string AssetPath,bool bUnloadTag)
         {
 			ResAssurer assurer = null;
             if(mAssurerList.ContainsKey(AssetPath))
@@ -103,7 +103,7 @@ namespace VEFramework
  	#region Sync Load
         protected ResAssurer LoadSync(string AssetPath)
         {
-			var assurer = GetAssurer(AssetPath);
+			var assurer = GetAssurer(AssetPath,DefaultUnLoadTag);
 			assurer.LoadSync();
             return assurer;
         }
@@ -123,7 +123,7 @@ namespace VEFramework
         }
 		protected ResAssurer LoadAsync(string AssetPath,Action<Assurer> finishCallback = null)
         {
-			var assurer = GetAssurer(AssetPath);
+			var assurer = GetAssurer(AssetPath,DefaultUnLoadTag);
             if(finishCallback != null)
                 assurer.LoadFinishCallback += finishCallback;
             assurer.LoadAsync();

@@ -52,6 +52,14 @@ namespace VEFramework
                 return "VAssetManager";
             }
         }
+        public bool DefaultUnLoadTag
+        {
+            get
+            {
+                return AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END;
+            }
+        }
+
 		protected int mCurrentCoroutineCount = 0;
         protected int mMaxCoroutineCount = 8; //最快协成大概在6到8之间
         protected LinkedList<IAsyncTask> mAsyncTaskStack;
@@ -116,42 +124,41 @@ namespace VEFramework
             StartCoroutine(task.DoLoadAsync(OnAsyncTaskFinish));
         }
 
-        public virtual void MarkAssurer(Assurer aber)
+        public virtual void MarkAssurer(Assurer assurer)
         {
-            aber.LoadSuccessCallback += OnAssurerLoaded;
-            aber.LoadFailCallback += OnAssurerLoadedFail;
+            assurer.LoadSuccessCallback += OnAssurerLoaded;
+            assurer.LoadFailCallback += OnAssurerLoadedFail;
         }
 
-        public virtual void OnAssurerLoaded(Assurer aber)
+        public virtual void OnAssurerLoaded(Assurer assurer)
 		{
-            if(aber.AutoRelease)
-                aber.Release();
+            if(assurer.AutoRelease)
+                assurer.Release();
 		}
-        public virtual void OnAssurerLoadedFail(Assurer aber)
+        public virtual void OnAssurerLoadedFail(Assurer assurer)
 		{
-            if(aber.AutoRelease)
-                aber.ForceRecycle();
+            if(assurer.AutoRelease)
+                assurer.ForceRecycle();
 		}
-        
 
-        public virtual bool RemoveAssurer(Assurer aber)
+        public virtual bool RemoveAssurer(Assurer assurer)
 		{
-            if(aber == null || aber.AssetPath.IsEmptyOrNull())
+            if(assurer == null || assurer.AssetPath.IsEmptyOrNull())
                 return false;
-			if(mAssurerList.ContainsKey(aber.AssetPath))
+			if(mAssurerList.ContainsKey(assurer.AssetPath))
 			{
-				mAssurerList.Remove(aber.AssetPath);
+				mAssurerList.Remove(assurer.AssetPath);
 				return true;
 			}
 			return true;	
 		}
 
-        public virtual void RecycleAssurer(Assurer aber)
+        public virtual void RecycleAssurer(Assurer assurer)
         {
-            aber.RecycleSelf();
+            assurer.RecycleSelf();
         }
 
-        public virtual void ReUseAssurer(Assurer aber)
+        public virtual void ReUseAssurer(Assurer assurer)
         {
 
         }

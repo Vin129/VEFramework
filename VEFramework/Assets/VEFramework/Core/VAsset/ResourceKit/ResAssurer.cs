@@ -68,10 +68,10 @@ namespace VEFramework
 			UnloadTag = bUnloadTag;
 		}
 
-		protected override void Rest()
+		protected override void Reset()
 		{
 			Log.IColor("[ResAssurer]{0}:RecycleSelf",LogColor.Orange,AssetPath);
-			base.Rest();
+			base.Reset();
 			if(mRESR != null && !mRESR.isDone)
 			{
 				ErrorMessage = "ResourceRequest has not Done";
@@ -87,7 +87,20 @@ namespace VEFramework
 		public override T Get<T>()
 		{
 			if(mAsset != null)
-				return mAsset as T;
+			{
+				if(typeof(T) == typeof(GameObject) )
+				{
+					var kObj = GameObject.Instantiate(mAsset as T);
+					if(kObj != null)
+						kObj.name = kObj.name.Replace("(Clone)","");
+					return kObj;
+				}
+				else
+				{
+					return mAsset as T;
+				}	
+			}
+
 			Log.E("Asset Not Exist:{0}",AssetPath);
 			return null;
 		}
@@ -169,7 +182,7 @@ namespace VEFramework
 				Log.EColor("UnSaveRecycle:{0}[AssetPath:{1}]",LogColor.ErrorTipLv1,mUseCount,AssetPath);
 			}
 			ResManager.Instance.RemoveAssurer(this);
-			Rest();
+			Reset();
 		}
 
 		public override void ForceRecycle()

@@ -1,7 +1,7 @@
 local CommandManager = class("CommandManager")
 
 function CommandManager:ctor()  
-    self.mController = require("logic/Command/Controller")
+    self.mController = require("Framework/Logic/Command/Controller")
     self.mPostCmdList = {}
 end
 

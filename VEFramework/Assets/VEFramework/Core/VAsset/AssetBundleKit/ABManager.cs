@@ -53,7 +53,7 @@ namespace VEFramework
         ///<summary>
         /// Key:RealPath  
         ///</summary>
-		private Dictionary<string,ABAssurer> mAssurerList;
+		private new Dictionary<string,ABAssurer> mAssurerList;
         private List<Assurer> mWait4RecycleList;
         private List<Assurer> mRecycleList;
         private AssetBundleManifest mManifest;
@@ -75,7 +75,7 @@ namespace VEFramework
             var ManifestPath = AssetCustomSetting.ABManifestFileName;
             if(ManifestPath.IsEmptyOrNull())
                 ManifestPath = "StreamingAssets";
-            var assurer = GetAssurer(ManifestPath,false);
+            var assurer = GetAssurer(ManifestPath,false,false);
             assurer.FileName = "AssetBundleManifest";            
             mManifest = assurer.LoadSync<AssetBundleManifest>();
         }
@@ -86,7 +86,7 @@ namespace VEFramework
         {
             var assurer = LoadSync(AssetPath);
             if(assurer != null)
-                assurer.AutoRelease = false;
+                assurer.AutoRelease = !DefaultUnLoadTag;
             return assurer;
         }
 
@@ -94,26 +94,35 @@ namespace VEFramework
         {
             var assurer = LoadAsync(AssetPath,null,false);
             if(assurer != null)
-                assurer.AutoRelease = false;
+                assurer.AutoRelease = !DefaultUnLoadTag;
             return assurer;
         }
-        
+
         public ABAssurer GetAssurerAsync<T>(string AssetPath,Action<T> finishCallback = null) where T:UnityEngine.Object
         {
             var assurer = LoadAsync(AssetPath,(ar)=>{GetResOnFinish<T>(ar as ABAssurer,finishCallback);},false);
             if(assurer != null)
-                assurer.AutoRelease = false;
+                assurer.AutoRelease = !DefaultUnLoadTag;
             return assurer;
         }
 
+        ///<param name="AssetPath">资产加载外部路径</param>
+        ///<summary>
+        /// 同步资产加载
+        ///</summary>
         public override T LoadSync<T>(string AssetPath)
         {
             return LoadSync<T>(AssetPath,false);
         }
 
-        public override void LoadAsync<T>(string AssetPath,Action<T> finishCallback = null)
+        ///<param name="AssetPath">资产加载外部路径</param>
+        ///<param name="FinishCallback">资产加载回调</param>
+        ///<summary>
+        /// 异步资产加载
+        ///</summary>
+        public override void LoadAsync<T>(string AssetPath,Action<T> FinishCallback = null)
         {
-            LoadAsync(AssetPath,(assurer)=>{GetResOnFinish<T>(assurer as ABAssurer,finishCallback);},false);
+            LoadAsync(AssetPath,(assurer)=>{GetResOnFinish<T>(assurer as ABAssurer,FinishCallback);},false);
         }
     #endregion
 
@@ -212,9 +221,9 @@ namespace VEFramework
         ///<param name="bPostfix">资产文件是否存在后缀</param>
         ///<param name="bUnloadTag">资产释放模式</param>
         ///<summary>
-        /// ABAssurer 唯一获取方式 目前对外开放存在风险 TODO解除风险
+        /// ABAssurer 唯一获取方式
         ///</summary>
-        private ABAssurer GetAssurer(string AssetPath,bool bPostfix = true,bool bUnloadTag = false)
+        private ABAssurer GetAssurer(string AssetPath,bool bPostfix,bool bUnloadTag)
         {
             string realPath;
             bool isContains = false;
@@ -261,7 +270,7 @@ namespace VEFramework
         }
         protected ABAssurer LoadSync(string AssetPath,bool bDepLoad)
         {
-            var assurer = GetAssurer(AssetPath);
+            var assurer = GetAssurer(AssetPath,true,DefaultUnLoadTag);
             if(bDepLoad == false)
                 LoadDependenciesSync(GetAssetBundleName(assurer.RealPath),ref assurer.DependFileList);
             assurer.LoadSync();
@@ -300,7 +309,7 @@ namespace VEFramework
         }
         protected ABAssurer LoadAsync(string AssetPath,Action<Assurer> finishCallback,bool bDepLoad)
         {
-            var assurer = GetAssurer(AssetPath);
+            var assurer = GetAssurer(AssetPath,true,DefaultUnLoadTag);
             if(bDepLoad == false)
                 LoadDependenciesAsync(GetAssetBundleName(assurer.RealPath),ref assurer.DependFileList,ref assurer.DependAssurerList);
             if(finishCallback != null)
@@ -327,6 +336,24 @@ namespace VEFramework
 
 
     #region  管理
+        public override void OnAssurerLoaded(Assurer assurer)
+		{
+            var aber = assurer as ABAssurer;
+            if(aber == null)
+                return;
+            if(aber.AutoRelease && !aber.UnloadTag)
+                aber.Release();
+		}
+        public override void OnAssurerLoadedFail(Assurer assurer)
+		{
+            var aber = assurer as ABAssurer;
+            if(aber == null)
+                return;
+            if(aber.AutoRelease)
+                aber.ForceRecycle();
+		}
+
+
         public override void RecycleAssurer(Assurer aber)
         {
             WaitForRecycle(aber);
@@ -375,6 +402,16 @@ namespace VEFramework
             }
         }
 
+        public void UnloadAsset(AssetBundle ab,bool tag)
+        {
+            if(!tag)
+                ab.Unload(tag);
+            else
+            {
+
+            }
+        }
+
         public bool RemoveAssurer(ABAssurer aber)
 		{
             if(aber == null || aber.RealPath.IsEmptyOrNull())
@@ -386,6 +423,18 @@ namespace VEFramework
 			}
 			return true;	
 		}
+
+        public void ReleaseDepend(string[] depList)
+        {
+            if(depList == null || depList.Length ==0)
+                return;
+            depList.ForEach(key =>{
+                if(mAssurerList.ContainsKey(key))
+                {
+                   mAssurerList[key].Release();
+                }
+            });
+        }
 	}
     #endregion
 }

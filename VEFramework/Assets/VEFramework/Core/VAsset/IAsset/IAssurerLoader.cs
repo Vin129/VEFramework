@@ -23,16 +23,11 @@
  ****************************************************************************/
 namespace VEFramework
 {
-    public interface IBaseUI
-	{
-		string Name {get;}
-		IUIData UIData{get;}
-		IAssurerLoader Loader{get;}
-		void Init(string Name,IUIData UIData,IAssurerLoader loader,bool bMonoBehaviour);
-		void OnInit();
-		void Show();
-		void Hide();
-		void Close();
-		void ClearAssest();
-	}
+    using System;
+    public interface IAssurerLoader
+    {
+        T LoadSync<T>(string AssetPath) where T:UnityEngine.Object ;
+        void LoadAsync<T>(string AssetPath,Action<T> FinishCallback = null) where T:UnityEngine.Object;
+        void Release(bool mode);
+    }
 }

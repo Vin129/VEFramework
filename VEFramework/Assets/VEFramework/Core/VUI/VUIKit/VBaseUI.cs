@@ -30,19 +30,23 @@ namespace VEFramework
         protected List<string> mAssetPaths;
         protected string mName;
         protected IUIData mUIData;
+        protected IAssurerLoader mLoader;
         protected bool bMonoBehaviour = false;   
 
 		/// <summary>
-        /// 资源释放开关,可自行控制
+        /// 资源深度释放
         /// </summary>
-        protected bool bClearAsset = false;
+        protected bool bClearAsset = true;
         public string Name { get{return mName;} }
         public IUIData UIData { get{return mUIData;} }
 
-        public virtual void Init(string Name,IUIData UIData,bool bMonoBehaviour = false)
+        public IAssurerLoader Loader { get{return mLoader;} }
+
+        public virtual void Init(string Name,IUIData UIData,IAssurerLoader loader,bool bMonoBehaviour = false)
         { 
             mName = Name;
             mUIData = UIData;
+            mLoader = loader;
             this.bMonoBehaviour = bMonoBehaviour;
             mAssetPaths = new List<string>();
             OnInit();
@@ -63,17 +67,19 @@ namespace VEFramework
            gameObject.SetActive(false);
         }
 
+        public virtual void CloseSelf()
+        {
+            VUIManager.Instance.Close(this);
+        }
+
         public virtual void Close()
         {
             GameObject.Destroy(gameObject);
         }
 
-        //TODO:资源加载
         public virtual void ClearAssest()
         {
-
-            if(!bClearAsset)
-                return;
+            Loader.Release(bClearAsset);
         }
 
         protected virtual void Destroy()

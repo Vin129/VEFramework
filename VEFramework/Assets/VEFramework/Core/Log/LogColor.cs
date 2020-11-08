@@ -29,7 +29,7 @@ namespace VEFramework
 	public static class LogColor
 	{
 		public static readonly string Blue = "4169E1";
-		public static readonly string Green = "008000";
+		public static readonly string Green = "81FF00";
 		public static readonly string Orange = "FFA500";
 		public static readonly string OrangeRed = "FF4500";
 		public static readonly string ErrorTipLv1 = "FFE600";

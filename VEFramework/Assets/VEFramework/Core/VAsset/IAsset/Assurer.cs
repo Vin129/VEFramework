@@ -61,7 +61,7 @@ namespace VEFramework
             }
         }
 
-        protected bool mAutoRelease = AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.I_DONT_CARE;
+        protected bool mAutoRelease = true;
         public bool AutoRelease
         {
             get
@@ -130,16 +130,12 @@ namespace VEFramework
             if(mUseCount <= 0)
                 Become2Useless();
         }
-		public virtual void Reset()
-        {
-            mUseCount = 0;
-        }
 
         public virtual void Recycle()
         {
 
         }
-        protected virtual void Rest()
+        protected virtual void Reset()
         {
             mAssetPath = null;
 			mUseCount = 0;
@@ -147,6 +143,8 @@ namespace VEFramework
             mLoadState = AssetLoadState.None;
             mErrorMessage = string.Empty;
             LoadFinishCallback = null;
+            LoadSuccessCallback = null;
+            LoadFailCallback = null;
         }
         public virtual void Reuse(){}
         public virtual void ForceRecycle(){}
