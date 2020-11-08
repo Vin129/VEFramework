@@ -58,7 +58,7 @@
     - **VUIKit: UI框架 **
       - **提供三种写UI的支持：纯C#、C#+lua、纯lua**
       - **UI界面管理+层级控制+自定义层级支持 **
-      - **资源无忧释放**
+      - **VLoader：资源无忧释放**
       - **VisualizeScript 脚本可视化**
     - **VUGUI: UGUI改良**
 
@@ -124,41 +124,41 @@
 
 ## TODO
 
-**~~1.AssetBundleKit 释放Assurer机制~~**
+**~~AssetBundleKit 释放Assurer机制~~**
 
-**~~2.AssetBundleKit 制作对应的ABBuild工具~~**
+**~~AssetBundleKit 制作对应的ABBuild工具~~**
 
-**~~3.AssetBundleKit Editor工具模块~~**
+**~~AssetBundleKit Editor工具模块~~**
 
-**~~4.ABAssurer 释放存在风险，设计一套安全的方式~~**
+**~~ABAssurer 释放存在风险，设计一套安全的方式~~**
 
-**~~5.VAsset 完善Resources部分与AssetLoad部分~~**
+**~~VAsset 完善Resources部分与AssetLoad部分~~**
 
-**~~6.VAssetKit 统筹管理：Asset、Resource、AssetBundle、WWW~~**
+**~~VAssetKit 统筹管理：Asset、Resource、AssetBundle、WWW~~**
 
-**~~7.VAsset 完成 v0.1版本~~**
+**~~VAsset 完成 v0.1版本~~**
 
-**8.EasyLog模块**
+**~~UIKit  (UICanvas) v0.1~~**
 
-**9.尝试IOC设计**
+**~~BaseUI &  LuaKit~~**
 
-**10.EasyNet模块整理**
+**~~VAsset升级，Assurer管理模块改造，更适合各种环境下合理使用。~~**
 
-**11. VAssetEditor模块**
+**VAsset:梳理 释放模式**
 
-**12.AssetFinder**
+**VAssetEditor模块：Assurer 可视化窗口**
 
-**~~13.UIKit (UICanvas) v0.1~~**
+**VAssetEditor模块：AssetFinder**
 
-**~~14.BaseUI &  LuaKit~~**
+**EasyLog模块**
 
-**15.可视化 UIScript**
+**尝试IOC设计**
 
-**16.参考AddressableAsset 引用计数升级VAsset**
+**EasyNet模块整理**
 
-**17.VAsset升级，Assurer管理模块改造，更适合各种环境下合理使用。**
+**可视化 UIScript**
 
-**18.Assurer 可视化窗口**
+
 
 
 
