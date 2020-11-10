@@ -69,18 +69,20 @@
     - **~~AssestBundleKit : AB资产模块  【V0.1  ABManager + ABBuilder】~~**
     - **~~NetAssetKit : 网络资产模块  【V0.1  NetAssetManager 】~~**
     - **~~Rule：规则模块~~**
-    - **AssetFinder：资产使用可视化** 
+    - **AssurerViewer：运行时资产可视化**
+    - **AssetFinder：检查资产是否被使用** 
     
 - **HotScriptKit**
 
-- **LuaKit**
+
+  - **LuaKit**
+    
+    - **~~ToLua~~**
+
   
-  - **~~ToLua~~**
+
   
-  
-  
-  
-  
+
   
 
 
