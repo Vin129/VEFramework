@@ -36,8 +36,6 @@ namespace VEFramework
 		}
 
 		private bool mFileExist = false;
-		//资源释放模式
-		public bool UnloadTag;
 		//AB地址
 		public string RealPath;
 		//AB文件
@@ -113,6 +111,12 @@ namespace VEFramework
         {
 			ABManager.Instance.ReleaseDepend(DependFileList);
             base.Release();
+        }
+
+		public override void Release(bool releaseMode)
+        {
+			ABManager.Instance.ReleaseDepend(DependFileList,releaseMode);
+            base.Release(releaseMode);
         }
 
 		protected override void Reset()

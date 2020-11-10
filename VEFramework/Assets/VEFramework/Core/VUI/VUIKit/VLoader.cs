@@ -102,12 +102,10 @@ namespace VEFramework
             return false;
         }
 
-        //TODO:Release 与 VAsset 直接的联系不健康
-        //TODO:梳理清楚 ReleaseMode UnLoadTag AutoRelease 关系 
         public void Release(bool ReleaseMode)
         {
             mLoadedAssurer.ForEach(assurer => {
-                assurer.Value.Release();
+                assurer.Value.Release(ReleaseMode);
             });
             this.RecycleSelf();
         }

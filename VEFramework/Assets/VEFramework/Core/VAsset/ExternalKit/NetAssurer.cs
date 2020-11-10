@@ -35,8 +35,6 @@ namespace VEFramework
 			var assurer = EasyPool<NetAssurer>.Instance.Get();
 			return assurer;
 		}
-		//资源释放模式
-		public bool UnloadTag;
 		public override string AssetPath
 		{
 			get

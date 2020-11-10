@@ -27,12 +27,16 @@ using VEFramework;
 using VEFramework.HotScriptKit;
 public class GamePipeline : MonoBehaviour 
 {
+	public Button testBtn;
+	IBaseUI test;
 	private void Awake() 
 	{
 		//初始化VEManager
+		testBtn.onClick.AddListener(()=>{test.Close();});
 		gameObject.AddComponent<VEManager>();
 		VLua.Instance.FakeInit();
-		VUIManager.Instance.OpenViewAsync("Prefabs/Test1/TestView1");
+		VUIManager.Instance.OpenViewAsync("Prefabs/Test1/TestView1",view=>{test = view;});
+
 
 		// ResManager.Instance.LoadAsync<GameObject>("Prefabs/Test2/TestView2",(obj)=>{
 		// 	if(obj == null)

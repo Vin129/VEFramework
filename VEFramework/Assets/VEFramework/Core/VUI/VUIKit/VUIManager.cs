@@ -143,7 +143,6 @@ namespace VEFramework
 		public bool Close(IBaseUI UI)
 		{
 			var bPop = Pop(UI);
-			UI.Close();
 			UI.ClearAssest();
 			return bPop;
 		}

@@ -86,7 +86,7 @@ namespace VEFramework
         {
             var assurer = LoadSync(AssetPath);
             if(assurer != null)
-                assurer.AutoRelease = !DefaultUnLoadTag;
+                assurer.AutoRelease = false;
             return assurer;
         }
 
@@ -94,7 +94,7 @@ namespace VEFramework
         {
             var assurer = LoadAsync(AssetPath,null,false);
             if(assurer != null)
-                assurer.AutoRelease = !DefaultUnLoadTag;
+                assurer.AutoRelease = false;
             return assurer;
         }
 
@@ -102,7 +102,7 @@ namespace VEFramework
         {
             var assurer = LoadAsync(AssetPath,(ar)=>{GetResOnFinish<T>(ar as ABAssurer,finishCallback);},false);
             if(assurer != null)
-                assurer.AutoRelease = !DefaultUnLoadTag;
+                assurer.AutoRelease = false;
             return assurer;
         }
 
@@ -273,6 +273,8 @@ namespace VEFramework
             var assurer = GetAssurer(AssetPath,true,DefaultUnLoadTag);
             if(bDepLoad == false)
                 LoadDependenciesSync(GetAssetBundleName(assurer.RealPath),ref assurer.DependFileList);
+            else
+                assurer.AutoRelease = false;
             assurer.LoadSync();
             return assurer;
         }
@@ -312,6 +314,8 @@ namespace VEFramework
             var assurer = GetAssurer(AssetPath,true,DefaultUnLoadTag);
             if(bDepLoad == false)
                 LoadDependenciesAsync(GetAssetBundleName(assurer.RealPath),ref assurer.DependFileList,ref assurer.DependAssurerList);
+            else
+                assurer.AutoRelease = false;
             if(finishCallback != null)
                 assurer.LoadFinishCallback += finishCallback;
             assurer.LoadAsync();
@@ -341,7 +345,7 @@ namespace VEFramework
             var aber = assurer as ABAssurer;
             if(aber == null)
                 return;
-            if(aber.AutoRelease && !aber.UnloadTag)
+            if(aber.AutoRelease)
                 aber.Release();
 		}
         public override void OnAssurerLoadedFail(Assurer assurer)
@@ -404,12 +408,7 @@ namespace VEFramework
 
         public void UnloadAsset(AssetBundle ab,bool tag)
         {
-            if(!tag)
-                ab.Unload(tag);
-            else
-            {
-
-            }
+            ab.Unload(tag);
         }
 
         public bool RemoveAssurer(ABAssurer aber)
@@ -429,9 +428,27 @@ namespace VEFramework
             if(depList == null || depList.Length ==0)
                 return;
             depList.ForEach(key =>{
-                if(mAssurerList.ContainsKey(key))
+                if(mRealABFilePath.ContainsKey(key))
                 {
-                   mAssurerList[key].Release();
+                    if(mAssurerList.ContainsKey(mRealABFilePath[key]))
+                    {
+                        mAssurerList[mRealABFilePath[key]].Release();
+                    }
+                }
+            });
+        }
+
+        public void ReleaseDepend(string[] depList,bool releaseMode)
+        {
+            if(depList == null || depList.Length ==0)
+                return;
+            depList.ForEach(key =>{
+                if(mRealABFilePath.ContainsKey(key))
+                {
+                    if(mAssurerList.ContainsKey(mRealABFilePath[key]))
+                    {
+                        mAssurerList[mRealABFilePath[key]].Release(releaseMode);
+                    }
                 }
             });
         }

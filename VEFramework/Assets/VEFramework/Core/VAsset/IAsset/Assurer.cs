@@ -25,7 +25,10 @@ namespace VEFramework
 {
     using System;
     using System.Collections;
-    //资产承保者：资产存放的最小单位
+    ///<summary>
+    ///资产存放的最小单位
+    ///<p>生命顺序：Retain -> Release -> Become2Useless -> Recycle -> Reset</p>
+    ///</summary>
     public class Assurer : IAsset,IAsyncTask,ICounter,IReusable
     {
 		protected string mAssetPath = string.Empty;
@@ -62,6 +65,10 @@ namespace VEFramework
         }
 
         protected bool mAutoRelease = true;
+
+        ///<summary>
+        ///控制是否自动回收资源
+        ///</summary>
         public bool AutoRelease
         {
             get
@@ -74,6 +81,10 @@ namespace VEFramework
 				mAutoRelease = value;
             }
         }
+        ///<summary>
+        ///资源释放模式：True 为彻底释放
+        ///</summary>
+        public bool UnloadTag;
 
         protected string mErrorMessage = string.Empty;
         public string ErrorMessage
@@ -129,6 +140,16 @@ namespace VEFramework
             mUseCount--;
             if(mUseCount <= 0)
                 Become2Useless();
+        }
+
+        public virtual void Release(bool releaseMode)
+        {
+            mUseCount--;
+            if(mUseCount <= 0)
+            {
+                UnloadTag = releaseMode;
+                Become2Useless();
+            }
         }
 
         public virtual void Recycle()

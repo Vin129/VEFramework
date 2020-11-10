@@ -74,11 +74,12 @@ namespace VEFramework
 
         public virtual void Close()
         {
-            GameObject.Destroy(gameObject);
+            VUIManager.Instance.Close(this);
         }
 
         public virtual void ClearAssest()
         {
+            GameObject.Destroy(gameObject);
             Loader.Release(bClearAsset);
         }
 

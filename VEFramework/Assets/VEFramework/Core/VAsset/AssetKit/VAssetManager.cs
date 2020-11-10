@@ -52,11 +52,16 @@ namespace VEFramework
                 return "VAssetManager";
             }
         }
+
+        ///<summary>
+        ///不关心资源的释放问题
+        ///TODO:是否要关心...
+        ///</summary>
         public bool DefaultUnLoadTag
         {
             get
             {
-                return AssetCustomSetting.AssetUnLoadMode == AssetUnLoadModeType.BEGIN_AND_END;
+                return false;
             }
         }
 
