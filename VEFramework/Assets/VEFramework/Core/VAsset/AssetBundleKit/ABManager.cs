@@ -53,7 +53,7 @@ namespace VEFramework
         ///<summary>
         /// Key:RealPath  
         ///</summary>
-		private new Dictionary<string,ABAssurer> mAssurerList;
+		private Dictionary<string,ABAssurer> mABAssurerList;
         private List<Assurer> mWait4RecycleList;
         private List<Assurer> mRecycleList;
         private AssetBundleManifest mManifest;
@@ -62,7 +62,7 @@ namespace VEFramework
             base.Init();
 			mRealABFilePath = new Dictionary<string, string>();
             mFilePathExistsList = new Dictionary<string, bool>();
-			mAssurerList = new Dictionary<string, ABAssurer>();
+			mABAssurerList = new Dictionary<string, ABAssurer>();
             mWait4RecycleList = new List<Assurer>();
             mRecycleList = new List<Assurer>();
 
@@ -236,9 +236,9 @@ namespace VEFramework
 
             var ABAnlysis = ABPathAnalysis.EasyGet();
             ABAnlysis.Analyze(AssetPath,bPostfix,bUnloadTag);
-            if(mAssurerList.ContainsKey(ABAnlysis.RealPath))
+            if(mABAssurerList.ContainsKey(ABAnlysis.RealPath))
             {
-                assurer = mAssurerList[ABAnlysis.RealPath];
+                assurer = mABAssurerList[ABAnlysis.RealPath];
                 assurer.Init(ABAnlysis);
             }
             if(assurer == null)
@@ -246,7 +246,7 @@ namespace VEFramework
                 assurer = ABAssurer.EasyGet();
                 MarkAssurer(assurer);
                 assurer.Init(ABAnlysis);
-                mAssurerList.Add(assurer.RealPath,assurer);
+                mABAssurerList.Add(assurer.RealPath,assurer);
             }
             if(!isContains)
                 mRealABFilePath.Add(assurer.AssetPath,assurer.RealPath);
@@ -415,9 +415,9 @@ namespace VEFramework
 		{
             if(aber == null || aber.RealPath.IsEmptyOrNull())
                 return false;
-			if(mAssurerList.ContainsKey(aber.RealPath))
+			if(mABAssurerList.ContainsKey(aber.RealPath))
 			{
-				mAssurerList.Remove(aber.RealPath);
+				mABAssurerList.Remove(aber.RealPath);
 				return true;
 			}
 			return true;	
@@ -430,9 +430,9 @@ namespace VEFramework
             depList.ForEach(key =>{
                 if(mRealABFilePath.ContainsKey(key))
                 {
-                    if(mAssurerList.ContainsKey(mRealABFilePath[key]))
+                    if(mABAssurerList.ContainsKey(mRealABFilePath[key]))
                     {
-                        mAssurerList[mRealABFilePath[key]].Release();
+                        mABAssurerList[mRealABFilePath[key]].Release();
                     }
                 }
             });
@@ -445,13 +445,26 @@ namespace VEFramework
             depList.ForEach(key =>{
                 if(mRealABFilePath.ContainsKey(key))
                 {
-                    if(mAssurerList.ContainsKey(mRealABFilePath[key]))
+                    if(mABAssurerList.ContainsKey(mRealABFilePath[key]))
                     {
-                        mAssurerList[mRealABFilePath[key]].Release(releaseMode);
+                        mABAssurerList[mRealABFilePath[key]].Release(releaseMode);
                     }
                 }
             });
         }
-	}
     #endregion
+    
+    #region Editor
+        public override Dictionary<string,Assurer> GetAssurerList()
+        {
+            mAssurerList.Clear();
+            mABAssurerList.ForEach(assurer=>{
+                mAssurerList.Add(assurer.Key,assurer.Value);
+            });
+            return mAssurerList;
+        }
+    #endregion
+
+
+    }
 }

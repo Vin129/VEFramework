@@ -167,6 +167,15 @@ namespace VEFramework
         {
 
         }
-    }
     #endregion
+
+
+    #region Editor
+        public virtual Dictionary<string,Assurer> GetAssurerList()
+        {
+            return mAssurerList;
+        }
+    #endregion
+    }
+
 }

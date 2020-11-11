@@ -121,7 +121,7 @@ namespace VEFramework
 
 		protected override void Reset()
 		{
-			Log.IColor("[ABAssurer]{0}:RecycleSelf",LogColor.Green,AssetPath);
+			Log.IColor("[ABAssurer]{0}:RecycleSelf {1}",LogColor.Green,AssetPath,UnloadTag);
 			base.Reset();
 			if(mABCR != null && !mABCR.isDone)
 			{
