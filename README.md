@@ -75,9 +75,10 @@
 - **HotScriptKit**
 
 
-  - **LuaKit**
-    
-    - **~~ToLua~~**
+    - **LuaKit**
+
+      - **~~ToLua~~**
+      - **XLua**
 
   
 
@@ -146,9 +147,11 @@
 
 **~~VAsset升级，Assurer管理模块改造，更适合各种环境下合理使用。~~**
 
-**VAsset:梳理 释放模式**
+**~~VAsset:梳理 释放模式~~**
 
 **VAssetEditor模块：Assurer 可视化窗口**
+
+**XLua**
 
 **VAssetEditor模块：AssetFinder**
 
