@@ -61,7 +61,6 @@
       - **VLoader：资源无忧释放**
       - **VisualizeScript 脚本可视化**
     - **VUGUI: UGUI改良**
-
   -  **VAsset  : 资产管理    细化承保单位（Assurer） 跟踪化管理**  
 
     - **~~VAssetKit : VAsset核心模块  【V0.1  VAsset 统筹管理】~~**
@@ -71,24 +70,21 @@
     - **~~Rule：规则模块~~**
     - **AssurerViewer：运行时资产可视化**
     - **AssetFinder：检查资产是否被使用** 
-    
 - **HotScriptKit**
 
+  - **LuaKit**
 
-    - **LuaKit**
-
-      - **~~ToLua~~**
-      - **XLua**
-
-  
-
-  
-
-  
+    - **~~ToLua~~**
+    - **XLua**
 
 
 
- 
+
+
+
+
+
+
 
 **— GamePipeline : Easy化使用流（非开发者）**
 
@@ -119,7 +115,7 @@
 
  **1.十月计划：VUI + LuaKit + VisualizeScript**
 
- **2.十一月计划：VUI  + 可视化 UIScript**
+ **2.十一月计划：VUI  + 可视化 UIScript  +XLua**
 
 
 
