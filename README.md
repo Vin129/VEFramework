@@ -113,7 +113,7 @@
 
 #  工作流 
 
- **1.十月计划：VUI + LuaKit + VisualizeScript**
+ **~~1.十月计划：VUI + LuaKit~~ **
 
  **2.十一月计划：VUI  + 可视化 UIScript  +XLua**
 
