@@ -36,6 +36,20 @@ namespace VEFramework
 
         public float KeepTime = AssetCustomSetting.AssetKeepTime;
 
+        protected bool mLog = true;
+        public bool LogSwitch
+        {
+            get
+            {
+                return mLog;
+            }
+
+            set
+            {
+				mLog = value;
+            }
+        }
+
 		protected int mUseCount = 0;
         public int UseCount
         {
@@ -120,6 +134,13 @@ namespace VEFramework
 			}
 		}
 
+        public virtual void LogIColor(object message,string color,params object[] args)
+        {
+            if(!LogSwitch)
+                return;
+            Log.IColor(message,color,args);
+        }
+
         public virtual bool LoadSync(){return true;}
         public virtual bool LoadSync(byte[] binary){return true;}
         public virtual void LoadAsync(){}
@@ -127,6 +148,11 @@ namespace VEFramework
         public virtual IEnumerator DoLoadAsync(System.Action finishCallback){ finishCallback(); yield break;}
 
         public virtual T Get<T>() where T:UnityEngine.Object
+		{
+			return null;
+		}
+
+        public virtual T Get<T>(string FileName) where T:UnityEngine.Object
 		{
 			return null;
 		}

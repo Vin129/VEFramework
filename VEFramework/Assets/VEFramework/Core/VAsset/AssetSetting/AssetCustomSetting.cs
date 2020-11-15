@@ -47,6 +47,14 @@ namespace VEFramework
 		public static readonly string AssetBundlerRuleAssetPath = UnityEngine.Application.dataPath + "/VEFramework/Core/VAsset/AssetRule/AssetBundleRules.asset";
 		public static readonly string ExternalAssetDir = PersistentABDir + "ExternalAsset/";
 		
+		public static string ScriptABPath
+		{
+			get
+			{
+				return "Lua";
+			}
+		}
+
 		///<summary>
 		///Empty：默认StreamingAssets为AssetBundle文件根目录
 		///若需要指定文件夹为AB文件根目录请修改此值在StreamingAssets下创建专属文件夹。 
@@ -55,8 +63,8 @@ namespace VEFramework
 		{
 			get
 			{
-				// return "TestAB";
-				return string.Empty;
+				return "VEResource";
+				// return string.Empty;
 			}
 		}
 		public static string ABPostfix
@@ -66,6 +74,17 @@ namespace VEFramework
 				return ".unity3d";
 			}
 		}
+
+		public static string ABFileBuildPath
+		{
+			get
+			{
+				if(ABManifestFileName.IsEmptyOrNull())
+					return UnityEngine.Application.streamingAssetsPath;
+				return UnityEngine.Application.streamingAssetsPath + "/" + ABManifestFileName;
+			}
+		}
+
 		public static string PersistentABDir
 		{
 			get

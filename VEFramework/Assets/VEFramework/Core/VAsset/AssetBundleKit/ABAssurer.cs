@@ -121,7 +121,7 @@ namespace VEFramework
 
 		protected override void Reset()
 		{
-			Log.IColor("[ABAssurer]{0}:RecycleSelf {1}",LogColor.Green,AssetPath,UnloadTag);
+			LogIColor("[ABAssurer]{0}:RecycleSelf {1}",LogColor.Green,AssetPath,UnloadTag);
 			base.Reset();
 			if(mABCR != null && !mABCR.isDone)
 			{
@@ -145,6 +145,11 @@ namespace VEFramework
 			LoadFinishCallback = null;
 		}
 
+		protected bool IsContains(string assetsName,string targetName)
+		{
+			return assetsName.Contains(targetName);
+		}
+
 		public override T Get<T>()
 		{
 			if(mAB == null || FileName.IsEmptyOrNull())
@@ -155,16 +160,17 @@ namespace VEFramework
 			string[] assetsNames = mAB.GetAllAssetNames();
 			for(int i = 0;i < assetsNames.Length;i++)
 			{
-				if(assetsNames[i].Contains(FileName))
+				if(IsContains(assetsNames[i],FileName))
 				{
-					Log.IColor("Get:{0}",LogColor.Green,assetsNames[i]);
+					LogIColor("Get:{0}",LogColor.Green,assetsNames[i]);
 					string strVal = assetsNames[i].Substring(assetsNames[i].IndexOf(FileName));
+					string check = assetsNames[i].Substring(0,assetsNames[i].IndexOf(FileName));
 					int iIdx = strVal.LastIndexOf(".");
 					if(-1 != iIdx)
 						strVal = strVal.Substring(0,iIdx);
-					if(strVal == FileName)
+					if(strVal == FileName && (check.IsEmptyOrNull()||check.EndsWith("/")))
 					{
-						if(typeof(T) == typeof(GameObject) )
+						if(typeof(T) == typeof(GameObject))
 						{
 							var kObj = GameObject.Instantiate(mAB.LoadAsset<T>(assetsNames[i]));
 							if(kObj != null)
@@ -181,6 +187,14 @@ namespace VEFramework
 			Log.E("No Get:{0}",FileName);
 			return null;
 		}
+
+		public override T Get<T>(string FileName)
+		{
+			this.FileName = FileName;
+			return Get<T>();
+		}
+
+
 
 		public T LoadSync<T>() where T : UnityEngine.Object
 		{

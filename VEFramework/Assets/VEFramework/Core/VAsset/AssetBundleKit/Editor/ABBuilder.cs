@@ -44,11 +44,10 @@ namespace VEFramework
 		{ 
 			string buildFolder;
 			if (string.IsNullOrEmpty (outputPath)) {
-				buildFolder = UnityEngine.Application.streamingAssetsPath;
+				buildFolder = AssetCustomSetting.ABFileBuildPath;
 			} else {
 				buildFolder = outputPath;
 			}			
-
 			if(!PathUtil.IsFileExists(buildFolder))
 				PathUtil.CreateDirectory(buildFolder);
 

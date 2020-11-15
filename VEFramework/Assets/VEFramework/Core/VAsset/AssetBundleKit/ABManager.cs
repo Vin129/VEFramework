@@ -57,6 +57,7 @@ namespace VEFramework
         private List<Assurer> mWait4RecycleList;
         private List<Assurer> mRecycleList;
         private AssetBundleManifest mManifest;
+        private ABAssurer ScriptLoader; 
 		public override void Init()
 		{
             base.Init();
@@ -68,6 +69,7 @@ namespace VEFramework
 
             StartCoroutine(RecycleUselessAssurer());
             LoadManifest();
+            InitScriptLoader();
 		}
 
         private void LoadManifest()
@@ -78,6 +80,18 @@ namespace VEFramework
             var assurer = GetAssurer(ManifestPath,false,false);
             assurer.FileName = "AssetBundleManifest";            
             mManifest = assurer.LoadSync<AssetBundleManifest>();
+        }
+
+        
+
+        private void InitScriptLoader()
+        {
+            var ScriptPath = AssetCustomSetting.ScriptABPath;
+            if(ScriptPath.IsEmptyOrNull())
+                return;
+            ScriptLoader = GetAssurerSync(ScriptPath);
+            if(ScriptLoader != null)
+                ScriptLoader.LogSwitch = false;
         }
 
 
@@ -124,6 +138,15 @@ namespace VEFramework
         {
             LoadAsync(AssetPath,(assurer)=>{GetResOnFinish<T>(assurer as ABAssurer,FinishCallback);},false);
         }
+
+        public T LoadScript<T>(string FileName) where T:UnityEngine.Object
+        {
+            if(ScriptLoader == null)
+                return null;
+            Log.IColor("LoadScript:{0}",LogColor.Green,FileName);
+            return ScriptLoader.Get<T>(FileName);
+        }
+
     #endregion
 
 
@@ -150,6 +173,13 @@ namespace VEFramework
                     fileExist = false;
                 }
             }
+            //TODO:更精确的锁定文件
+            // var preciseFile = assetPath.Replace(abRealPath,"");
+            // if(preciseFile.StartsWith("/"))
+            // {
+            //     preciseFile = preciseFile.Substring(1);
+            //     fileName = preciseFile;
+            // }
             return abRealPath;
         }
 

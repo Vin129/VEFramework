@@ -68,7 +68,7 @@ namespace VEFramework
 
 		protected override void Reset()
 		{
-			Log.IColor("[ResAssurer]{0}:RecycleSelf",LogColor.Orange,AssetPath);
+			LogIColor("[ResAssurer]{0}:RecycleSelf",LogColor.Orange,AssetPath);
 			base.Reset();
 			if(mRESR != null && !mRESR.isDone)
 			{

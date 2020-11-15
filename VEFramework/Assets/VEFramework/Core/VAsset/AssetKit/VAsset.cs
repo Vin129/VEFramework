@@ -48,6 +48,17 @@ namespace VEFramework
 
 
 	#region 一般资源加载接口
+		public byte[] LoadScriptFile(string fileName)
+		{
+			if(AppSetting.AssetBundleOpen)
+			{
+				var tAsset = ABManager.Instance.LoadScript<TextAsset>(fileName);
+				if(tAsset)
+					return tAsset.bytes;
+			}
+			return default(byte[]);
+		}
+
 		public T LoadSync<T>(string AssetPath) where T : UnityEngine.Object
         {
 			T kObj = null;
