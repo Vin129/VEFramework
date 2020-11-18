@@ -63,8 +63,8 @@ namespace VEFramework
 			{
                 if(false == IsDirectory(dir) && IsFileExists(dir) && !dir.EndsWith(".meta"))
                 {
-                        string filePath = dir.Replace("\\","/");
-                        strFiles.Add(filePath);
+                    string filePath = dir.Replace("\\","/");
+                    strFiles.Add(filePath);
                 }
 				else
                 {
@@ -138,7 +138,7 @@ namespace VEFramework
         return GetFileName(strPath,strContactPath,true,kSearchOpt);
     }
 
-    public static List<string> GetFullPathName(string strPath,bool bPostfixed,SearchOption kSearchOpt = SearchOption.TopDirectoryOnly)
+    public static List<string> GetFullPathName(string strPath,bool bPostfixed,SearchOption kSearchOpt = SearchOption.TopDirectoryOnly,bool bUnderAssest = false)
     {
         List<string> strFiles = new List<string>();
         string[] files = Directory.GetFiles(strPath,"*.*",kSearchOpt);
@@ -153,7 +153,14 @@ namespace VEFramework
                 if(-1 != iIdx)
                     strFile = strFile.Substring(0,iIdx);
             }
-            strFiles.Add(strFile);
+            if(bUnderAssest)
+            {
+                strFiles.Add(GetPathUnderAssets(strFile,false));
+            }
+            else
+            {
+                strFiles.Add(strFile);
+            }
         }
         return strFiles;
     }
