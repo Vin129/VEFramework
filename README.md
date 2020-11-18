@@ -71,10 +71,16 @@
     - **AssurerViewer：运行时资产可视化**
     - **AssetFinder：检查资产是否被使用** 
 - **HotScriptKit**
-
-  - **LuaKit**
-- **~~ToLua~~**
+- **LuaKit**
+    - **~~ToLua~~**
     - **XLua**
+- **VEPackageManager： VE相关Packages 管理整合**
+
+    - **~~LocalPackages : 本地Packages 管理 v0.1~~**
+    - **DownloadPackages ：下载**
+    - **Packages收录**
+
+        - **HotScriptKit_Tolua**
 
 
 
