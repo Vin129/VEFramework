@@ -79,8 +79,7 @@
     - **~~LocalPackages : 本地Packages 管理 v0.1~~**
     - **DownloadPackages ：下载**
     - **Packages收录**
-
-        - **HotScriptKit_Tolua**
+- **HotScriptKit_Tolua**
 
 
 
@@ -150,11 +149,11 @@
 
 **~~VAsset:梳理 释放模式~~**
 
+**XLua 支持**
+
 **VAssetEditor模块：Assurer 可视化窗口**
 
 **ABManager：更精确的加载**
-
-**XLua**
 
 **VAssetEditor模块：AssetFinder**
 
