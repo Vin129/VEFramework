@@ -79,7 +79,8 @@
     - **~~LocalPackages : 本地Packages 管理 v0.1~~**
     - **DownloadPackages ：下载**
     - **Packages收录**
-- **HotScriptKit_Tolua**
+      - **~~HotScriptKit_Tolua~~**
+      - **HotScriptKit_XLua **
 
 
 
