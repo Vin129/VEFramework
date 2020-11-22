@@ -152,7 +152,7 @@
 
 **XLua 支持**
 
-**VAssetEditor模块：Assurer 可视化窗口**
+**VAssetEditor模块：Assurer 可视化窗口 升级**
 
 **ABManager：更精确的加载**
 
