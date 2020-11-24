@@ -25,8 +25,11 @@ namespace VEFramework.HotScriptKit
 {
     using UnityEngine;
     using System.Reflection;
-    using LuaInterface;
     using VEFramework;
+#if DEFINE_VE_TOLUA
+    using LuaInterface;
+#endif
+
     public class ColliderData
     {
         public Collider Collider;
@@ -253,7 +256,7 @@ namespace VEFramework.HotScriptKit
         #endregion Log Module
 
         #region Network
-        public static void DoPost(string strURL, string strBody, LuaFunction kCallbackFunc)
+        public static void DoPost(string strURL, string strBody, object kCallbackFunc)
         {
 
         }

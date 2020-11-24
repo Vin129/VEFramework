@@ -1,5 +1,4 @@
-﻿
-/****************************************************************************
+﻿/****************************************************************************
  * Copyright (c) 2020 vin129
  *  
  * May the Force be with you :)
@@ -22,41 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  ****************************************************************************/
-namespace VEFramework.HotScriptKit  
+namespace VEFramework.HotScriptKit
 {
-    using System;
-    using UnityEngine;
-    public class VLua : VEManagers<VLua>
-    {
-        public override string ManagerName
-        {
-            get
-            {
-                return "VLua";
-            }
-        }
-
-        private Action<float> LuaUpdateFunction;
-
-#if DEFINE_VE_TOLUA    
-    
-		public override void Init()
-		{
-            if (!ScriptBaseSetting.SourceSaveCheck)
-            {
-                Log.E("[VLua]:Source is Inexistence");
-                return;
-            }     
-            ToLuaManager.Instance.BindMonoUpdate(ref LuaUpdateFunction);
-		}
-
-        private void Update() 
-        {
-            if(LuaUpdateFunction != null)
-                LuaUpdateFunction.Invoke(Time.deltaTime);
-        }
-
-
+#if DEFINE_VE_TOLUA
+    using  LuaInterface;
 #endif
+    public static class LuaPerformer
+    {
+        #if DEFINE_VE_TOLUA
+            public static void Call(object luafunction,params object[] args)
+            {
+                LuaFunction f = (LuaFunction)luafunction;
+                f.Call(args);
+            }
+        #else
+            public static void Call(object luafunction,params object[] args){}
+        #endif
     }
 }
+

@@ -21,7 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  ****************************************************************************/
-#define LUA_KIT //没有lua环境请注释
+
+#if DEFINE_VE_TOLUA
 namespace VEFramework.HotScriptKit
 {
 	using UnityEngine;
@@ -29,9 +30,7 @@ namespace VEFramework.HotScriptKit
 	using System.Text.RegularExpressions;
 	using UnityEditor.SceneManagement;
 	using VEFramework;
-	#if LUA_KIT
 	using LuaInterface;
-	#endif
 	[CustomEditor(typeof(LuaComponent))]
 	public class LuaComponentInspectorEditor : UnityEditor.Editor
 	{
@@ -134,3 +133,4 @@ namespace VEFramework.HotScriptKit
 
 	}
 }
+#endif

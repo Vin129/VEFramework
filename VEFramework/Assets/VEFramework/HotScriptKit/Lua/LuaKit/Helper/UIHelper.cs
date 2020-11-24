@@ -24,12 +24,14 @@
 namespace VEFramework.HotScriptKit
 {
     using System;
-    using System.Collections;
     using UnityEngine;
     using UnityEngine.UI;
     using UnityEngine.EventSystems;
-    using LuaInterface;
+
     using VEFramework;
+#if DEFINE_VE_TOLUA
+    using LuaInterface;
+#endif
 
     public static class UIHelper
     {
@@ -134,10 +136,7 @@ namespace VEFramework.HotScriptKit
             kButton.onClick.RemoveAllListeners();
             kButton.onClick.AddListener(delegate()
             {
-                // if (Input.touchCount > 1)
-                //     return;
-                LuaFunction f = (LuaFunction)kLuaFunc;
-                f.Call(kObj);
+                LuaPerformer.Call(kLuaFunc,kObj);
             });
         }
 
@@ -181,8 +180,7 @@ namespace VEFramework.HotScriptKit
             dd.onValueChanged.AddListener(delegate(int index)
             {
                 Dropdown.OptionData _data = dd.options[index];
-                LuaFunction f = (LuaFunction)kLuaFunc;
-                f.Call(index, _data.text);
+                LuaPerformer.Call(kLuaFunc,index, _data.text);
             });
         }
 
@@ -250,8 +248,7 @@ namespace VEFramework.HotScriptKit
             kInput.onEndEdit.AddListener(delegate (String str)
             {
                 kInput.text = kInput.text.Replace(" ", no_breaking_space);
-                LuaFunction f = (LuaFunction)kLuaFunc;
-                f.Call(str);
+                LuaPerformer.Call(kLuaFunc,str);
             });
         }
         #endregion
@@ -269,8 +266,7 @@ namespace VEFramework.HotScriptKit
             kToggle.onValueChanged.RemoveAllListeners();
             kToggle.onValueChanged.AddListener(delegate(bool isOn)
             {
-                LuaFunction f = (LuaFunction)kLuaFunc;
-                f.Call(isOn, kObj);
+                LuaPerformer.Call(kLuaFunc,isOn,kObj);
             });
         }
         public static bool GetToggleIsOn(GameObject kObj)
@@ -338,33 +334,21 @@ namespace VEFramework.HotScriptKit
                 return;
             kComponent.onClick = delegate (GameObject sender, BaseEventData kEvtData)
             {
-                LuaFunction kFunc = kLuaFunc as LuaFunction;
-                if (null != kFunc)
-                    kFunc.Call(sender, kEvtData);
-                else
-                    Log.W("Call Click Event Failed");
+                LuaPerformer.Call(kLuaFunc,sender, kEvtData);
             };
         }
         public static void RegisterClickEvent(GameObject obj, object kLuaFunc)
         {
             EventTriggerListener.Get(obj).onClick = delegate (GameObject sender, BaseEventData kEvtData)
             {
-                LuaFunction kFunc = kLuaFunc as LuaFunction;
-                if (null != kFunc)
-                    kFunc.Call(sender, kEvtData);
-                else
-                    Log.W("Call Click Event Failed");
+                LuaPerformer.Call(kLuaFunc,sender, kEvtData);
             };
         }
         public static void RegisterPressedDownEvent(GameObject obj, object kLuaFunc)
         {
             EventTriggerListener.Get(obj).onDown = delegate (GameObject sender, BaseEventData kEvtData)
             {
-                LuaFunction kFunc = kLuaFunc as LuaFunction;
-                if (null != kFunc)
-                    kFunc.Call(sender, kEvtData);
-                else
-                    Log.W("Call PressedDown Event Failed");
+                LuaPerformer.Call(kLuaFunc,sender, kEvtData);
             };
         }
 
@@ -372,11 +356,7 @@ namespace VEFramework.HotScriptKit
         {
             EventTriggerListener.Get(obj).onUp = delegate (GameObject sender, BaseEventData kEvtData)
             {
-                LuaFunction kFunc = kLuaFunc as LuaFunction;
-                if (null != kFunc)
-                    kFunc.Call(sender, kEvtData);
-                else
-                    Log.W("Call PressedUp Event Failed");
+                LuaPerformer.Call(kLuaFunc,sender, kEvtData);
             };
         }
 
@@ -388,11 +368,7 @@ namespace VEFramework.HotScriptKit
                 if (null == group)
                     group = obj.AddComponent<CanvasGroup>();
                 group.blocksRaycasts = false;
-                LuaFunction kFunc = kLuaFunc as LuaFunction;
-                if (null != kFunc)
-                    kFunc.Call(sender, kEvtData);
-                else
-                    Log.W("Call Begin Drag Failed");
+                LuaPerformer.Call(kLuaFunc,sender, kEvtData);
             };
         }
         public static void RegisterDragEvent(GameObject obj, object kLuaFunc)
@@ -405,11 +381,7 @@ namespace VEFramework.HotScriptKit
                 Vector3 globalMousePos;
                 if (RectTransformUtility.ScreenPointToWorldPointInRectangle(kTs, kData.position, kData.pressEventCamera, out globalMousePos))
                     kTs.position = globalMousePos;
-                LuaFunction kFunc = kLuaFunc as LuaFunction;
-                if (null != kFunc)
-                    kFunc.Call(sender, kEvtData);
-                else
-                    Log.W("Call Drag Failed");
+                LuaPerformer.Call(kLuaFunc,sender, kEvtData);
             };
         }
         public static void RegisterEndDragEvent(GameObject obj, object kLuaFunc)
@@ -419,22 +391,14 @@ namespace VEFramework.HotScriptKit
                 CanvasGroup group = obj.GetComponent<CanvasGroup>();
                 if (null != group)
                     GameObject.Destroy(group);
-                LuaFunction kFunc = kLuaFunc as LuaFunction;
-                if (null != kFunc)
-                    kFunc.Call(sender, kEvtData);
-                else
-                    Log.W("Call End Drag Failed");
+                LuaPerformer.Call(kLuaFunc,sender, kEvtData);
             };
         }
         public static void RegisterNotDragEvent(GameObject obj, object kLuaFunc)
         {
             DragEventListener.Get(obj).onNotDrag = delegate (GameObject sender, BaseEventData kEvtData, bool canClick)
             {
-                LuaFunction kFunc = kLuaFunc as LuaFunction;
-                if (null != kFunc)
-                    kFunc.Call(sender, kEvtData, canClick);
-                else
-                    Log.W("Call End Drag Failed");
+                LuaPerformer.Call(kLuaFunc,sender, kEvtData, canClick);
             };
         }
 
@@ -454,19 +418,8 @@ namespace VEFramework.HotScriptKit
             {
                 PointerEventData kData = kEvtData as PointerEventData;
                 GameObject kDragger = kData.pointerDrag;
-                UICallback kDropCb = null;
-                if (null != kDragger)
-                    kDropCb = kDragger.GetComponent<UICallback>();
-                LuaFunction kFunc = kLuaFunc as LuaFunction;
-                if (null != kFunc)
-                {
-                    if (kDropCb != null)
-                        kFunc.Call(sender, kDragger, kEvtData, kDropCb.DropCallback);
-                    else
-                        kFunc.Call(sender, kDragger, kEvtData);
-                }
-                else
-                    Log.W("Call Drop Failed");
+
+                LuaPerformer.Call(kLuaFunc,sender, kDragger, kEvtData);
             };
         }
 
@@ -474,25 +427,16 @@ namespace VEFramework.HotScriptKit
         {
             if (null == obj)
                 return;
-            UICallback kComponent = obj.GetComponent<UICallback>();
-            if (null == kComponent)
-                kComponent = obj.AddComponent<UICallback>();
-            kComponent.DropCallback = luaFunc as LuaFunction;
+            //TODO
         }
 
         public static void UnRegisterDropCallback(GameObject obj)
         {
             if (null == obj)
                 return;
-            UICallback kComponent = obj.GetComponent<UICallback>();
-            if (null != kComponent)
-                kComponent.DropCallback = null;
+            //TODO
         }
 
-        #endregion
-
-        #region TODO
-            //Res
         #endregion
     }
 }

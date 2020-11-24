@@ -26,10 +26,11 @@ namespace VEFramework.HotScriptKit
     using System;
     using UnityEngine;
     using System.Collections.Generic;
-    using LuaInterface;
     #if UNITY_EDITOR	
-    using UnityEditor;
+        using UnityEditor;
     #endif
+#if DEFINE_VE_TOLUA   
+    using LuaInterface;
     public class ToLuaManager:Singleton<ToLuaManager>
     {
         public const string LuaEnterFile  = "Framework/init.lua";
@@ -196,4 +197,5 @@ namespace VEFramework.HotScriptKit
             }
         }
     }
+#endif
 }

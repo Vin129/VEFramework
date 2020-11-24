@@ -37,6 +37,14 @@ namespace VEFramework.HotScriptKit
         private string scriptPathHead;
         private string scriptPathTail;
         private string scriptPath;
+
+        [MenuItem("VETool/LuaKit/AddSymbols")]
+        public static void AddSymbols()
+        {
+            PlayerSettingExtensions.SetDefineSymbols("DEFINE_VE_TOLUA");
+            AssetDatabase.Refresh();
+        }
+
   
         [MenuItem("VETool/LuaKit/Setting")]
         public static void ShowWindow()

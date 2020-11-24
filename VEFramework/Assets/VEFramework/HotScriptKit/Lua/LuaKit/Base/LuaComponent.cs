@@ -23,14 +23,15 @@
  * THE SOFTWARE.
  ****************************************************************************/
 
-using UnityEngine;
-using LuaInterface;
+
 namespace VEFramework.HotScriptKit 
 {
+	using UnityEngine;
+# if DEFINE_VE_TOLUA
+	using LuaInterface;
 	public class LuaComponent : MonoBehaviour
 	{
 		public static bool isFirstLaunch = true;
-
 		/// <summary>  
 		/// 提供给外部手动执行LUA脚本的接口  
 		/// </summary>  
@@ -46,20 +47,18 @@ namespace VEFramework.HotScriptKit
 
 		public string LuaFilePath;
 
-		public LuaTable LuaModule
-		{
-			get { return mSelfLuaTable; }
-		}
-
-
 		public string LuaClass
 		{
 			get { return LuaClassName; }
 		}
-
-
-		private LuaTable mSelfLuaTable = null;
 		private string   LuaClassName  = null;
+
+
+		public LuaTable LuaModule
+		{
+			get { return mSelfLuaTable; }
+		}
+		private LuaTable mSelfLuaTable = null;
 
 		//初始化函数，可以被重写，已添加其他
 		protected virtual bool Init()
@@ -116,9 +115,17 @@ namespace VEFramework.HotScriptKit
 				{
 					func.Push(o);
 				}
-
 				func.PCall();
 				func.EndPCall();
+			}
+		}
+
+		public void LuaDispose()
+		{
+			if (null != mSelfLuaTable)
+			{
+				mSelfLuaTable.Dispose();
+				mSelfLuaTable = null;
 			}
 		}
 
@@ -151,20 +158,13 @@ namespace VEFramework.HotScriptKit
 		void OnDestroy()
 		{
 			CallLuaFunction(ToLuaManager.LuaMonoFunctionName.OnDestroy);
+			LuaDispose();
 
-			if (null != mSelfLuaTable)
-			{
-				mSelfLuaTable.Dispose();
-				mSelfLuaTable = null;
-			}
 		}
-
-        public void DisposeLuaTable(){
-              if (null != mSelfLuaTable)
-              {
-                  mSelfLuaTable.Dispose();
-                  mSelfLuaTable = null;
-              }
+        public void DisposeLuaTable()
+		{
+			LuaDispose();
         }
 	}
+# endif
 }

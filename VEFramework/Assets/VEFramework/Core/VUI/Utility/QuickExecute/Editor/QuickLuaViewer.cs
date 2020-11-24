@@ -1,16 +1,15 @@
-﻿#define LUA_KIT
-#if LUA_KIT
+﻿#if DEFINE_VE_TOLUA
 namespace  VEFramework
 {
 	using System.Collections.Generic;
 	using UnityEngine;
-	using LuaInterface;
 	using System;
 	using System.Text.RegularExpressions;
 	using System.Linq;
 	using UnityEditor;
 	using EGL = UnityEditor.EditorGUILayout;
 	using GL = UnityEngine.GUILayout;
+	using LuaInterface;
 	using VEFramework.HotScriptKit;
 	public class QuickLuaViewer
 	{

@@ -1,5 +1,4 @@
-﻿
-/****************************************************************************
+﻿/****************************************************************************
  * Copyright (c) 2020 vin129
  *  
  * May the Force be with you :)
@@ -22,41 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  ****************************************************************************/
-namespace VEFramework.HotScriptKit  
+namespace VEFramework
 {
-    using System;
-    using UnityEngine;
-    public class VLua : VEManagers<VLua>
+    using UnityEditor;
+    public static class PlayerSettingExtensions
     {
-        public override string ManagerName
+        static BuildTargetGroup BuildTarget
         {
             get
             {
-                return "VLua";
+    #if UNITY_ANDROID
+                return BuildTargetGroup.Android;
+    #elif UNITY_IOS
+                return BuildTargetGroup.iOS;
+    #else
+                return BuildTargetGroup.Standalone;
+    #endif
             }
         }
 
-        private Action<float> LuaUpdateFunction;
-
-#if DEFINE_VE_TOLUA    
-    
-		public override void Init()
-		{
-            if (!ScriptBaseSetting.SourceSaveCheck)
-            {
-                Log.E("[VLua]:Source is Inexistence");
-                return;
-            }     
-            ToLuaManager.Instance.BindMonoUpdate(ref LuaUpdateFunction);
-		}
-
-        private void Update() 
+        public static void SetDefineSymbols(string symbols)
         {
-            if(LuaUpdateFunction != null)
-                LuaUpdateFunction.Invoke(Time.deltaTime);
+            string define = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTarget);
+            if (!define.Contains(symbols))
+            {
+                define += ";" + symbols;
+            }
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTarget, define);
         }
-
-
-#endif
     }
 }
+

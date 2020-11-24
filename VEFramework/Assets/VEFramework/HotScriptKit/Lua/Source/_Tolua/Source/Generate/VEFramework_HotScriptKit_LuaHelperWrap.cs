@@ -444,7 +444,7 @@ public class VEFramework_HotScriptKit_LuaHelperWrap
 			ToLua.CheckArgsCount(L, 3);
 			string arg0 = ToLua.CheckString(L, 1);
 			string arg1 = ToLua.CheckString(L, 2);
-			LuaFunction arg2 = ToLua.CheckLuaFunction(L, 3);
+			object arg2 = ToLua.ToVarObject(L, 3);
 			VEFramework.HotScriptKit.LuaHelper.DoPost(arg0, arg1, arg2);
 			return 0;
 		}
