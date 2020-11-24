@@ -29,7 +29,7 @@ namespace VEFramework.HotScriptKit
     using UnityEngine.EventSystems;
 
     using VEFramework;
-#if DEFINE_VE_TOLUA
+#if DEFINE_VE_LUA
     using LuaInterface;
 #endif
 

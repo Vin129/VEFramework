@@ -40,6 +40,12 @@ namespace VEFramework
             }
         }
 
+        public static bool ContainsSymbols(string symbols)
+        {
+            string define = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTarget);
+            return define.Contains(symbols);
+        }
+
         public static void SetDefineSymbols(string symbols)
         {
             string define = PlayerSettings.GetScriptingDefineSymbolsForGroup(BuildTarget);

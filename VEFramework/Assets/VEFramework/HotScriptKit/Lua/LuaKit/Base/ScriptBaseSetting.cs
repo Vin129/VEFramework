@@ -42,6 +42,7 @@ namespace VEFramework.HotScriptKit
 			}
 		}
 
+		public static string LuaDefineSymbol = "DEFINE_VE_LUA";
 
 		// Lua 来源路径 （Tolua&Xlua...）
 		public static string LuaSourcePath = Application.dataPath + "/VEFramework/HotScriptKit/Lua/Source";

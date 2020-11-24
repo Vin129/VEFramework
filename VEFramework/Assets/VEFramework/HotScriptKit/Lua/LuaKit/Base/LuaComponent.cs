@@ -27,7 +27,7 @@
 namespace VEFramework.HotScriptKit 
 {
 	using UnityEngine;
-# if DEFINE_VE_TOLUA
+# if DEFINE_VE_LUA
 	using LuaInterface;
 	public class LuaComponent : MonoBehaviour
 	{

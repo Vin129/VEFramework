@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  ****************************************************************************/
 
-#if DEFINE_VE_TOLUA
+#if DEFINE_VE_LUA
 namespace VEFramework.HotScriptKit
 {
 	using UnityEngine;

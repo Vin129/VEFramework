@@ -31,7 +31,7 @@ namespace VEFramework
 	using GL = UnityEngine.GUILayout;
 	using System;
 	using System.Linq;
-#if DEFINE_VE_TOLUA
+#if DEFINE_VE_LUA
 	using LuaInterface;
 #endif
 

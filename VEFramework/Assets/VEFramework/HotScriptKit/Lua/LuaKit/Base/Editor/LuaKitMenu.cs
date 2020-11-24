@@ -1,5 +1,4 @@
-﻿
-/****************************************************************************
+﻿/****************************************************************************
  * Copyright (c) 2020 vin129
  *  
  * May the Force be with you :)
@@ -22,41 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  ****************************************************************************/
-namespace VEFramework.HotScriptKit  
+namespace VEFramework.HotScriptKit
 {
-    using System;
-    using UnityEngine;
-    public class VLua : VEManagers<VLua>
+    using UnityEditor;
+    using VEFramework;
+    [InitializeOnLoad]
+    public static class LuaKitMenu
     {
-        public override string ManagerName
+        static bool beCheck = false;
+        static LuaKitMenu()
         {
-            get
+            if(!PlayerSettingExtensions.ContainsSymbols(ScriptBaseSetting.LuaDefineSymbol) && !beCheck)
             {
-                return "VLua";
+                if (EditorUtility.DisplayDialog("提示", "检测您正在使用HotScriptKit中LuaKit模块,需添加模块宏以确保模块可正常使用", "添加", "取消"))
+                {
+                    beCheck = true;
+                    PlayerSettingExtensions.SetDefineSymbols(ScriptBaseSetting.LuaDefineSymbol);
+                    AssetDatabase.Refresh();
+                }
+
+                beCheck = false;
             }
         }
-
-        private Action<float> LuaUpdateFunction;
-
-#if DEFINE_VE_LUA    
-    
-		public override void Init()
-		{
-            if (!ScriptBaseSetting.SourceSaveCheck)
-            {
-                Log.E("[VLua]:Source is Inexistence");
-                return;
-            }     
-            ToLuaManager.Instance.BindMonoUpdate(ref LuaUpdateFunction);
-		}
-
-        private void Update() 
-        {
-            if(LuaUpdateFunction != null)
-                LuaUpdateFunction.Invoke(Time.deltaTime);
-        }
-
-
-#endif
     }
 }

@@ -26,7 +26,7 @@ namespace VEFramework.HotScriptKit
     using UnityEngine;
     using System.Reflection;
     using VEFramework;
-#if DEFINE_VE_TOLUA
+#if DEFINE_VE_LUA
     using LuaInterface;
 #endif
 

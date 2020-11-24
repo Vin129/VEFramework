@@ -23,12 +23,12 @@
  ****************************************************************************/
 namespace VEFramework.HotScriptKit
 {
-#if DEFINE_VE_TOLUA
+#if DEFINE_VE_LUA
     using  LuaInterface;
 #endif
     public static class LuaPerformer
     {
-        #if DEFINE_VE_TOLUA
+        #if DEFINE_VE_LUA
             public static void Call(object luafunction,params object[] args)
             {
                 LuaFunction f = (LuaFunction)luafunction;

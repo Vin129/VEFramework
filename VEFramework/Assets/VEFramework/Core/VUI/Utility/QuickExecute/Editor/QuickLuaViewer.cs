@@ -1,4 +1,4 @@
-﻿#if DEFINE_VE_TOLUA
+﻿#if DEFINE_VE_LUA
 namespace  VEFramework
 {
 	using System.Collections.Generic;

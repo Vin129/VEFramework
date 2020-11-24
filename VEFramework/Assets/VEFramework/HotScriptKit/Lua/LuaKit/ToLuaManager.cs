@@ -29,7 +29,7 @@ namespace VEFramework.HotScriptKit
     #if UNITY_EDITOR	
         using UnityEditor;
     #endif
-#if DEFINE_VE_TOLUA   
+#if DEFINE_VE_LUA   
     using LuaInterface;
     public class ToLuaManager:Singleton<ToLuaManager>
     {
