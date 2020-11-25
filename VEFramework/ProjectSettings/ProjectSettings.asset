@@ -552,7 +552,7 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLWasmStreaming: 0
   scriptingDefineSymbols:
-    1: 
+    1: DEFINE_VE_LUA
   platformArchitecture: {}
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}
