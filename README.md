@@ -120,9 +120,9 @@
 
  **~~1.十月计划：VUI + LuaKit~~ **
 
- **2.十一月计划：VUI  + 可视化 UIScript  +XLua**
+ **~~2.十一月计划：VUI  + 可视化 UIScript~~ **
 
-
+**3.十二月计划：XLua**
 
 
 
