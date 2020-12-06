@@ -71,16 +71,18 @@
     - **AssurerViewer：运行时资产可视化**
     - **AssetFinder：检查资产是否被使用** 
 - **HotScriptKit**
-- **LuaKit**
-    - **~~ToLua~~**
-    - **XLua**
+
+    - **LuaKit**
+        
+        - **~~ToLua~~**
+        - **~~XLua~~**
 - **VEPackageManager： VE相关Packages 管理整合**
 
     - **~~LocalPackages : 本地Packages 管理 v0.1~~**
     - **DownloadPackages ：下载**
     - **Packages收录**
       - **~~HotScriptKit_Tolua~~**
-      - **HotScriptKit_XLua **
+      - **~~HotScriptKit_XLua~~ **
 
 
 
@@ -150,7 +152,9 @@
 
 **~~VAsset:梳理 释放模式~~**
 
-**XLua 支持**
+**~~XLua 支持~~**
+
+**VAsset 增加对XLua的加载支持**
 
 **VAssetEditor模块：Assurer 可视化窗口 升级**
 
