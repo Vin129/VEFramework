@@ -35,7 +35,7 @@ public class GamePipeline : MonoBehaviour
 		testBtn.onClick.AddListener(()=>{test.Close();});
 		gameObject.AddComponent<VEManager>();
 		VLua.Instance.FakeInit();
-		VUIManager.Instance.OpenViewAsync("Prefabs/Test1/TestView1",view=>{test = view;});
+		// VUIManager.Instance.OpenViewAsync("Prefabs/Test1/TestView1",view=>{test = view;});
 
 
 		// ResManager.Instance.LoadAsync<GameObject>("Prefabs/Test2/TestView2",(obj)=>{

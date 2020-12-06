@@ -27,12 +27,7 @@ namespace VEFramework.HotScriptKit
     using UnityEngine;
     using UnityEngine.UI;
     using UnityEngine.EventSystems;
-
     using VEFramework;
-#if DEFINE_VE_LUA
-    using LuaInterface;
-#endif
-
     public static class UIHelper
     {
         #region Transform

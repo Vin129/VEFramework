@@ -27,7 +27,7 @@
 namespace VEFramework.HotScriptKit 
 {
 	using UnityEngine;
-# if DEFINE_VE_LUA
+# if DEFINE_VE_TOLUA
 	using LuaInterface;
 	public class LuaComponent : MonoBehaviour
 	{
@@ -158,6 +158,132 @@ namespace VEFramework.HotScriptKit
 		void OnDestroy()
 		{
 			CallLuaFunction(ToLuaManager.LuaMonoFunctionName.OnDestroy);
+			LuaDispose();
+
+		}
+        public void DisposeLuaTable()
+		{
+			LuaDispose();
+        }
+	}
+# endif
+
+# if DEFINE_VE_XLUA
+	using XLua;
+	public class LuaComponent : MonoBehaviour
+	{
+		public static bool isFirstLaunch = true;
+		/// <summary>  
+		/// 提供给外部手动执行LUA脚本的接口  
+		/// </summary>  
+		public bool Initilize(string path)
+		{
+			LuaPath = path;
+			Init();
+			return true;
+		}
+
+		//lua路径，不用填缀名，可以是bundle
+		[Tooltip("script path")] public string LuaPath;
+
+		public string LuaFilePath;
+
+		public string LuaClass
+		{
+			get { return LuaClassName; }
+		}
+		private string   LuaClassName  = null;
+
+
+		public LuaTable LuaModule
+		{
+			get { return mSelfLuaTable; }
+		}
+		private LuaTable mSelfLuaTable = null;
+
+		//初始化函数，可以被重写，已添加其他
+		protected virtual bool Init()
+		{		
+			mSelfLuaTable = XLuaManager.Instance.AddLuaFile(LuaPath, gameObject);
+			LuaClassName = CallLuaFunctionRString("getClassName");
+		
+			mSelfLuaTable.Set<string,GameObject>("gameObject",gameObject);
+			mSelfLuaTable.Set<string,Transform>("transform",transform);
+
+			return true;
+		}
+
+		private string CallLuaFunctionRString(string name, params object[] args)
+		{
+			string resault = null;
+			if (mSelfLuaTable != null)
+			{
+				LuaFunction func = mSelfLuaTable.Get<LuaFunction>(name);
+				if (null == func)
+				{
+					return resault;
+				}
+				
+				var popValues = func.Call(args);
+				func.Dispose();
+				resault = popValues[0] as string;
+			}
+			return resault;
+		}
+
+
+		public void CallLuaFunction(string name, params object[] args)
+		{
+			if (mSelfLuaTable != null)
+			{
+				LuaFunction func = mSelfLuaTable.Get<LuaFunction>(name);
+				if (null == func)
+				{
+					return;
+				}
+				func.Call(args);
+				func.Dispose();
+			}
+		}
+
+		public void LuaDispose()
+		{
+			if (null != mSelfLuaTable)
+			{
+				mSelfLuaTable.Dispose();
+				mSelfLuaTable = null;
+			}
+		}
+
+		void Awake()
+		{
+			if (Initilize(LuaPath))
+				CallLuaFunction(XLuaManager.LuaMonoFunctionName.Awake);
+		}
+
+		void OnEnable()
+		{
+			CallLuaFunction(XLuaManager.LuaMonoFunctionName.OnEnable);
+		}
+
+		void Start()
+		{
+			CallLuaFunction(XLuaManager.LuaMonoFunctionName.Start);
+		}
+
+		void Update()
+		{
+			CallLuaFunction(XLuaManager.LuaMonoFunctionName.Update);
+		}
+
+		void OnDisable()
+		{
+			CallLuaFunction(XLuaManager.LuaMonoFunctionName.OnDisable);
+		}
+
+		void OnDestroy()
+		{
+			CallLuaFunction(XLuaManager.LuaMonoFunctionName.OnDestroy);
 			LuaDispose();
 
 		}

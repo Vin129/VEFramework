@@ -29,18 +29,35 @@ namespace VEFramework.HotScriptKit
     public static class LuaKitMenu
     {
         static bool beCheck = false;
+
+        static bool CheckHaveLuaDefineSymbol()
+        {
+            return PlayerSettingExtensions.ContainsSymbols(ScriptBaseSetting.ToLuaDefineSymbol) || PlayerSettingExtensions.ContainsSymbols(ScriptBaseSetting.XLuaDefineSymbol);
+        }
         static LuaKitMenu()
         {
-            if(!PlayerSettingExtensions.ContainsSymbols(ScriptBaseSetting.LuaDefineSymbol) && !beCheck)
+            if(!beCheck && !CheckHaveLuaDefineSymbol() && ScriptBaseSetting.SourceSaveCheck)
             {
-                if (EditorUtility.DisplayDialog("提示", "检测您正在使用HotScriptKit中LuaKit模块,需添加模块宏以确保模块可正常使用", "添加", "取消"))
+                if(ScriptBaseSetting.ToLuaSourceSaveCheck)
                 {
-                    beCheck = true;
-                    PlayerSettingExtensions.SetDefineSymbols(ScriptBaseSetting.LuaDefineSymbol);
-                    AssetDatabase.Refresh();
+                    if (EditorUtility.DisplayDialog("提示", "检测您正在使用HotScriptKit中ToLua模块,需添加模块宏以确保模块可正常使用", "添加", "取消"))
+                    {
+                        beCheck = true;
+                        PlayerSettingExtensions.SetDefineSymbols(ScriptBaseSetting.ToLuaDefineSymbol);
+                        AssetDatabase.Refresh();
+                    }
+                    beCheck = false;
                 }
-
-                beCheck = false;
+                else if(ScriptBaseSetting.XLuaSourceSaveCheck)
+                {
+                    if (EditorUtility.DisplayDialog("提示", "检测您正在使用HotScriptKit中XLua模块,需添加模块宏以确保模块可正常使用", "添加", "取消"))
+                    {
+                        beCheck = true;
+                        PlayerSettingExtensions.SetDefineSymbols(ScriptBaseSetting.XLuaDefineSymbol);
+                        AssetDatabase.Refresh();
+                    }
+                    beCheck = false;
+                }  
             }
         }
     }

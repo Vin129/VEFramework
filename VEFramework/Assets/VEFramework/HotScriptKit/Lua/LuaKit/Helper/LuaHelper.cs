@@ -26,10 +26,6 @@ namespace VEFramework.HotScriptKit
     using UnityEngine;
     using System.Reflection;
     using VEFramework;
-#if DEFINE_VE_LUA
-    using LuaInterface;
-#endif
-
     public class ColliderData
     {
         public Collider Collider;

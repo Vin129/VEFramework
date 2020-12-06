@@ -41,7 +41,15 @@ namespace VEFramework.HotScriptKit
         [MenuItem("VETool/LuaKit/AddSymbols")]
         public static void AddSymbols()
         {
-            PlayerSettingExtensions.SetDefineSymbols(ScriptBaseSetting.LuaDefineSymbol);
+            if(ScriptBaseSetting.ToLuaSourceSaveCheck)
+            {
+                PlayerSettingExtensions.SetDefineSymbols(ScriptBaseSetting.ToLuaDefineSymbol);
+            }
+            else if(ScriptBaseSetting.XLuaSourceSaveCheck)
+            {
+                PlayerSettingExtensions.SetDefineSymbols(ScriptBaseSetting.XLuaDefineSymbol);
+            }
+            
             AssetDatabase.Refresh();
         }
 

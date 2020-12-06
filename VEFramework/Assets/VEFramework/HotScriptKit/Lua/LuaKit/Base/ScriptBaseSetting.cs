@@ -37,12 +37,30 @@ namespace VEFramework.HotScriptKit
 	{
 		public static bool SourceSaveCheck 
 		{
-			get{
-				return (Directory.Exists(LuaSourcePath + "/_Tolua") | (Directory.Exists(LuaSourcePath + "/_Xlua")));
+			get
+			{
+				return ToLuaSourceSaveCheck | XLuaSourceSaveCheck;
 			}
 		}
 
-		public static string LuaDefineSymbol = "DEFINE_VE_LUA";
+		public static bool ToLuaSourceSaveCheck
+		{
+			get
+			{
+				return Directory.Exists(LuaSourcePath + "/_Tolua");
+			}
+		}
+
+		public static bool XLuaSourceSaveCheck
+		{
+			get
+			{
+				return Directory.Exists(LuaSourcePath + "/_Xlua");
+			}
+		}
+
+		public static string ToLuaDefineSymbol = "DEFINE_VE_TOLUA";
+		public static string XLuaDefineSymbol = "DEFINE_VE_XLUA";
 
 		// Lua 来源路径 （Tolua&Xlua...）
 		public static string LuaSourcePath = Application.dataPath + "/VEFramework/HotScriptKit/Lua/Source";

@@ -1,1 +1,14 @@
-{"Packages":[{"name":"VE_HotScript_Tolua","version":"v0.1","localpath":"G:/Vin129P/VEFramework/VEFramework/Assets/VEFramework/HotScriptKit/Lua/Source/_Tolua"}]}
+{
+    "Packages": [
+        {
+            "name": "VE_HotScript_Tolua",
+            "version": "v0.1",
+            "localpath": "G:/Vin129P/VEFramework/VEFramework/Assets/VEFramework/HotScriptKit/Lua/Source/_Tolua"
+        },
+        {
+            "name": "VE_HotScript_Xlua",
+            "version": "v0.1",
+            "localpath": "G:/Vin129P/VEFramework/VEFramework/Assets/VEFramework/HotScriptKit/Lua/Source/_Xlua"
+        }
+    ]
+}

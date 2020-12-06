@@ -38,17 +38,27 @@ namespace VEFramework.HotScriptKit
 
         private Action<float> LuaUpdateFunction;
 
-#if DEFINE_VE_LUA    
-    
+#if DEFINE_VE_TOLUA    
 		public override void Init()
 		{
-            if (!ScriptBaseSetting.SourceSaveCheck)
+            if (!ScriptBaseSetting.ToLuaSourceSaveCheck)
             {
                 Log.E("[VLua]:Source is Inexistence");
                 return;
             }     
             ToLuaManager.Instance.BindMonoUpdate(ref LuaUpdateFunction);
 		}
+#elif DEFINE_VE_XLUA
+        public override void Init()
+		{
+            if (!ScriptBaseSetting.XLuaSourceSaveCheck)
+            {
+                Log.E("[VLua]:Source is Inexistence");
+                return;
+            }     
+            XLuaManager.Instance.BindMonoUpdate(ref LuaUpdateFunction);
+		}
+#endif
 
         private void Update() 
         {
@@ -56,7 +66,5 @@ namespace VEFramework.HotScriptKit
                 LuaUpdateFunction.Invoke(Time.deltaTime);
         }
 
-
-#endif
     }
 }

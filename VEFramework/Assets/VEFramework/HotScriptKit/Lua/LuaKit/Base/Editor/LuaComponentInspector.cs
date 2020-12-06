@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  ****************************************************************************/
 
-#if DEFINE_VE_LUA
+#if DEFINE_VE_TOLUA || DEFINE_VE_XLUA
 namespace VEFramework.HotScriptKit
 {
 	using UnityEngine;
@@ -30,7 +30,6 @@ namespace VEFramework.HotScriptKit
 	using System.Text.RegularExpressions;
 	using UnityEditor.SceneManagement;
 	using VEFramework;
-	using LuaInterface;
 	[CustomEditor(typeof(LuaComponent))]
 	public class LuaComponentInspectorEditor : UnityEditor.Editor
 	{
