@@ -108,11 +108,10 @@
 - **ResourceKit 完成 v0.1**
 - **VAsset 设立对外总入口**
 - **NetAssetKit 完成 v0.1**
-
 - **EasyLog模块 v0.1**
-
 - **VUI v0.1**
 - **HotScript v0.1**
+- **VEPackageManager v0.1**
 
 
 
