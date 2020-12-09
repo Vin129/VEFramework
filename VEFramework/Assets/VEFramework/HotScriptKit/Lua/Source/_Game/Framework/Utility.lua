@@ -2,9 +2,9 @@
 -- Author: Your Name
 -- Date: 2016-10-29 00:25:32
 --
-local GameObject = UnityEngine.GameObject;
-local Transform = UnityEngine.Transform;
-local Debug = UnityEngine.Debug;
+local GameObject = CS.UnityEngine.GameObject;
+local Transform = CS.UnityEngine.Transform;
+local Debug = CS.UnityEngine.Debug;
 
 --工具类
 Utility = {};

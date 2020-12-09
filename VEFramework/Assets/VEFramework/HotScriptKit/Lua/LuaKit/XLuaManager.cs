@@ -31,6 +31,8 @@ namespace VEFramework.HotScriptKit
     #endif
 #if DEFINE_VE_XLUA   
     using XLua;
+    using System.IO;
+
     public class XLuaManager:Singleton<XLuaManager>
     {
         public const string LuaEnterFile  = "Framework/init.lua";
@@ -44,7 +46,7 @@ namespace VEFramework.HotScriptKit
 
         //lua环境
         private static LuaEnv mLuaEnv = null;
-
+        
         //函数名字定义
         public static class MatterFunctionName
         {
@@ -62,16 +64,21 @@ namespace VEFramework.HotScriptKit
             public static readonly string OnDisable     = "OnDisable";
             public static readonly string OnDestroy     = "OnDestroy";
         }
+        protected List<string> mSearchPaths;
         //预存函数提高效率
-        protected Dictionary<string, LuaFunction> mMatterFunctionMap = new Dictionary<string, LuaFunction>();
+        protected Dictionary<string, LuaFunction> mMatterFunctionMap;
 
         //初始化
         public void Init()
         {
+            mSearchPaths = new List<string>();
+            mMatterFunctionMap = new Dictionary<string, LuaFunction>();
+            AddEditorSearchPath(ScriptBaseSetting.LuaGamePath);
+
             mLuaEnv = new LuaEnv();
-            mLuaEnv.AddLoader(VAsset.Instance.XLuaLoader);
+            mLuaEnv.AddLoader(XLuaLoader);
             var enterFile = LuaEnterFile;
-            mLuaEnv.DoString(VAsset.Instance.XLuaLoader(ref enterFile));
+            mLuaEnv.DoString(XLuaLoader(ref enterFile));
             AddMatterFunction(MatterFunctionName.CreateLuaFile);
             AddMatterFunction(MatterFunctionName.MonoUpdate);
         }
@@ -151,13 +158,6 @@ namespace VEFramework.HotScriptKit
             return null;
         }
 
-        public static void AddEditorSearchPath(string path)
-        {
-    #if UNITY_EDITOR
-
-    #endif
-        }
-
         public static void Dispose()
         {
             mInstance = null;
@@ -167,6 +167,51 @@ namespace VEFramework.HotScriptKit
                 mLuaEnv = null;
             }
         }
+
+	#region XLua加载
+        public void AddEditorSearchPath(string path)
+        { 
+        #if UNITY_EDITOR
+            if (!Path.IsPathRooted(path))
+            {
+                Log.E(path + " is not a full path");
+                return;
+            }
+            var fullpath = path;
+            fullpath = fullpath.Replace('\\', '/');
+            if (fullpath.Length > 0 && fullpath[fullpath.Length - 1] != '/')
+            {
+                fullpath += '/';
+            }
+            fullpath += "?.lua";
+            mSearchPaths.Add(fullpath);
+        #endif
+        }
+
+		public byte[] XLuaLoader(ref string fileName)
+        {	
+        #if XLua_VASSET || !UNITY_EDITOR
+			if(!fileName.EndsWith(".lua"))
+				fileName += ".lua";
+			return VAsset.Instance.LoadScriptFile(fileName);
+        #elif UNITY_EDITOR
+            string filePath = string.Empty;
+            var name = fileName.Replace(".lua","");
+            mSearchPaths.ForEach(value=>{
+                if(File.Exists(value.Replace("?",name)))
+                {
+                    filePath = value.Replace("?",name);
+                    return;
+                }   
+            });
+            if(filePath.IsEmptyOrNull())
+                return null;
+            return File.ReadAllBytes(filePath);
+        #endif
+        }
+	#endregion
+
+
     }
 #endif
 }

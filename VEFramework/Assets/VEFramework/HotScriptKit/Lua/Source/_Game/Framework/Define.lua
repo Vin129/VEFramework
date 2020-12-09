@@ -1,5 +1,5 @@
-WWW = UnityEngine.WWW;
+WWW = CS.UnityEngine.WWW;
 
-LuaHelper = VEFramework.HotScriptKit.LuaHelper
-UIHelper = VEFramework.HotScriptKit.UIHelper
+LuaHelper = CS.VEFramework.HotScriptKit.LuaHelper
+UIHelper = CS.VEFramework.HotScriptKit.UIHelper
 

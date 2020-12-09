@@ -135,17 +135,5 @@ namespace VEFramework
         }
 
 	#endregion
-
-	#region XLua加载
-		public byte[] XLuaLoader(ref string fileName)
-        {	
-			Log.E(fileName);
-			if(!fileName.EndsWith(".lua"))
-				fileName += ".lua";
-			return VAsset.Instance.LoadScriptFile(fileName);
-        }
-	#endregion
-
-
     }
 }

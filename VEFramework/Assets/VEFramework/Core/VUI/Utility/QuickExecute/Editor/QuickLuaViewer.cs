@@ -185,7 +185,9 @@ namespace  VEFramework
 
 #elif DEFINE_VE_XLUA
 	using XLua;
-	public class QuickLuaViewer
+    using System.IO;
+
+    public class QuickLuaViewer
 	{
 		private Action<string> debugger;
 		public QuickLuaViewer(Action<string> action)
@@ -234,13 +236,16 @@ namespace  VEFramework
 
 		public void ClearLuaState()
 		{
+			if(mSearchPaths != null)
+				mSearchPaths.Clear();
 			if(mExecuteFunctionDirt != null)
 				mExecuteFunctionDirt.Clear();
 			if(mFocusLuaTab != null)
 				mFocusLuaTab.Dispose();
 			if(mLuaEnv != null)
 				mLuaEnv.Dispose();
-
+			
+			mSearchPaths = null;
 			mExecuteFunctionDirt = null;
 			mFocusLuaTab = null;
 			mLuaEnv = null;
@@ -252,14 +257,57 @@ namespace  VEFramework
 		private readonly string[] IgonreBaseName = {"new","ctor","create"};
 		private LuaEnv mLuaEnv;
 		private LuaTable mFocusLuaTab;
+		private List<string> mSearchPaths;
 		private Dictionary<string,Action> mExecuteFunctionDirt;
 		private void LuaStateInit()
-		{
-
+		{	
+			mSearchPaths = new List<string>();
+			AddEditorSearchPath(ScriptBaseSetting.LuaGamePath);
 			mLuaEnv = new LuaEnv();
-			mLuaEnv.AddLoader(VAsset.Instance.XLuaLoader);
-			mLuaEnv.DoString("require",LuaDefaultFilePath);		
+			mLuaEnv.AddLoader(XLuaLoader);
+			mLuaEnv.DoString(XLuaLoader(ref LuaDefaultFilePath));		
 		}
+
+	#region XLua加载
+        public void AddEditorSearchPath(string path)
+        { 
+        #if UNITY_EDITOR
+            if (!Path.IsPathRooted(path))
+            {
+                Log.E(path + " is not a full path");
+                return;
+            }
+            var fullpath = path;
+            fullpath = fullpath.Replace('\\', '/');
+            if (fullpath.Length > 0 && fullpath[fullpath.Length - 1] != '/')
+            {
+                fullpath += '/';
+            }
+            fullpath += "?.lua";
+            mSearchPaths.Add(fullpath);
+        #endif
+        }
+
+		public byte[] XLuaLoader(ref string fileName)
+        {	
+        #if UNITY_EDITOR
+            string filePath = string.Empty;
+            var name = fileName.Replace(".lua","");
+            mSearchPaths.ForEach(value=>{
+                if(File.Exists(value.Replace("?",name)))
+                {
+                    filePath = value.Replace("?",name);
+                    return;
+                }   
+            });
+            if(filePath.IsEmptyOrNull())
+                return null;
+            return File.ReadAllBytes(filePath);
+        #endif
+        }
+	#endregion
+
+
 
 		private void FindLuaTableInfo(string filePath)
 		{
@@ -280,7 +328,6 @@ namespace  VEFramework
 					return;
 				}
 				filePath = resultString[1];	
-				Debug.LogError(filePath);
 				LuaFunction func = mLuaEnv.Global.Get<LuaFunction>(CreateLuaFile);
 				if (null == func)
 				{
@@ -303,19 +350,37 @@ namespace  VEFramework
 			if(mExecuteFunctionDirt == null)
 			{
 				mExecuteFunctionDirt = new Dictionary<string, Action>();
-				mFocusLuaTab.Get<LuaTable>("class").ForEach<LuaFunction,string>((f,name)=>{
-					if(!IgonreBaseName.Contains(name))
-					{
-						var key = name;
-						mExecuteFunctionDirt.Add(key,()=>{
-							var luafunc = mFocusLuaTab.Get<LuaFunction>(key);
-							if(luafunc != null)
-							{
-								luafunc.Call(mFocusLuaTab);
-							}
-						});
+				var dict = mFocusLuaTab.Get<Dictionary<string,LuaFunction>>("class");
+				dict.ForEach(
+					v =>{
+						if(!IgonreBaseName.Contains(v.Key))
+						{
+							var key = v.Key;
+							mExecuteFunctionDirt.Add(key,()=>{
+								var luafunc = mFocusLuaTab.Get<LuaFunction>(key);
+								if(luafunc != null)
+								{
+									luafunc.Call(mFocusLuaTab);
+								}
+							});
+						}
 					}
-				});
+				);
+
+
+				// mFocusLuaTab.Get<LuaTable>("class").ForEach<LuaFunction,string>((f,name)=>{
+				// 	if(!IgonreBaseName.Contains(name))
+				// 	{
+				// 		var key = name;
+				// 		mExecuteFunctionDirt.Add(key,()=>{
+				// 			var luafunc = mFocusLuaTab.Get<LuaFunction>(key);
+				// 			if(luafunc != null)
+				// 			{
+				// 				luafunc.Call(mFocusLuaTab);
+				// 			}
+				// 		});
+				// 	}
+				// });
 			}	
 		}
 	}
