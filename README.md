@@ -160,7 +160,7 @@
 
 **Lua脚本打包便捷工具**
 
-**URP模块**
+**Shader + URP模块**
 
 **VAssetEditor模块：Assurer 可视化窗口 升级**
 
