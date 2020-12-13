@@ -35,35 +35,40 @@ namespace VEFramework.HotScriptKit
                 return "VLua";
             }
         }
-
         private Action<float> LuaUpdateFunction;
+        public VLuaManager LuaManager
+        {
+            get
+            {
+                #if DEFINE_VE_TOLUA 
+                    return ToLuaManager.Instance;
+                #elif DEFINE_VE_XLUA
+                    return XLuaManager.Instance;
+                #endif
+                return null;
+            }
+        }
 
-#if DEFINE_VE_TOLUA    
+   
 		public override void Init()
 		{
-            if (!ScriptBaseSetting.ToLuaSourceSaveCheck)
+            if (!ScriptBaseSetting.SourceSaveCheck)
             {
                 Log.E("[VLua]:Source is Inexistence");
                 return;
             }     
-            ToLuaManager.Instance.BindMonoUpdate(ref LuaUpdateFunction);
+            LuaManager.BindMonoUpdate(ref LuaUpdateFunction);
 		}
-#elif DEFINE_VE_XLUA
-        public override void Init()
-		{
-            if (!ScriptBaseSetting.XLuaSourceSaveCheck)
-            {
-                Log.E("[VLua]:Source is Inexistence");
-                return;
-            }     
-            XLuaManager.Instance.BindMonoUpdate(ref LuaUpdateFunction);
-		}
-#endif
 
         private void Update() 
         {
             if(LuaUpdateFunction != null)
                 LuaUpdateFunction.Invoke(Time.deltaTime);
+        }
+
+        private void OnDestroy() 
+        {
+            LuaManager.Destroy();
         }
 
     }

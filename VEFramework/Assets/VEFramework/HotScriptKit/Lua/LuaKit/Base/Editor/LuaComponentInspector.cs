@@ -52,12 +52,6 @@ namespace VEFramework.HotScriptKit
 				luaVeiwer = new QuickLuaViewer((msg)=>{Log.E(msg);});
 		}
 
-		private void OnDisable() 
-		{
-			if(luaVeiwer != null)
-				luaVeiwer.ClearLuaState();
-		}
-
 		private string focusFilePath;
 		public override void OnInspectorGUI()
 		{
@@ -116,7 +110,7 @@ namespace VEFramework.HotScriptKit
 					if (GUILayout.Button("刷新脚本"))
 					{
 						focusFilePath = null;
-						luaVeiwer.ClearLuaState();
+						luaVeiwer.ClearLuaState(true);
 						AssetDatabase.Refresh();
 					}
 

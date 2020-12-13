@@ -31,10 +31,8 @@ namespace VEFramework.HotScriptKit
     #endif
 #if DEFINE_VE_TOLUA   
     using LuaInterface;
-    public class ToLuaManager:Singleton<ToLuaManager>
+    public class ToLuaManager:VLuaManager<ToLuaManager>,ILuaEnv
     {
-        public const string LuaEnterFile  = "Framework/init.lua";
-
 		private ToLuaManager(){}
 
         public override void InitFinished()
@@ -45,28 +43,18 @@ namespace VEFramework.HotScriptKit
         //lua环境
         private static LuaState mLuaState = null;
 
-        //函数名字定义
-        public static class MatterFunctionName
-        {
-            public static readonly string CreateLuaFile = "CreateLuaFile";
-
-            public static readonly string MonoUpdate = "MonoUpdate";
-        };
-
-        public static class LuaMonoFunctionName
-        {
-            public static readonly string Awake         = "Awake";
-            public static readonly string OnEnable      = "OnEnable";
-            public static readonly string Start         = "Start";
-            public static readonly string Update        = "Update";
-            public static readonly string OnDisable     = "OnDisable";
-            public static readonly string OnDestroy     = "OnDestroy";
-        }
         //预存函数提高效率
         protected Dictionary<string, LuaFunction> mMatterFunctionMap = new Dictionary<string, LuaFunction>();
 
+        public LuaState LuaEnv 
+        {
+            get
+            {
+                return mLuaState;
+            }
+        }
         //初始化
-        public void Init()
+        public override void Init()
         {
     #if UNITY_EDITOR
             LuaFileUtils.Instance.beZip = AppSetting.AssetBundleOpen;
@@ -82,6 +70,8 @@ namespace VEFramework.HotScriptKit
             AddMatterFunction(MatterFunctionName.CreateLuaFile);
             AddMatterFunction(MatterFunctionName.MonoUpdate);
         }
+
+        public override ILuaEnv GetEnv(){ return Instance;}
 
         private void libLoader()
         {
@@ -99,20 +89,14 @@ namespace VEFramework.HotScriptKit
             DelegateFactory.Init();
         }
         
-        private void Update(float deltaTime)
+        public override void Update(float deltaTime)
         {
             if(mMatterFunctionMap[MatterFunctionName.MonoUpdate] != null)
                 mMatterFunctionMap[MatterFunctionName.MonoUpdate].Call(deltaTime);
         }   
 
-
-        public void BindMonoUpdate(ref Action<float> act)
-        {
-            act = Update;
-        }
-
         //保存函数
-        public bool AddMatterFunction(string funcName)
+        public override bool AddMatterFunction(string funcName)
         {
             var func = mLuaState.GetFunction(funcName);
             if (null == func)
@@ -124,6 +108,23 @@ namespace VEFramework.HotScriptKit
             return true;
         }
 
+        //销毁
+        public override void Destroy()
+        {
+            //记得释放资源
+            foreach (var pair in mMatterFunctionMap)
+            {
+                pair.Value.Dispose();
+            }
+            mMatterFunctionMap.Clear();
+            if(mLuaState != null)
+            {
+                mLuaState.Dispose();
+                mLuaState = null;
+            }
+        }
+
+    #region LuaEnv通用组件
         public LuaTable AddLuaFile(params object[] args)
         {
             LuaFunction func = mLuaState.GetFunction(MatterFunctionName.CreateLuaFile);
@@ -144,27 +145,13 @@ namespace VEFramework.HotScriptKit
             return table;
         }
 
-        //销毁
-        public void Destroy()
-        {
-            //记得释放资源
-            foreach (var pair in mMatterFunctionMap)
-            {
-                pair.Value.Dispose();
-            }
-
-            mMatterFunctionMap.Clear();
-            mLuaState.Dispose();
-        }
-
-
-        public static LuaComponent AddLuaComponent(GameObject go, string path)
+        public LuaComponent AddLuaComponent(GameObject go, string path)
         {
             LuaComponent luaComp = go.AddComponent<LuaComponent>();
             luaComp.Initilize(path); // 手动调用脚本运行，以取得LuaTable返回值  
             return luaComp;
         }
-        public static LuaComponent GetLuaComponent(GameObject go, string LuaClassName)
+        public LuaComponent GetLuaComponent(GameObject go, string LuaClassName)
         {
             LuaComponent[] comps = go.GetComponents<LuaComponent>();
 
@@ -176,7 +163,7 @@ namespace VEFramework.HotScriptKit
 
             return null;
         }
-
+    #endregion
         public static void AddEditorSearchPath(string path)
         {
     #if UNITY_EDITOR
@@ -185,16 +172,6 @@ namespace VEFramework.HotScriptKit
                 mLuaState.AddSearchPath(Application.dataPath + "/" + path);
             }
     #endif
-        }
-
-        public static void Dispose()
-        {
-            mInstance = null;
-            if (mLuaState != null)
-            {
-                mLuaState.Dispose();
-                mLuaState = null;
-            }
         }
     }
 #endif

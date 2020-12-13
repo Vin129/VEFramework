@@ -23,39 +23,26 @@
  ****************************************************************************/
 namespace VEFramework.HotScriptKit
 {
-#if DEFINE_VE_TOLUA
-    using  LuaInterface;
-#elif DEFINE_VE_XLUA
+    using UnityEngine;
+    //XLua&ToLua 虚拟机接口
+#if DEFINE_VE_XLUA
     using XLua;
-#endif
-    public static class LuaPerformer
-    {
-        #if DEFINE_VE_TOLUA || DEFINE_VE_XLUA
-            public static void Call(object luafunction,params object[] args)
-            {
-                LuaFunction f = (LuaFunction)luafunction;
-                f.Call(args);
-            }
-            public static string RSCall(object luafunction,params object[] args)
-            {
-                LuaFunction f = (LuaFunction)luafunction;
-                var resultParams = f.Call(args);
-                if(resultParams.Length == 0)
-                    return null;
-                return resultParams[0] as string;
-            }
-            public static LuaFunction GetFunction(LuaTable mTable,string fName)
-            {
-            #if DEFINE_VE_TOLUA
-                return mTable.GetLuaFunction(fName);
-            #else
-                return mTable.Get<LuaFunction>(fName);
-            #endif
-            }
-        #else
-            public static void Call(object luafunction,params object[] args){}
-            public static string RSCall(object luafunction,params object[] args){return null;}
-        #endif
+	public interface ILuaEnv       
+	{
+        LuaEnv LuaEnv {get;}
+        LuaTable AddLuaFile(params object[] args);
+        LuaComponent AddLuaComponent(GameObject go, string path);
+        LuaComponent GetLuaComponent(GameObject go, string path);
     }
+#elif DEFINE_VE_TOLUA
+    using LuaInterface;
+    public interface ILuaEnv 
+    {
+        LuaState LuaEnv {get;}
+        LuaComponent AddLuaComponent(GameObject go, string path);
+        LuaComponent GetLuaComponent(GameObject go, string path);
+    }
+#else
+	public interface ILuaEnv {}
+#endif
 }
-

@@ -1,6 +1,3 @@
---=============================================================================
--- 2020.3 Vin129
---=============================================================================
 local luaKit = class("luaKit",LuaBehaviour)
 function luaKit:ctor()
     self.hellow = "hellow lua"
@@ -38,7 +35,7 @@ function luaKit:OnDestroy()
 end
 --================================
 function luaKit:Hellow()
-    log(self.hellow)
+    log("Hellow")
 end
 
 
