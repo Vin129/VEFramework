@@ -75,7 +75,7 @@
     - **LuaKit**
       - **~~ToLua v0.1~~**
         - **~~XLua v0.1~~**
-        - **QuickLuaViewer** 
+        - **~~QuickLuaViewer v0.1~~** 
         - **LuaPacker**
 - **VEPackageManager： VE相关Packages 管理整合**
 
@@ -156,7 +156,7 @@
 
 **~~XLua的加载支持~~**
 
-**QuickLuaViewer 升级 ，公共管理**
+**~~QuickLuaViewer 升级 ，公共管理~~**
 
 **Lua脚本打包便捷工具**
 
