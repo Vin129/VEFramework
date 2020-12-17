@@ -76,7 +76,7 @@
       - **~~ToLua v0.1~~**
         - **~~XLua v0.1~~**
         - **~~QuickLuaViewer v0.1~~** 
-        - **LuaPacker**
+        - **LuaPacker v0.1**
 - **VEPackageManager： VE相关Packages 管理整合**
 
     - **~~LocalPackages : 本地Packages 管理 v0.1~~**
