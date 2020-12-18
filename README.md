@@ -93,7 +93,6 @@
 
 
 
-
 **— GamePipeline : Easy化使用流（非开发者）**
 
 ​	**— 资产可视化  VAssetEditor：资产可视化工具 **
@@ -158,7 +157,7 @@
 
 **~~QuickLuaViewer 升级 ，公共管理~~**
 
-**Lua脚本打包便捷工具**
+**LuaPack**
 
 **Shader + URP模块**
 
