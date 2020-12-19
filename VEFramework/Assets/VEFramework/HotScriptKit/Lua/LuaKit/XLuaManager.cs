@@ -91,7 +91,6 @@ namespace VEFramework.HotScriptKit
         //销毁
         public override void Destroy()
         {
-            Log.E(1111);
             //记得释放资源
             foreach (var pair in mMatterFunctionMap)
             {
