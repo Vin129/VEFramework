@@ -110,7 +110,7 @@
 - **NetAssetKit 完成 v0.1**
 - **EasyLog模块 v0.1**
 - **VUI v0.1**
-- **HotScript v0.1**
+- **HotScript  —— ToLua（v0.1）  XLua（v0.1） **
 - **VEPackageManager v0.1**
 
 
