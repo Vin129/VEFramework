@@ -9,6 +9,7 @@
 - [ ] **ECS**
 - [ ] **ProtoBuff/SProto**
 - [ ] **VUIKit**
+- [ ] **EasyNet**
 
 
 
