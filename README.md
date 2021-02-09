@@ -6,7 +6,6 @@
 # TODOList
 
 - [ ] **LuaPacker**
-- [ ] **ECS**
 - [ ] **ProtoBuff/SProto**
 - [ ] **VUIKit**
 - [ ] **EasyNet**
