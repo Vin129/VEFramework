@@ -110,7 +110,7 @@ namespace VEFramework.Editor
 		public static void EasyBuild()
 		{
 			AssetBundleEasyBuild();
-			Log.IColor("Build Over",LogColor.OrangeRed);
+			Log.IColor("AB Build Over",LogColor.OrangeRed);
 		}
 
 		[MenuItem ("VETool/VAsset/SetABNameByRule")]

@@ -64,14 +64,13 @@ namespace VEFramework.HotScriptKit
 
 		// Lua 来源路径 （Tolua&Xlua...）
 		public static string LuaSourcePath = Application.dataPath + "/VEFramework/HotScriptKit/Lua/Source";
+		// Lua Game
+		public static string LuaGamePath = LuaSourcePath + "/_Game";
 		// LuaKit 路径
 		public static string LuaKitPath = Application.dataPath + "/VEFramework/HotScriptKit/Lua/LuaKit";
-		// Lua Game
-		public static string LuaGamePath = Application.dataPath + "/VEFramework/HotScriptKit/Lua/Source/_Game";
 
 		// TODO:都将支持窗口设置
 		public static string VERSIONS = "0.1.1";
-
 		public static string SETTING_DATA_PATH = LuaKitPath + "/ScriptKitData/BaseSetting.json";
 #region  EditorKey 
 		public static string KEY_SCRIPT_PATH_TAIl = "SCRIPT_PATH_TAIL";
@@ -83,18 +82,14 @@ namespace VEFramework.HotScriptKit
 #else 
 		public static string ScriptPathTail = "/UI";
 #endif
-		// public static Dictionary<string,string> ;
-		public static int NOW_SCRIPT_TYPE = 1;	
 #region ToLua	
-		public static int LUA_BASE_TYPE = 1;
 		//lua逻辑代码目录
 		public static string LUA_DIR = LuaGamePath;     
 		//tolua lua文件目录           
 		public static string TOLUA_DIR = LuaSourcePath + "/_Tolua/ToLua/Lua";       
 #endregion
 #region SettingSupprot	
-		public static string[] ScriptPathHeads = {String.Empty,LUA_DIR};
-		public static string NOW_PATH_HEAD = ScriptPathHeads[NOW_SCRIPT_TYPE] ?? String.Empty;
+		public static string NOW_PATH_HEAD = LuaGamePath;
 		public static string NOW_PATH_TAIL {
 			get{
 				if(!BaseData.Keys.Contains(KEY_SCRIPT_PATH_TAIl)){
@@ -107,8 +102,6 @@ namespace VEFramework.HotScriptKit
 			}
 		}
 #endregion
-
-
 		private static JsonData baseData;
 		public static JsonData BaseData{
 			get{
@@ -129,33 +122,26 @@ namespace VEFramework.HotScriptKit
 				baseData = value;
 			}
 		}
-		public static void SetBaseData(string key,string value){
+		public static void SetBaseData(string key,string value)
+		{
 			BaseData[key] = value;
 		}
-		public static void SaveBaseData(){
+		public static void SaveBaseData()
+		{
 			BaseData.SaveJsonData(SETTING_DATA_PATH);
 		}
 
-		public static string GetScriptPath(int scriptType){
-			if(!BaseData.Keys.Contains(KEY_SCRIPT_PATH))
+		public static string GetHotScriptName()
+		{
+			if(ToLuaSourceSaveCheck)
 			{
-				if(ScriptPathHeads[scriptType] == null)
-					return ScriptPathTail;
-				return ScriptPathHeads[scriptType] + ScriptPathTail;
+				return "ToLua";
 			}
-			else
+			else if(XLuaSourceSaveCheck)
 			{
-				return BaseData[KEY_SCRIPT_PATH].ToString();
+				return "XLua";
 			}
-		}
-
-		public static string GetHotScriptName(){
-			switch(NOW_SCRIPT_TYPE){
-				case 1:
-					return "ToLua";
-				default:
-					return "无";
-			}
+			return "Null";
 		}
 	}
 }

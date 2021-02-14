@@ -127,7 +127,7 @@ namespace VEFramework.HotScriptKit
 
 		public byte[] XLuaLoader(ref string fileName)
         {	
-        #if XLua_VASSET || !UNITY_EDITOR
+        #if XLUA_VASSET || !UNITY_EDITOR
 			if(!fileName.EndsWith(".lua"))
 				fileName += ".lua";
 			return VAsset.Instance.LoadScriptFile(fileName);

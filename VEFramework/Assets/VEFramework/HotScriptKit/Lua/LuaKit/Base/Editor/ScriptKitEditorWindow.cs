@@ -26,6 +26,8 @@ namespace VEFramework.HotScriptKit
     using UnityEngine;
     using UnityEditor;
     using LitJson;
+    using VEFramework.Editor;
+
     public class ScriptKitEditorWindow:EditorWindow
     {
         private static ScriptKitEditorWindow instance;
@@ -53,6 +55,13 @@ namespace VEFramework.HotScriptKit
             AssetDatabase.Refresh();
         }
 
+        [MenuItem("VETool/LuaKit/CopyLuaToResource")]
+        public static void CopyLuaToResource()
+        {
+            LuaPacker.CopyLuaFilesToResource();
+            AssetDatabase.Refresh();
+            Log.IColor("Lua Copy done",LogColor.Orange);
+        }
   
         [MenuItem("VETool/LuaKit/Setting")]
         public static void ShowWindow()
@@ -64,7 +73,17 @@ namespace VEFramework.HotScriptKit
             instance.Show();
         }
 
-        public void Init(){
+        [MenuItem ("VETool/VAsset/EasyBuild(ScriptKit)")]
+		public static void EasyBuild()
+		{
+            CopyLuaToResource();
+			ABBuilderEditor.AssetBundleEasyBuild();
+			Log.IColor("AB Build Over",LogColor.OrangeRed);
+		}
+
+
+        public void Init()
+        {
             contents = new Contents();
             guiStyle = new GUIStyle();
             scriptPath = EditorPrefs.GetString(ScriptBaseSetting.KEY_SCRIPT_PATH,string.Empty);
@@ -75,7 +94,8 @@ namespace VEFramework.HotScriptKit
             EditorPrefs.SetString(ScriptBaseSetting.KEY_SCRIPT_PATH,scriptPath);
         }
 
-        public void OnGUI(){
+        public void OnGUI()
+        {
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 			GUILayout.BeginVertical();
             GUILayout.Label(string.Format("{0}CodePath:{1}",hotScriptName,scriptPath));

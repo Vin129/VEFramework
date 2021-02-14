@@ -28,7 +28,6 @@
 		<type fullname="UnityEngine.Space" preserve="all"/>
 		<type fullname="UnityEngine.MeshRenderer" preserve="all"/>
 		<type fullname="UnityEngine.WrapMode" preserve="all"/>
-		<type fullname="UnityEngine.QualitySettings" preserve="all"/>
 		<type fullname="UnityEngine.RenderSettings" preserve="all"/>
 		<type fullname="UnityEngine.RenderTexture" preserve="all"/>
 		<type fullname="UnityEngine.Resources" preserve="all"/>
@@ -72,11 +71,6 @@
 		<type fullname="UnityEngine.AnimationBlendMode" preserve="all"/>
 		<type fullname="UnityEngine.QueueMode" preserve="all"/>
 		<type fullname="UnityEngine.PlayMode" preserve="all"/>
-		
-	</assembly>
-
-	<assembly fullname="UnityEngine.InputLegacyModule">
-	    <type fullname="UnityEngine.Input" preserve="all"/>
 		
 	</assembly>
 
