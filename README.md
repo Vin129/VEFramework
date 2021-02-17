@@ -143,37 +143,21 @@
 
 ## Further
 
-**~~AssetBundleKit 释放Assurer机制~~**
+**~~AssetBundleKit： 释放机制、Build工具、Editor模块~~**
 
-**~~AssetBundleKit 制作对应的ABBuild工具~~**
+**~~VAsset 完成 v0.1版本 ： Kit Asset、Resource、AssetBundle、WWW~~ **
 
-**~~AssetBundleKit Editor工具模块~~**
-
-**~~ABAssurer 释放存在风险，设计一套安全的方式~~**
-
-**~~VAsset 完善Resources部分与AssetLoad部分~~**
-
-**~~VAssetKit 统筹管理：Asset、Resource、AssetBundle、WWW~~**
-
-**~~VAsset 完成 v0.1版本~~**
-
-**~~UIKit  (UICanvas) v0.1~~**
-
-**~~BaseUI &  LuaKit~~**
+**~~UIKit  (UICanvas) v0.1 ： BaseUI &  LuaKit~~**
 
 **~~VAsset升级，Assurer管理模块改造，更适合各种环境下合理使用。~~**
 
-**~~VAsset:梳理 释放模式~~**
+**~~ToLua&XLua 支持~~**
 
-**~~XLua 支持~~**
+**~~QuickLuaViewer  可视化lua脚本~~**
 
-**~~XLua的加载支持~~**
+**~~HotScriptKit v0.1 : ToLua&XLua~~**
 
-**~~QuickLuaViewer 升级 ，公共管理~~**
-
-**~~LuaPack~~**
-
-**VAssetEditor模块：Assurer 可视化窗口 升级**
+**VAssetViewer ：Assurer 可视化窗口 升级**
 
 **ABManager：更精确的加载**
 
