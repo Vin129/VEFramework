@@ -358,7 +358,7 @@ namespace VEFramework
 		#endregion Encrypt Module
 
 		private BuildTarget mBuildTarget;
-		private BuildAssetBundleOptions m_BuildOption = BuildAssetBundleOptions.DeterministicAssetBundle;
+		private BuildAssetBundleOptions m_BuildOption = BuildAssetBundleOptions.DeterministicAssetBundle & BuildAssetBundleOptions.ChunkBasedCompression;
 
 		public static BuildTarget AssetBundleBuildTarget
 		{
