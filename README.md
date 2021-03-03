@@ -76,9 +76,9 @@
     - **~~Rule：规则模块~~**
     - **AssurerViewer：运行时资产可视化**
     - **AssetFinder：检查资产是否被使用** 
+    - **AssetTracker： Debug模式资产追踪**（https://github.com/blueberryzzz/ReferenceFinder）
 - **HotScriptKit**
-
-    - **LuaKit**
+- **LuaKit**
       - **~~ToLua v0.1~~**
         - **~~XLua v0.1~~**
         - **~~QuickLuaViewer v0.1~~** 
@@ -158,6 +158,8 @@
 **~~HotScriptKit v0.1 : ToLua&XLua~~**
 
 **VAssetViewer ：Assurer 可视化窗口 升级**
+
+**AssetTracker**
 
 **ABManager：更精确的加载**
 
