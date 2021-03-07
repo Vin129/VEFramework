@@ -39,20 +39,25 @@ namespace VEFramework.HotScriptKit
             public static string RSCall(object luafunction,params object[] args)
             {
                 LuaFunction f = (LuaFunction)luafunction;
-                var resultParams = f.Call(args);
+#if DEFINE_VE_XLUA
+            var resultParams = f.Call(args);
                 if(resultParams.Length == 0)
                     return null;
                 return resultParams[0] as string;
-            }
+#else
+            var result = f.Invoke<string>();
+            return result;
+#endif
+        }
             public static LuaFunction GetFunction(LuaTable mTable,string fName)
             {
-            #if DEFINE_VE_TOLUA
+#if DEFINE_VE_TOLUA
                 return mTable.GetLuaFunction(fName);
-            #else
+#else
                 return mTable.Get<LuaFunction>(fName);
-            #endif
+#endif
             }
-        #else
+#else
             public static void Call(object luafunction,params object[] args){}
             public static string RSCall(object luafunction,params object[] args){return null;}
         #endif

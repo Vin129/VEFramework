@@ -39,6 +39,7 @@ namespace VEFramework.HotScriptKit
     public interface ILuaEnv 
     {
         LuaState LuaEnv {get;}
+        LuaTable AddLuaFile(params object[] args);
         LuaComponent AddLuaComponent(GameObject go, string path);
         LuaComponent GetLuaComponent(GameObject go, string path);
     }

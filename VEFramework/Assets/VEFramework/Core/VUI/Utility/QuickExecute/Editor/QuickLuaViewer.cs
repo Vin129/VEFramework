@@ -125,9 +125,9 @@ namespace  VEFramework
 	#if DEFINE_VE_TOLUA
 		private void FindLuaTableInfo(string filePath)
 		{
-			if(mLuaState == null)
+			if(LuaManager.GetEnv().LuaEnv == null)
 				LuaStateInit();
-			if(mLuaState == null)
+			if(LuaManager.GetEnv().LuaEnv == null)
 			{
 				Report("LuaKitError:LuaState init fail");
 				return;
@@ -143,7 +143,7 @@ namespace  VEFramework
 				}
 				filePath = resultString[1];	
 				Debug.LogError(filePath);
-				LuaFunction func = mLuaState.GetFunction(CreateLuaFile);
+				LuaFunction func = LuaManager.GetEnv().LuaEnv.GetFunction(CreateLuaFile);
 				if (null == func)
 				{
 					var msg = "LuaKitError: Not Found Function {0}";
